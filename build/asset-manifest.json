@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a1ffdaeb.css",
+    "main.js": "/static/js/main.ccc3044f.js",
+    "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2877d54f94f30c5d563c.ttf",
+    "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.13e40630e5866f777de8.ttf",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.bdb9e23299f9d1320a8b.woff2",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.7be2266f1be21c44ecd4.woff2",
+    "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.146404900f7550a9719d.ttf",
+    "static/media/page-logo.png": "/static/media/page-logo.b9f8f372bbdcb0882930.png",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.8bedd7cfa43a6c358cdd.woff2",
+    "static/media/page-logo-icon-only.png": "/static/media/page-logo-icon-only.f59e807e50a2eeb958d7.png",
+    "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.6c0a7b774ffa1cf0a059.ttf",
+    "static/media/clothes.svg": "/static/media/clothes.bf26c69bf8d02d12b8f7ade5b05d0f65.svg",
+    "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.497d535001197a9c5b38.woff2",
+    "static/media/plants.svg": "/static/media/plants.b84388df61361c6d53648b33f1a7bd60.svg",
+    "static/media/appliances.svg": "/static/media/appliances.a614c148dfab2b64ccd07769b3177ebc.svg",
+    "static/media/furniture.svg": "/static/media/furniture.e75473bf396739485aef29e99c8a6083.svg",
+    "static/media/car.svg": "/static/media/car.8e4d8197565d3cac2e4800bd44595b46.svg",
+    "index.html": "/index.html",
+    "static/media/arrow_left.svg": "/static/media/arrow_left.db6e2d88c7c35a775ce4.svg",
+    "static/media/arrow_right.svg": "/static/media/arrow_right.f7c6ac6d310d3b82f0a0.svg",
+    "main.a1ffdaeb.css.map": "/static/css/main.a1ffdaeb.css.map",
+    "main.ccc3044f.js.map": "/static/js/main.ccc3044f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a1ffdaeb.css",
+    "static/js/main.ccc3044f.js"
+  ]
+}
