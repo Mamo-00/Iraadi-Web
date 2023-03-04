@@ -13,5 +13,10 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
+<<<<<<< HEAD
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IRAADI_PROJECT }}'
+          projectId: iraadi-project
+=======
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IRAADI_WEBAPP_DCA5B }}'
           projectId: iraadi-webapp-dca5b
+>>>>>>> 2862116d219aa58db0865dc40879e92d69c07066

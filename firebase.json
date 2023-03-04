@@ -1,4 +1,10 @@
 {
+<<<<<<< HEAD
+  "functions": {
+    "source": "functions"
+  },
+=======
+>>>>>>> 2862116d219aa58db0865dc40879e92d69c07066
   "hosting": {
     "public": "build",
     "ignore": [
