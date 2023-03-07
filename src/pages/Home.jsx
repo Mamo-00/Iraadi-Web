@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import Recommendations from "../components/Recommendations";
+import Footer from "../components/Footer";
 import Login from "../pages/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ReactComponent as Appliance } from "../assets/categoryIcons/appliances.svg";
@@ -10,6 +12,8 @@ import { ReactComponent as Furniture } from "../assets/categoryIcons/furniture.s
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import "../styles.css";
+
+
 
 const Category = styled(Link)`
   margin-top: 20px;
@@ -31,25 +35,33 @@ const Container = styled.div`
   max-width: 1010px;
 `;
 
+const Aside = styled.div`
+  background-color: #f2f2f2;
+  border: 3px solid #ddd;
+  padding: 10px;
+  height: 400px; /* adjust as needed */
+  margin-top: 5rem;
+`;
+
 const Fridge = styled(Appliance)`
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 `;
 const Hoodie = styled(Clothes)`
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 `;
 const Ferrari = styled(Car)`
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 `;
 const Plant = styled(Plants)`
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 `;
 const Sofa = styled(Furniture)`
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 `;
 
 const Home = () => {
@@ -68,49 +80,57 @@ const Home = () => {
         <Navbar toggleShow={toggleShow}/>{" "}
       </header>
       <Login basicModal={basicModal} setBasicModal={setBasicModal} toggleShow={toggleShow}/>
-      <Container className="row mx-auto justify-content-center">
-
-        <Category to="/elektronikk-og-hvitevarer" className="col-6 col-sm-3">
-          <div className="d-flex justify-content-center">
-            <Fridge />
-          </div>
-        </Category>
-
-        <Category to="/kjoretoy" className="col-6 col-sm-3">
-          <div className="d-flex justify-content-center">
-            <Ferrari />
-          </div>
-        </Category>
-
-        <Category
-          to="/klaer-og-tilbehor"
-          className="col-3"
-          title="klær og tilbehør"
-        >
+      <div className="row mt-2 justify-content-center">
+        <Aside className="col-2 my-auto ms-2 p-2">
           
-            <Hoodie />
-            <Label className="">Clothes</Label>
-        </Category>
+        </Aside>
+        <Container className="row mx-2 justify-content-center col-6">
 
-        <Category to="/planter" className="col-6 col-sm-3">
-          <div className="d-flex justify-content-center">
-            <Plant />
-          </div>
-        </Category>
+          <Category to="/elektronikk-og-hvitevarer" className="col-6 col-sm-2">
+            <div className="d-flex justify-content-center">
+              <Fridge />
+            </div>
+          </Category>
 
-        <Category to="/mobler" className="col-6 col-sm-3">
-          <div className="d-flex justify-content-center">
-            <Sofa />
-          </div>
-        </Category>
+          <Category to="/kjoretoy" className="col-6 col-sm-2">
+            <div className="d-flex justify-content-center">
+              <Ferrari />
+            </div>
+          </Category>
 
-        <Category to="/link1" className="col-6 col-sm-3">
-          <div className="d-flex justify-content-center">
-            <Fridge />
-          </div>
-        </Category>
-        
-      </Container>
+          <Category
+            to="/klaer-og-tilbehor"
+            className="col-6 col-sm-2"
+            title="klær og tilbehør"
+          >
+            
+              <Hoodie />
+              <Label className="">Clothes</Label>
+          </Category>
+
+          <Category to="/planter" className="col-6 col-sm-2">
+            <div className="d-flex justify-content-center">
+              <Plant />
+            </div>
+          </Category>
+
+          <Category to="/mobler" className="col-6 col-sm-2">
+            <div className="d-flex justify-content-center">
+              <Sofa />
+            </div>
+          </Category>
+
+        </Container>
+        <Aside className="col-2 my-auto me-2 p-2">
+          
+        </Aside>
+      </div>
+      <div className="row justify-content-center mx-auto mt-2">
+        <div className="col-10">
+          <Recommendations />
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 };
