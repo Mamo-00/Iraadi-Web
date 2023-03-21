@@ -10,7 +10,7 @@ import {
   from '@mui/material';
 
 
-function VehicleCard( { img } ) {
+function VehicleCard( { img, title, location, distance, year, price } ) {
   return (
     <Card
       sx={{
@@ -29,9 +29,9 @@ function VehicleCard( { img } ) {
         alt="Car"
       />
       <CardContent>
-        <Typography variant="subtitle2">Oslo</Typography>
+      <Typography variant="subtitle2">{location}</Typography>
         <Typography gutterBottom variant="h5" component="div">
-          2018 BMW X3
+          {title}
         </Typography>
         <Divider sx={{ my: 2 }} color="text.primary" />
         <Box
@@ -42,13 +42,15 @@ function VehicleCard( { img } ) {
           }}
         >
           <Typography variant="body1" color="text.secondary">
-            50 000 km
+            {distance}km
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            2018
+            {year}
           </Typography>
         </Box>
-
+        <Typography variant="h4" color="text.primary" sx={{ mt: 1 }}>
+          {price} NOK
+        </Typography>
         <Button variant="contained" sx={{ mt: 2 }}>
           <Typography variant="h6">See details</Typography>
         </Button>

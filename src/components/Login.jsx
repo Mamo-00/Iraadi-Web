@@ -35,13 +35,9 @@ function Login( {toggleShow, basicModal, setBasicModal} ) {
     <>
       <MDBModal show={basicModal} setShow={setBasicModal} tabIndex="-1">
         <MDBModalDialog>
-          <MDBModalContent className="rounded-2">
+          <MDBModalContent className='rounded-2'>
             <MDBModalHeader>
-              {justifyActive === "tab1" ? (
-                <MDBModalTitle>Login</MDBModalTitle>
-              ) : (
-                <MDBModalTitle>Register</MDBModalTitle>
-              )}
+              <MDBModalTitle>Modal title</MDBModalTitle>
               <MDBBtn
                 className="btn-close"
                 color="none"

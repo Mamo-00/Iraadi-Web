@@ -44,13 +44,14 @@ export const tokens = (mode) => ({
 export const themeSettings = (mode) => {
   const colors = tokens(mode);
   return {
+    
     palette: {
       mode: mode,
       ...(mode === "dark"
         ? {
             // palette values for dark mode
             primary: {
-              main: colors.blue[3],
+              main: colors.blue[3] + " !important",
             },
             secondary: {
               main: colors.blue[1],

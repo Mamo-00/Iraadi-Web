@@ -69,7 +69,7 @@ const NavbarBeta = ( { toggleShow } ) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={toggleShow}>Login</MenuItem>
+      <MenuItem onClick={toggleShow}><Link to="/login" rel="noopener follow" style={{ color: "#000"  }}>Login</Link></MenuItem>
       
     </Menu>
   );
@@ -136,90 +136,92 @@ const NavbarBeta = ( { toggleShow } ) => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, maxWidth: "1010px", mx: "auto", color: "primary.main"}}>
-      <AppBar position="static" sx={{ boxShadow: "none",  }}>
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Link
-            to="/"
-            className="me-auto"
-            style={{ color: "#fff", backgroundColor: "inherit" }}
-          >
-            <img
-              src={Logo}
-              className="d-none d-sm-block me-1 logo"
-              alt="Logo"
-              style={{ height: "50px", width: "250px" }}
-            />
-          </Link>
+    <Box sx={{backgroundColor: "primary.main", widht: "100vw"}}>
+      <Box sx={{ flexGrow: 1, maxWidth: "1010px", mx: "auto", backgroundColor: "primary.main"}}>
+        <AppBar position="static" sx={{ boxShadow: "none", backgroundColor: "primary.main" }}>
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Link
+              to="/"
+              className="me-auto"
+              style={{ color: "#fff", backgroundColor: "inherit" }}
+            >
+              <img
+                src={Logo}
+                className="d-none d-sm-block me-1 logo"
+                alt="Logo"
+                style={{ height: "50px", width: "250px" }}
+              />
+            </Link>
 
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
 
-            {/* Light / Dark mode*/}
-            <IconButton onClick={colorMode.toggleColorMode}>
-              {theme.palette.mode === "dark" ? (
-                <DarkModeOutlinedIcon />
-              ) : (
-                <LightModeOutlinedIcon />
-              )}
-            </IconButton>
-            
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
+              {/* Light / Dark mode*/}
+              <IconButton onClick={colorMode.toggleColorMode}>
+                {theme.palette.mode === "dark" ? (
+                  <DarkModeOutlinedIcon />
+                ) : (
+                  <LightModeOutlinedIcon />
+                )}
+              </IconButton>
+              
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="inherit"
+              >
+                <Badge badgeContent={4} color="secondary">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
 
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
+              <IconButton
+                size="large"
+                aria-label="show 17 new notifications"
+                color="inherit"
+              >
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        {renderMobileMenu}
+        {renderMenu}
+      </Box>
     </Box>
   );
 }
