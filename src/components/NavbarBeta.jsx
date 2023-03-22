@@ -16,6 +16,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import LoginIcon from '@mui/icons-material/Login';
 
 import { useTheme } from "@mui/material";
 import { ColorModeContext, tokens } from "../theme";
@@ -69,8 +70,16 @@ const NavbarBeta = ( { toggleShow } ) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={toggleShow}><Link to="/login" rel="noopener follow" style={{ color: "#000"  }}>Login</Link></MenuItem>
-      
+      <MenuItem>
+        <Link
+          to="/login"
+          rel="noopener follow"
+          onClick={toggleShow}
+          style={{ color: "#000" }}
+        >
+          Login
+        </Link>
+      </MenuItem>
     </Menu>
   );
 
@@ -79,14 +88,14 @@ const NavbarBeta = ( { toggleShow } ) => {
     <Menu
       anchorEl={mobileMoreAnchorEl}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       id={mobileMenuId}
       keepMounted
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
@@ -106,7 +115,7 @@ const NavbarBeta = ( { toggleShow } ) => {
             <MailIcon />
           </Badge>
         </IconButton>
-        <p>Messages</p>
+        <span>Messages</span>
       </MenuItem>
       <MenuItem>
         <IconButton
@@ -118,19 +127,35 @@ const NavbarBeta = ( { toggleShow } ) => {
             <NotificationsIcon />
           </Badge>
         </IconButton>
-        <p>Notifications</p>
+        <span>Notifications</span>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem >
         <IconButton
           size="large"
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
+          aria-haspopup="false"
           color="inherit"
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <span>Profile</span>
+      </MenuItem>
+      <MenuItem>
+        <IconButton 
+          size="large"
+          aria-label="login"
+          color="inherit">
+          <LoginIcon />
+        </IconButton>
+        <Link
+          to="/login"
+          rel="noopener follow"
+          onClick={toggleShow}
+          style={{ color: "#000" }}
+        >
+        <span>Login</span>
+        </Link>
       </MenuItem>
     </Menu>
   );
