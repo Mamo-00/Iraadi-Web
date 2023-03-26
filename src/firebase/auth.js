@@ -50,7 +50,11 @@ const AuthUserContext = createContext({
 
 export function AuthUserProvider({ children }) {
   const auth = useFirebaseAuth();
-  return <AuthUserContext.Provider value={auth}>{children}</AuthUserContext.Provider>;
+  return (
+    <AuthUserContext.Provider value={auth}>
+      {children}
+    </AuthUserContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthUserContext);

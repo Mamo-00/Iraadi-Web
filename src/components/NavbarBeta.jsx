@@ -3,8 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { Link } from "react-router-dom";
+import { Link  } from 'react-router-dom';
 import Logo from '../assets/logo/page-logo.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
@@ -75,7 +74,7 @@ const NavbarBeta = ( { toggleShow } ) => {
           to="/login"
           rel="noopener follow"
           onClick={toggleShow}
-          style={{ color: "#000" }}
+          color="inherit"
         >
           Login
         </Link>
@@ -109,7 +108,7 @@ const NavbarBeta = ( { toggleShow } ) => {
           )}
         </IconButton>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={handleMobileMenuClose}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={8} color="secondary">
             <MailIcon />
@@ -117,7 +116,7 @@ const NavbarBeta = ( { toggleShow } ) => {
         </IconButton>
         <span>Messages</span>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={handleMobileMenuClose}>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
@@ -129,7 +128,7 @@ const NavbarBeta = ( { toggleShow } ) => {
         </IconButton>
         <span>Notifications</span>
       </MenuItem>
-      <MenuItem >
+      <MenuItem onClick={handleMobileMenuClose}>
         <IconButton
           size="large"
           aria-label="account of current user"
@@ -141,20 +140,17 @@ const NavbarBeta = ( { toggleShow } ) => {
         </IconButton>
         <span>Profile</span>
       </MenuItem>
-      <MenuItem>
-        <IconButton 
-          size="large"
-          aria-label="login"
-          color="inherit">
+      <MenuItem onClick={handleMobileMenuClose}>
+        <IconButton size="large" aria-label="login" color="inherit">
           <LoginIcon />
         </IconButton>
         <Link
           to="/login"
           rel="noopener follow"
           onClick={toggleShow}
-          style={{ color: "#000" }}
+          color="inherit"
         >
-        <span>Login</span>
+          <span>Login</span>
         </Link>
       </MenuItem>
     </Menu>
@@ -177,7 +173,7 @@ const NavbarBeta = ( { toggleShow } ) => {
             <Link
               to="/"
               className="me-auto"
-              style={{ color: "#fff", backgroundColor: "inherit" }}
+              sx={{ color: "#fff", backgroundColor: "inherit" }}
             >
               <img
                 src={Logo}
