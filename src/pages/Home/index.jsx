@@ -3,55 +3,22 @@ import NavbarBeta from "../../components/NavbarBeta";
 import Footer from "../../components/Footer";
 import Login from "../../components/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import FlippingCard from "../../components/Cards/FlippingCard";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-// import styled from "styled-components";
-// import { Link } from "react-router-dom";
-import "../../styles.css";
 import { IconButton, Typography, Stack } from "@mui/material";
 import Masonry from '@mui/lab/Masonry';
 import CategoryIcons from "../../components/CategoryIcons";
 import { useTheme } from "@mui/material";
-
-
-
 import VehicleCard from "../../components/Cards/VehicleCard";
 
-// const Category = styled(Link)`
-//   margin-top: 20px;
-//   align-items: center;
-//   justify-content: center;
-//   margin-bottom: 15px;
-//   display: flex;
-//   flex-direction: column;
-// `;
-
-// const Label = styled.span`
-//   margin-top: 5px;
-//   color: #000;
-//   text-decoration: none;
-//   font-weight: 700;
-// `;
-
-// const Container = styled.div`
-//   max-width: 1010px;
-// `;
-
-// const Aside = styled.div`
-//   background-color: #f2f2f2;
-//   border: 3px solid #ddd;
-//   padding: 10px;
-//   height: 400px; /* adjust as needed */
-//   margin-top: 5rem;
-// `;
 
 const Home = () => {
-  const [basicModal, setBasicModal] = useState(false);
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
+
   const toggleShow = (e) => {
     e.preventDefault();
-    setBasicModal(!basicModal);
+    setOpen(!open);
   };
 
   const products = [
@@ -118,8 +85,7 @@ const Home = () => {
       <NavbarBeta toggleShow={toggleShow} />
 
       <Login
-        basicModal={basicModal}
-        setBasicModal={setBasicModal}
+        open={open}
         toggleShow={toggleShow}
       />
 

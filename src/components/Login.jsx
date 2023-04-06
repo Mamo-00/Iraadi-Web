@@ -1,253 +1,222 @@
 import React, { useState } from 'react';
 import {
-  MDBContainer,
-  MDBTabs,
-  MDBTabsItem,
-  MDBTabsLink,
-  MDBTabsContent,
-  MDBTabsPane,
-  MDBBtn,
-  MDBIcon,
-  MDBInput,
-  MDBCheckbox,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-}
-from 'mdb-react-ui-kit';
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Box,
+  Tab,
+  Tabs,
+  TextField,
+  Button,
+  Container,
+  Typography,
+  IconButton,
+  Checkbox,
+  FormControlLabel,
+  Divider,
+} from '@mui/material';
+import {
+  Google as GoogleIcon,
+  Facebook as FacebookIcon,
+  Twitter as TwitterIcon,
+  GitHub as GitHubIcon,
+} from "@mui/icons-material";
 
-function Login( {toggleShow, basicModal, setBasicModal} ) {
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
-  const [justifyActive, setJustifyActive] = useState('tab1');;
+const Login = ( { toggleShow, open } ) => {
   
-  const handleJustifyClick = (value) => {
-    if (value === justifyActive) {
-      return;
-    }
+  const [activeTab, setActiveTab] = useState(0);
 
-    setJustifyActive(value);
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+
+  // Register form state
+  const [registerName, setRegisterName] = useState('');
+  const [registerPhone, setRegisterPhone] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  
+
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   return (
-    <>
-      <MDBModal show={basicModal} setShow={setBasicModal} tabIndex="-1">
-        <MDBModalDialog>
-          <MDBModalContent className='rounded-2'>
-            <MDBModalHeader>
-              <MDBModalTitle>Modal title</MDBModalTitle>
-              <MDBBtn
-                className="btn-close"
-                color="none"
-                onClick={toggleShow}
-              ></MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>
-              <MDBContainer className="p-3 my-5 d-flex flex-column w-75">
-                <MDBTabs
-                  pills
-                  justify
-                  className="mb-3 d-flex flex-row justify-content-between"
+    <div>
+      <Dialog open={open} onClose={toggleShow} maxWidth="sm" fullWidth>
+        <DialogTitle disableTypography>
+          <Typography variant="h4" component="div">
+            Login/Register
+          </Typography>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={toggleShow}
+            aria-label="close"
+            sx={{ position: "absolute", right: 8, top: 8, mr: 0.5 }}
+          >
+            <CloseOutlinedIcon />
+          </IconButton>
+        </DialogTitle>
+        <Divider sx={{ my: 1 }} color="primary" />
+        <DialogContent>
+          <Container maxWidth="sm">
+            <Tabs value={activeTab} onChange={handleChange} variant="fullWidth">
+              <Tab label="Login" />
+              <Tab label="Register" />
+            </Tabs>
+            {activeTab === 0 && (
+              <Container maxWidth="xs">
+                <Typography align="center" variant="body1" sx={{ mt: 2 }}>
+                  Sign in with:
+                </Typography>
+                <Box display="flex" justifyContent="center" mt={2}>
+                  <IconButton>
+                    <FacebookIcon />
+                  </IconButton>
+                  <IconButton>
+                    <TwitterIcon />
+                  </IconButton>
+                  <IconButton>
+                    <GoogleIcon />
+                  </IconButton>
+                  <IconButton>
+                    <GitHubIcon />
+                  </IconButton>
+                </Box>
+                <Typography align="center" variant="body1" sx={{ mt: 2 }}>
+                  or:
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  margin='normal'
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                />
+                <TextField
+                  fullWidth
+                  label="Password"
+                  margin='normal'
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                />
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={1}
                 >
-                  <MDBTabsItem>
-                    <MDBTabsLink
-                      onClick={() => handleJustifyClick("tab1")}
-                      active={justifyActive === "tab1"}
-                    >
-                      Login
-                    </MDBTabsLink>
-                  </MDBTabsItem>
-                  <MDBTabsItem>
-                    <MDBTabsLink
-                      onClick={() => handleJustifyClick("tab2")}
-                      active={justifyActive === "tab2"}
-                    >
-                      Register
-                    </MDBTabsLink>
-                  </MDBTabsItem>
-                </MDBTabs>
-
-                <MDBTabsContent>
-                  <MDBTabsPane show={justifyActive === "tab1"}>
-                    <div className="text-center mb-3">
-                      <p>Sign in with:</p>
-
-                      <div
-                        className="d-flex justify-content-between mx-auto"
-                        style={{ width: "40%" }}
-                      >
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="facebook-f" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="twitter" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="google" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="github" size="sm" />
-                        </MDBBtn>
-                      </div>
-
-                      <p className="text-center mt-3">or:</p>
-                    </div>
-
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Email address"
-                      id="form1"
-                      type="email"
-                    />
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Password"
-                      id="form2"
-                      type="password"
-                    />
-
-                    <div className="d-flex justify-content-between mx-4 mb-4">
-                      <MDBCheckbox
-                        name="flexCheck"
-                        value=""
-                        id="flexCheckDefault"
-                        label="Remember me"
-                      />
-                      <a href="!#">Forgot password?</a>
-                    </div>
-
-                    <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
-                    <p className="text-center">
-                      Not a member? <a href="#!">Register</a>
-                    </p>
-                  </MDBTabsPane>
-
-                  <MDBTabsPane show={justifyActive === "tab2"}>
-                    <div className="text-center mb-3">
-                      <p>Sign un with:</p>
-
-                      <div
-                        className="d-flex justify-content-between mx-auto"
-                        style={{ width: "40%" }}
-                      >
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="facebook-f" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="twitter" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="google" size="sm" />
-                        </MDBBtn>
-
-                        <MDBBtn
-                          tag="a"
-                          color="none"
-                          className="m-1"
-                          style={{ color: "#1266f1" }}
-                        >
-                          <MDBIcon fab icon="github" size="sm" />
-                        </MDBBtn>
-                      </div>
-
-                      <p className="text-center mt-3">or:</p>
-                    </div>
-
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Name"
-                      id="form1"
-                      type="text"
-                    />
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Phone"
-                      id="form1"
-                      type="tel"
-                      onKeyPress={(event) => {
-                        if (!/[0-9]/.test(event.key)) {
-                          event.preventDefault();
-                        }
-                      }}
-                    />
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Email"
-                      id="form1"
-                      type="email"
-                    />
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Password"
-                      id="form1"
-                      type="password"
-                    />
-                    <MDBInput
-                      wrapperClass="mb-4"
-                      label="Password"
-                      id="form1"
-                      type="password"
-                    />
-
-                    <div className="d-flex justify-content-center mb-4">
-                      <MDBCheckbox
-                        name="flexCheck"
-                        id="flexCheckDefault"
-                        label="I have read and agree to the terms"
-                      />
-                    </div>
-
-                    <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
-                  </MDBTabsPane>
-                </MDBTabsContent>
-              </MDBContainer>
-            </MDBModalBody>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
-    </>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Remember me"
+                  />
+                  <Typography variant="body2">
+                    <a href="#!">Forgot password?</a>
+                  </Typography>
+                </Box>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Sign in
+                </Button>
+              </Container>
+            )}
+            {activeTab === 1 && (
+              <Container maxWidth="xs">
+                <Typography align="center" variant="body1" sx={{ mt: 2 }}>
+                  Sign up with:
+                </Typography>
+                <Box display="flex" justifyContent="center" mt={2}>
+                  <IconButton>
+                    <FacebookIcon />
+                  </IconButton>
+                  <IconButton>
+                    <TwitterIcon />
+                  </IconButton>
+                  <IconButton>
+                    <GoogleIcon />
+                  </IconButton>
+                  <IconButton>
+                    <GitHubIcon />
+                  </IconButton>
+                </Box>
+                <Typography align="center" variant="body1" sx={{ mt: 2 }}>
+                  or:
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  margin='normal'
+                  value={registerName}
+                  onChange={(e) => setRegisterName(e.target.value)}
+                />
+                <TextField
+                  fullWidth
+                  label="Phone"
+                  margin='normal'
+                  type="tel"
+                  value={registerPhone}
+                  onChange={(e) => setRegisterPhone(e.target.value)}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Email"
+                  margin='normal'
+                  type="email"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                />
+                <TextField
+                  fullWidth
+                  label="Password"
+                  margin='normal'
+                  type="password"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                />
+                <TextField
+                  fullWidth
+                  label="Confirm Password"
+                  margin='normal'
+                  type="password"
+                  value={registerConfirmPassword}
+                  onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                />
+                <Box display="flex" justifyContent="center" mt={1}>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="I have read and agree to the terms"
+                  />
+                </Box>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Sign up
+                </Button>
+              </Container>
+            )}
+          </Container>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
-}
+};
+
 export default Login;
