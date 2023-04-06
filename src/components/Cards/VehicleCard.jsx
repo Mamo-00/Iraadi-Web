@@ -16,11 +16,10 @@ function VehicleCard( { img, title, location, distance, year, price } ) {
       sx={{
         maxWidth: 345,
         maxHeight: 750,
-        mx: "auto",
-        boxShadow: 3,
         overflow: "hidden",
+        mx: 1,
       }}
-      style={{ boxShadow: "1px -2px 9px #4189DD, 0px 1px 9px #4189DD" }}
+      style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
     >
       <CardMedia
         component="img"

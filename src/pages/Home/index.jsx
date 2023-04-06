@@ -9,9 +9,13 @@ import Box from "@mui/material/Box";
 // import styled from "styled-components";
 // import { Link } from "react-router-dom";
 import "../../styles.css";
-import { IconButton } from "@mui/material";
+import { IconButton, Typography, Stack } from "@mui/material";
 import Masonry from '@mui/lab/Masonry';
-import BikeScooterOutlinedIcon from "@mui/icons-material/BikeScooterOutlined";
+import CategoryIcons from "../../components/CategoryIcons";
+import { useTheme } from "@mui/material";
+
+
+
 import VehicleCard from "../../components/Cards/VehicleCard";
 
 // const Category = styled(Link)`
@@ -44,7 +48,7 @@ import VehicleCard from "../../components/Cards/VehicleCard";
 
 const Home = () => {
   const [basicModal, setBasicModal] = useState(false);
-
+  const theme = useTheme();
   const toggleShow = (e) => {
     e.preventDefault();
     setBasicModal(!basicModal);
@@ -97,6 +101,7 @@ const Home = () => {
       distance: 112,
       year: 2010,
       img: "https://cdn.fleetnews.co.uk/web-clean/1/root/new-tuk-tuks-provide-additional-support_w268.jpg",
+      price: 12000
     },
     {
       title: "Tuk Tuk S4",
@@ -104,6 +109,7 @@ const Home = () => {
       distance: 141,
       year: 2009,
       img: "https://cdn.pixabay.com/photo/2016/09/04/12/09/tuktuk-1643802__340.jpg",
+      price: 9000
     },
   ];
 
@@ -117,46 +123,90 @@ const Home = () => {
         toggleShow={toggleShow}
       />
 
-      <Box sx={{ flexGrow: 1, maxWidth: "1010px", mx: "auto", my: 4 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          maxWidth: "1010px",
+          mx: 2,
+          [theme.breakpoints.up("md")]: {
+            mx: "auto",
+          },
+          my: 4,
+          py: 1,
+          borderRadius: 4,
+          backgroundColor: "background.paper",
+        }}
+        style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
+      >
         <Grid
           container
           spacing={2}
           sx={{ display: "flex", justifyContent: "center" }}
         >
           <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton>
-              <BikeScooterOutlinedIcon
-                sx={{ width: 65, height: 50, color: "primary.main" }}
-              />
-            </IconButton>
+            <Stack direction="column" alignItems="center">
+              <IconButton>
+                <CategoryIcons
+                  category="market"
+                  style={{ width: 65, height: 50 }}
+                />
+              </IconButton>
+              <Typography variant="body1" align="center" color="primary.main">
+                Market
+              </Typography>
+            </Stack>
           </Grid>
           <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton>
-              <BikeScooterOutlinedIcon
-                sx={{ width: 65, height: 50, color: "primary.main" }}
-              />
-            </IconButton>
+            <Stack direction="column" alignItems="center">
+              <IconButton>
+                <CategoryIcons
+                  category="vehicle"
+                  style={{ width: 65, height: 50 }}
+                />
+              </IconButton>
+              <Typography variant="body1" align="center" color="primary.main">
+                Vehicle
+              </Typography>
+            </Stack>
           </Grid>
           <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton>
-              <BikeScooterOutlinedIcon
-                sx={{ width: 65, height: 50, color: "primary.main" }}
-              />
-            </IconButton>
+            <Stack direction="column" alignItems="center">
+              <IconButton>
+                <CategoryIcons
+                  category="property"
+                  style={{ width: 65, height: 50 }}
+                />
+              </IconButton>
+              <Typography variant="body1" align="center" color="primary.main">
+                Property
+              </Typography>
+            </Stack>
           </Grid>
           <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton>
-              <BikeScooterOutlinedIcon
-                sx={{ width: 65, height: 50, color: "primary.main" }}
-              />
-            </IconButton>
+            <Stack direction="column" alignItems="center">
+              <IconButton>
+                <CategoryIcons
+                  category="rental"
+                  style={{ width: 65, height: 50 }}
+                />
+              </IconButton>
+              <Typography variant="body1" align="center" color="primary.main">
+                Rental
+              </Typography>
+            </Stack>
           </Grid>
           <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton>
-              <BikeScooterOutlinedIcon
-                sx={{ width: 65, height: 50, color: "primary.main" }}
-              />
-            </IconButton>
+            <Stack direction="column" alignItems="center">
+              <IconButton>
+                <CategoryIcons
+                  category="valuables"
+                  style={{ width: 65, height: 50 }}
+                />
+              </IconButton>
+              <Typography variant="body1" align="center" color="primary.main">
+                Valuables
+              </Typography>
+            </Stack>
           </Grid>
         </Grid>
       </Box>
@@ -166,7 +216,7 @@ const Home = () => {
           maxWidth: "1010px",
           mx: "auto",
           my: 4,
-          overflowX: "hidden"
+          overflowX: "hidden",
         }}
       >
         <Masonry

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./components/Login";
-import { AuthUserProvider } from "./firebase/auth";
+import { AuthProvider } from "./firebase/auth";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 
@@ -12,12 +12,12 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AuthUserProvider>
+        <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
           </Routes>
-        </AuthUserProvider>
+        </AuthProvider>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

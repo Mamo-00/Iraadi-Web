@@ -1,60 +1,134 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut as authSignOut } from 'firebase/auth';
-import { auth } from './firebase-config';
+import React, { useContext, useState, useEffect } from "react";
+import { auth, googleProvider, facebookProvider } from "./firebase-config";
 
-// code taken form https://github.com/FirebaseExtended/expense-tracker/blob/main/fcm-starter/firebase/auth.js
-// look at this video: https://www.youtube.com/watch?v=q2RZOiUD5E0 for more information
+const AuthContext = React.createContext();
 
-export default function useFirebaseAuth() {
-  const [authUser, setAuthUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
-  const clear = () => {
-    setAuthUser(null);
-    setIsLoading(false);
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
+
+  // Object containing functions for signing in with email and password
+  const signInWithEmailPassword = {
+    signup: (email, password) => {
+      return auth.createUserWithEmailAndPassword(email, password)
+        .then((result) => {
+          const user = result.user;
+          setCurrentUser(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    },
+    login: (email, password) => {
+      return auth.signInWithEmailAndPassword(email, password)
+        .then((result) => {
+          const user = result.user;
+          setCurrentUser(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    },
+    logout: () => {
+      return auth.signOut()
+        .then(() => {
+          setCurrentUser(null);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    },
+    resetPassword: (email) => {
+      return auth.sendPasswordResetEmail(email)
+        .then(() => {
+          console.log("Password reset email sent successfully!");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
+    },
+    updateEmail: (email) => {
+      try {
+        return currentUser.updateEmail(email);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      }
+    },
+    updatePassword: (password) => {
+      try {
+        return currentUser.updatePassword(password);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      }
+    }
   };
 
-  const authStateChanged = async (user) => {
-    setIsLoading(true);
-    if (!user) {
-        clear();
-        return;
-    }
-    setAuthUser({
-        uid: user.uid,
-        email: user.email
-    });
-    setIsLoading(false);
-  }; 
+  // Function for signing in with Google
+  const signInWithGoogle = () => {
+    return auth
+      .signInWithPopup(googleProvider)
+      .then((result) => {
+        const user = result.user;
+        setCurrentUser(user);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+  };
 
-  const signOut = () => authSignOut(auth).then(clear);
+  const signInWithFacebook = () => {
+    return auth
+      .signInWithPopup(facebookProvider)
+      .then((result) => {
+        const user = result.user;
+        setCurrentUser(user);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+  };
 
-  // Listen for Firebase Auth state change
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, authStateChanged);
-    return () => unsubscribe();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
   }, []);
 
-  return {
-    authUser,
-    isLoading,
-    signOut
+  const value = {
+    currentUser,
+    ...signInWithEmailPassword,
+    signInWithFacebook,
+    signInWithGoogle,
   };
-}
 
-const AuthUserContext = createContext({
-  authUser: null,
-  isLoading: true,
-  signOut: async () => {}
-});
-
-export function AuthUserProvider({ children }) {
-  const auth = useFirebaseAuth();
   return (
-    <AuthUserContext.Provider value={auth}>
-      {children}
-    </AuthUserContext.Provider>
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthUserContext);

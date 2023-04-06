@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3d7e50c1.css",
-    "main.js": "/static/js/main.74c4aa3e.js",
+    "main.js": "/static/js/main.db40718b.js",
     "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2877d54f94f30c5d563c.ttf",
     "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.13e40630e5866f777de8.ttf",
     "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.bdb9e23299f9d1320a8b.woff2",
@@ -11,14 +11,19 @@
     "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.8bedd7cfa43a6c358cdd.woff2",
     "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.6c0a7b774ffa1cf0a059.ttf",
     "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.497d535001197a9c5b38.woff2",
+    "static/media/market.svg": "/static/media/market.eeec8f62afd2635b5dd44d29ba989796.svg",
+    "static/media/vehicle.svg": "/static/media/vehicle.b19fc6cd51a88845ab9d37a6fe5ea83e.svg",
+    "static/media/property.svg": "/static/media/property.ec30aa483662c4254a559b67b17ce234.svg",
+    "static/media/valuables.svg": "/static/media/valuables.da25bbccb28a5980cf5eb943f8e9927e.svg",
+    "static/media/rental.svg": "/static/media/rental.999c136f3c1ade4efd644f36431f7227.svg",
     "index.html": "/index.html",
     "static/media/arrow_left.svg": "/static/media/arrow_left.db6e2d88c7c35a775ce4.svg",
     "static/media/arrow_right.svg": "/static/media/arrow_right.f7c6ac6d310d3b82f0a0.svg",
     "main.3d7e50c1.css.map": "/static/css/main.3d7e50c1.css.map",
-    "main.74c4aa3e.js.map": "/static/js/main.74c4aa3e.js.map"
+    "main.db40718b.js.map": "/static/js/main.db40718b.js.map"
   },
   "entrypoints": [
     "static/css/main.3d7e50c1.css",
-    "static/js/main.74c4aa3e.js"
+    "static/js/main.db40718b.js"
   ]
 }
