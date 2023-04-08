@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { auth, googleProvider, facebookProvider } from "./firebase-config";
+import { auth, googleProvider, facebookProvider, app } from "./firebase-config";
+import { signInWithPopup } from "firebase/auth";
 
 const AuthContext = React.createContext();
 
@@ -13,10 +14,14 @@ export function AuthProvider({ children }) {
 
   // Object containing functions for signing in with email and password
   const signInWithEmailPassword = {
-    signup: (email, password) => {
-      return auth.createUserWithEmailAndPassword(email, password)
-        .then((result) => {
+    signup: (email, password, name, phone) => {
+      return auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(async (result) => {
           const user = result.user;
+          // Set custom claims
+          const setCustomClaims = app.functions().httpsCallable("setCustomClaims");
+          await setCustomClaims({ uid: user.uid, name, phone });
           setCurrentUser(user);
         })
         .catch((error) => {
@@ -81,8 +86,7 @@ export function AuthProvider({ children }) {
 
   // Function for signing in with Google
   const signInWithGoogle = () => {
-    return auth
-      .signInWithPopup(googleProvider)
+    return signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
         setCurrentUser(user);
@@ -96,18 +100,17 @@ export function AuthProvider({ children }) {
   };
 
   const signInWithFacebook = () => {
-    return auth
-      .signInWithPopup(facebookProvider)
-      .then((result) => {
-        const user = result.user;
-        setCurrentUser(user);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-      });
+    return signInWithPopup(auth, facebookProvider)
+    .then((result) => {
+      const user = result.user;
+      setCurrentUser(user);
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+    });
   };
 
   useEffect(() => {

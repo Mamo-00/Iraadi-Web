@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from "../firebase/auth";
 import {
   Dialog,
   DialogTitle,
@@ -19,7 +20,6 @@ import {
   Google as GoogleIcon,
   Facebook as FacebookIcon,
   Twitter as TwitterIcon,
-  GitHub as GitHubIcon,
 } from "@mui/icons-material";
 
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
@@ -27,7 +27,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 const Login = ( { toggleShow, open } ) => {
   
   const [activeTab, setActiveTab] = useState(0);
-
+  const [error, setError] = useState('');
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -38,16 +38,59 @@ const Login = ( { toggleShow, open } ) => {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
-  
 
+  const {
+    login,
+    signup,
+    signInWithGoogle,
+    signInWithFacebook
+  } = useAuth();
+
+  
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
+  const validateRegisterForm = () => {
+    if (registerName.trim() === '') {
+      setError('Name is required');
+      return false;
+    }
+  
+    if (registerPhone.trim() === '') {
+      setError('Phone number is required');
+      return false;
+    }
+  
+    if (registerEmail.trim() === '') {
+      setError('Email is required');
+      return false;
+    }
+  
+    if (registerPassword.trim() === '') {
+      setError('Password is required');
+      return false;
+    }
+
+    if (registerPassword.length < 6) {
+      setError('Password must be 6 characters long');
+      return false;
+    }
+  
+    if (registerPassword !== registerConfirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+  
+    setError('');
+    return true;
+  };
+  
+
   return (
     <div>
-      <Dialog open={open} onClose={toggleShow} maxWidth="sm" fullWidth>
-        <DialogTitle disableTypography>
+      <Dialog open={open} onClose={toggleShow} maxWidth="xs" fullWidth>
+        <DialogTitle >
           <Typography variant="h4" component="div">
             Login/Register
           </Typography>
@@ -74,17 +117,14 @@ const Login = ( { toggleShow, open } ) => {
                   Sign in with:
                 </Typography>
                 <Box display="flex" justifyContent="center" mt={2}>
-                  <IconButton>
-                    <FacebookIcon />
+                  <IconButton onClick={signInWithFacebook}>
+                    <FacebookIcon fontSize="large" color="primary" />
                   </IconButton>
                   <IconButton>
-                    <TwitterIcon />
+                    <TwitterIcon fontSize="large" color="primary" />
                   </IconButton>
-                  <IconButton>
-                    <GoogleIcon />
-                  </IconButton>
-                  <IconButton>
-                    <GitHubIcon />
+                  <IconButton onClick={signInWithGoogle}>
+                    <GoogleIcon fontSize="large" color="primary" />
                   </IconButton>
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
@@ -93,7 +133,7 @@ const Login = ( { toggleShow, open } ) => {
                 <TextField
                   fullWidth
                   label="Email"
-                  margin='normal'
+                  margin="normal"
                   type="email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
@@ -101,7 +141,7 @@ const Login = ( { toggleShow, open } ) => {
                 <TextField
                   fullWidth
                   label="Password"
-                  margin='normal'
+                  margin="normal"
                   type="password"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
@@ -125,6 +165,7 @@ const Login = ( { toggleShow, open } ) => {
                   variant="contained"
                   color="primary"
                   sx={{ mt: 2 }}
+                  onClick={() => login(loginEmail, loginPassword)}
                 >
                   Sign in
                 </Button>
@@ -136,33 +177,39 @@ const Login = ( { toggleShow, open } ) => {
                   Sign up with:
                 </Typography>
                 <Box display="flex" justifyContent="center" mt={2}>
-                  <IconButton>
-                    <FacebookIcon />
+                  <IconButton onClick={signInWithFacebook}>
+                    <FacebookIcon fontSize="large" color="primary" />
                   </IconButton>
                   <IconButton>
-                    <TwitterIcon />
+                    <TwitterIcon fontSize="large" color="primary" />
                   </IconButton>
-                  <IconButton>
-                    <GoogleIcon />
-                  </IconButton>
-                  <IconButton>
-                    <GitHubIcon />
+                  <IconButton onClick={signInWithGoogle}>
+                    <GoogleIcon fontSize="large" color="primary" />
                   </IconButton>
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   or:
                 </Typography>
+                {error && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    sx={{ mt: 2, textAlign: "center" }}
+                  >
+                    {error}
+                  </Typography>
+                )}
                 <TextField
                   fullWidth
                   label="Name"
-                  margin='normal'
+                  margin="normal"
                   value={registerName}
                   onChange={(e) => setRegisterName(e.target.value)}
                 />
                 <TextField
                   fullWidth
                   label="Phone"
-                  margin='normal'
+                  margin="normal"
                   type="tel"
                   value={registerPhone}
                   onChange={(e) => setRegisterPhone(e.target.value)}
@@ -175,7 +222,7 @@ const Login = ( { toggleShow, open } ) => {
                 <TextField
                   fullWidth
                   label="Email"
-                  margin='normal'
+                  margin="normal"
                   type="email"
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
@@ -183,7 +230,7 @@ const Login = ( { toggleShow, open } ) => {
                 <TextField
                   fullWidth
                   label="Password"
-                  margin='normal'
+                  margin="normal"
                   type="password"
                   value={registerPassword}
                   onChange={(e) => setRegisterPassword(e.target.value)}
@@ -191,7 +238,7 @@ const Login = ( { toggleShow, open } ) => {
                 <TextField
                   fullWidth
                   label="Confirm Password"
-                  margin='normal'
+                  margin="normal"
                   type="password"
                   value={registerConfirmPassword}
                   onChange={(e) => setRegisterConfirmPassword(e.target.value)}
@@ -207,6 +254,22 @@ const Login = ( { toggleShow, open } ) => {
                   variant="contained"
                   color="primary"
                   sx={{ mt: 2 }}
+                  onClick={() => {
+                    if (validateRegisterForm()) {
+                      signup(
+                        registerEmail,
+                        registerPassword,
+                        registerName,
+                        registerPhone
+                      )
+                        .then(() => {
+                          // Perform any additional operations after successful registration
+                        })
+                        .catch((error) => {
+                          setError(error.message);
+                        });
+                    }
+                  }}
                 >
                   Sign up
                 </Button>
