@@ -1,86 +1,113 @@
-import React from 'react';
-import {
-  MDBFooter,
-  MDBContainer,
-  MDBIcon,
-  MDBBtn
-} from 'mdb-react-ui-kit';
+import React from "react";
+import { Container, Grid, Typography, Link, IconButton } from "@mui/material";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 const Footer = () => {
   return (
-    <MDBFooter className='bg-light text-center text-white'>
-      
-
-      <div className='text-center p-3' style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
-          <MDBContainer className='p-4 pb-0'>
-          <section className='mb-4'>
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#3b5998' }}
-              href='#!'
-              role='button'
+    <footer>
+      <Container
+        maxWidth={false}
+        sx={{
+          backgroundColor: (theme) => theme.palette.primary.main,
+          padding: (theme) => theme.spacing(3),
+          color: "#fff",
+        }}
+      >
+        <Grid container spacing={4}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6">About</Typography>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>About Us</Typography>
+            </Link>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>Contact Us</Typography>
+            </Link>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6">Help Center</Typography>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>FAQs</Typography>
+            </Link>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>Terms & Conditions</Typography>
+            </Link>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6">Policies</Typography>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>Privacy Policy</Typography>
+            </Link>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography>Return Policy</Typography>
+            </Link>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={3}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6">Follow Us</Typography>
+            <IconButton
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "#fff",
+                marginLeft: (theme) => theme.spacing(1),
+                marginRight: (theme) => theme.spacing(1),
+              }}
             >
-              <MDBIcon fab icon='facebook-f' />
-            </MDBBtn>
-
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#55acee' }}
-              href='#!'
-              role='button'
+              <FacebookIcon />
+            </IconButton>
+            <IconButton
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "#fff",
+                marginLeft: (theme) => theme.spacing(1),
+                marginRight: (theme) => theme.spacing(1),
+              }}
             >
-              <MDBIcon fab icon='twitter' />
-            </MDBBtn>
-
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#dd4b39' }}
-              href='#!'
-              role='button'
+              <InstagramIcon />
+            </IconButton>
+            <IconButton
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "#fff",
+                marginLeft: (theme) => theme.spacing(1),
+                marginRight: (theme) => theme.spacing(1),
+              }}
             >
-              <MDBIcon fab icon='google' />
-            </MDBBtn>
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#ac2bac' }}
-              href='#!'
-              role='button'
+              <TwitterIcon />
+            </IconButton>
+            <IconButton
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "#fff",
+                marginLeft: (theme) => theme.spacing(1),
+                marginRight: (theme) => theme.spacing(1),
+              }}
             >
-              <MDBIcon fab icon='instagram' />
-            </MDBBtn>
-
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#0082ca' }}
-              href='#!'
-              role='button'
-            >
-              <MDBIcon fab icon='linkedin-in' />
-            </MDBBtn>
-
-            <MDBBtn
-              floating
-              className='m-1'
-              style={{ backgroundColor: '#333333' }}
-              href='#!'
-              role='button'
-            >
-              <MDBIcon fab icon='github' />
-            </MDBBtn>
-          </section>
-        </MDBContainer>
-        © 2020 Copyright:
-        <a className='text-white' href='https://mdbootstrap.com/'>
-          MDBootstrap.com
-        </a>
-      </div>
-    </MDBFooter>
+              <LinkedInIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Container>
+    </footer>
   );
-}
-
+};
 export default Footer;

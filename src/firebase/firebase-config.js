@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
+import { getFunctions } from "firebase/functions";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, EmailAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -13,7 +15,10 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+export const functions = getFunctions(app);
 export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 export const facebookProvider = new FacebookAuthProvider();
+export const emailProvider = new EmailAuthProvider();

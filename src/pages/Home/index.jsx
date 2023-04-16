@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import NavbarBeta from "../../components/NavbarBeta";
+import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Login from "../../components/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -82,7 +82,7 @@ const Home = () => {
 
   return (
     <div>
-      <NavbarBeta toggleShow={toggleShow} />
+      <Navbar toggleShow={toggleShow} />
 
       <Login
         open={open}

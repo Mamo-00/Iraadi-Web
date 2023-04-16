@@ -40,13 +40,23 @@ const Login = ( { toggleShow, open } ) => {
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
 
   const {
+    onError,
     login,
     signup,
     signInWithGoogle,
     signInWithFacebook
   } = useAuth();
-
   
+  const combinedError = error || onError;
+
+  const handleFacebookLogin = () => {
+    signInWithFacebook();
+  };
+  
+  const handleGoogleLogin = () => {
+    signInWithGoogle();
+  };
+
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
@@ -117,19 +127,28 @@ const Login = ( { toggleShow, open } ) => {
                   Sign in with:
                 </Typography>
                 <Box display="flex" justifyContent="center" mt={2}>
-                  <IconButton onClick={signInWithFacebook}>
+                  <IconButton onClick={handleFacebookLogin}>
                     <FacebookIcon fontSize="large" color="primary" />
                   </IconButton>
                   <IconButton>
                     <TwitterIcon fontSize="large" color="primary" />
                   </IconButton>
-                  <IconButton onClick={signInWithGoogle}>
+                  <IconButton onClick={handleGoogleLogin}>
                     <GoogleIcon fontSize="large" color="primary" />
                   </IconButton>
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   or:
                 </Typography>
+                {combinedError && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    sx={{ mt: 2, textAlign: "center" }}
+                  >
+                    {combinedError}
+                  </Typography>
+                )}
                 <TextField
                   fullWidth
                   label="Email"
@@ -177,26 +196,26 @@ const Login = ( { toggleShow, open } ) => {
                   Sign up with:
                 </Typography>
                 <Box display="flex" justifyContent="center" mt={2}>
-                  <IconButton onClick={signInWithFacebook}>
+                  <IconButton onClick={handleFacebookLogin}>
                     <FacebookIcon fontSize="large" color="primary" />
                   </IconButton>
                   <IconButton>
                     <TwitterIcon fontSize="large" color="primary" />
                   </IconButton>
-                  <IconButton onClick={signInWithGoogle}>
+                  <IconButton onClick={handleGoogleLogin}>
                     <GoogleIcon fontSize="large" color="primary" />
                   </IconButton>
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   or:
                 </Typography>
-                {error && (
+                {combinedError && (
                   <Typography
                     variant="body2"
                     color="error"
                     sx={{ mt: 2, textAlign: "center" }}
                   >
-                    {error}
+                    {combinedError}
                   </Typography>
                 )}
                 <TextField
