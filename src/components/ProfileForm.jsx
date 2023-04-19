@@ -12,10 +12,12 @@ import {
 import { useAuth } from "../firebase/auth";
 
 const ProfileForm = () => {
-  const { currentUser, updateProfile } = useAuth();
+  const { currentUser, updateProfile, fetchAndUpdateCurrentUser } = useAuth();
   const [displayName, setDisplayName] = useState(currentUser.displayName);
   const [phoneNumber, setPhoneNumber] = useState(currentUser.phoneNumber);
   const [profilePicture, setProfilePicture] = useState(currentUser.photoURL);
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(currentUser.photoURL);
 
   const handleDisplayNameChange = (event) => {
     setDisplayName(event.target.value);
@@ -26,33 +28,57 @@ const ProfileForm = () => {
   };
 
   const handleProfilePictureChange = (event) => {
-    setProfilePicture(URL.createObjectURL(event.target.files[0]));
+    const file = event.target.files[0];
+    setProfilePictureFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
+  
+  console.log("current user is:", currentUser)
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await updateProfile(displayName, phoneNumber, profilePicture);
+    
+    await fetchAndUpdateCurrentUser(); 
+    
+    await updateProfile(currentUser?.uid, displayName, phoneNumber, profilePictureFile, (updatedUserData) => {
+      // Update the state with the new user data
+      setDisplayName(updatedUserData.displayName);
+      setPhoneNumber(updatedUserData.phoneNumber);
+      setProfilePicture(updatedUserData.photoURL);
+    });
+    console.log("Updated user data:", { displayName, phoneNumber, profilePicture });
   };
+  
+
+  useEffect(() => {
+     if (currentUser) {
+      setDisplayName(currentUser.displayName);
+      setPhoneNumber(currentUser.phoneNumber);
+      setPreviewUrl(currentUser.photoURL);
+    }
+  }, [currentUser]);
+
+  
 
   return (
     <Container maxWidth="sm">
       <Box textAlign="center" my={4}>
-        <Typography variant="h4">My Profile</Typography>
+        <Typography variant="h2" color="primary">My Profile</Typography>
       </Box>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="h6">Edit Profile</Typography>
+            <Typography variant="h4" color="primary">Edit Profile</Typography>
           </Grid>
           <Grid item xs={12}>
             {profilePicture && (
               <Box mt={2}>
-                <Avatar src={profilePicture} alt={displayName} sx={{ mb: 2 }} />
+                <Avatar src={previewUrl} alt={displayName} sx={{ mb: 2 }} />
               </Box>
             )}
             <InputLabel
               htmlFor="profile-picture-upload"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", maxWidth: "180px", }}
             >
               <Button variant="contained" color="primary" component="span">
                 Upload Profile Picture
@@ -82,7 +108,7 @@ const ProfileForm = () => {
               fullWidth
               label="Phone Number"
               variant="standard"
-              value={phoneNumber}
+              value={phoneNumber || ""}
               onChange={handlePhoneNumberChange}
               size="small"
             />

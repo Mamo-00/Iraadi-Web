@@ -41,7 +41,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
   return (
     <Container maxWidth="sm">
       <Box textAlign="center" my={4}>
-        <Typography variant="h4" sx={{ mb: 4 }}>
+        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
           My ads
         </Typography>
         <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
@@ -60,8 +60,8 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
       </Box>
 
       <Box textAlign="center" my={4}>
-        <Typography variant="h4" sx={{ mb: 4 }}>
-          My ads
+        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
+          Searches
         </Typography>
         <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
           {products?.map((item, index) => (
@@ -79,8 +79,8 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
       </Box>
 
       <Box textAlign="center" my={4}>
-        <Typography variant="h4" sx={{ mb: 4 }}>
-          My ads
+        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
+          Favorites
         </Typography>
         <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
           {products?.map((item, index) => (

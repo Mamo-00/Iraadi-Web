@@ -1,4 +1,4 @@
-import { React, useContext, useState, useEffect } from "react";
+import { React, useContext, useState, useEffect, useRef } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -31,20 +31,29 @@ const Navbar = ( { toggleShow } ) => {
   const theme = useTheme();
   const colors = tokens("theme.palette.mode");
   const colorMode = useContext(ColorModeContext);
-
-  const { currentUser, logout, profilePictureUrl, fetchUserProfile } = useAuth();
-
+  
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
-
+  const userFetched = useRef(false);
+  const { currentUser, logout, profilePictureUrl, fetchAndUpdateCurrentUser } = useAuth();
+  
   useEffect(() => {
-    if (currentUser) {
-      fetchUserProfile(currentUser.uid).then(() => setLoadingProfile(false));
-    } else {
+    if (currentUser && !userFetched.current) {
+      setLoadingProfile(true);
+      fetchAndUpdateCurrentUser()
+        .then(() => {
+          setLoadingProfile(false);
+          userFetched.current = true;
+        })
+        .catch((error) => {
+          console.error("Error in fetchAndUpdateCurrentUser:", error);
+        });
+    } else if (!currentUser) {
       setLoadingProfile(false);
+      userFetched.current = false;
     }
-  }, [currentUser]);
+  }, [currentUser, fetchAndUpdateCurrentUser]);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -89,11 +98,13 @@ const Navbar = ( { toggleShow } ) => {
       
       {currentUser !== null ? (
         <Box>
-          <MenuItem onClick={logout}>
-            <Typography rel="noopener follow" onClick={logout} color="inherit">
-              Logout
-            </Typography>
-          </MenuItem>
+          <Link to="/">
+            <MenuItem onClick={logout}>
+              <Typography rel="noopener follow" onClick={logout} color="inherit">
+                Logout
+              </Typography>
+            </MenuItem>
+          </Link>
 
           <MenuItem><Typography variant="subtitle2">{currentUser?.displayName}</Typography></MenuItem>
         </Box>

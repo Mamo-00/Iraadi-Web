@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, CardMedia } from "@mui/material";
+import { Card, CardMedia, CardActionArea } from "@mui/material";
+import { Link  } from 'react-router-dom';
 
 function ImageCard( { img } ) {
   return (
@@ -12,13 +13,16 @@ function ImageCard( { img } ) {
       }}
       style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
     >
-      <CardMedia
-        component="img"
-        sx={{ maxHeight: 350, overflow: "hidden" }}
-        image={img}
-        alt="Car"
-      />
-      
+      <CardActionArea component={Link} to={img} target="_blank" >
+        
+          <CardMedia
+            component="img"
+            sx={{ maxHeight: 200, overflow: "hidden" }}
+            image={img}
+            alt="Car"
+          />
+        
+      </CardActionArea>
     </Card>
   );
 }

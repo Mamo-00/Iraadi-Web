@@ -18,30 +18,30 @@ const Footer = () => {
       >
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6">About</Typography>
+            <Typography variant="h5" >About</Typography>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>About Us</Typography>
+              <Typography color="text.primary">About Us</Typography>
             </Link>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>Contact Us</Typography>
-            </Link>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6">Help Center</Typography>
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>FAQs</Typography>
-            </Link>
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>Terms & Conditions</Typography>
+              <Typography color="text.primary">Contact Us</Typography>
             </Link>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6">Policies</Typography>
+            <Typography variant="h5" >Help Center</Typography>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>Privacy Policy</Typography>
+              <Typography color="text.primary">FAQs</Typography>
             </Link>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography>Return Policy</Typography>
+              <Typography color="text.primary">Terms & Conditions</Typography>
+            </Link>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h5" >Policies</Typography>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography color="text.primary">Privacy Policy</Typography>
+            </Link>
+            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+              <Typography color="text.primary">Return Policy</Typography>
             </Link>
           </Grid>
           <Grid
@@ -55,7 +55,7 @@ const Footer = () => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6">Follow Us</Typography>
+            <Typography variant="h6" color="text.primary">Follow Us</Typography>
             <IconButton
               href="#"
               target="_blank"

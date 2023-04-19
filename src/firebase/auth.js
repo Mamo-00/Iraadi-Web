@@ -1,13 +1,19 @@
 import React, { useContext, useState, useEffect } from "react";
 import { auth, googleProvider, facebookProvider, emailProvider, functions, db } from "./firebase-config";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { httpsCallable } from "firebase/functions";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   fetchSignInMethodsForEmail,
   linkWithCredential,
+  signOut,
+  sendPasswordResetEmail,
+  updateEmail as updateUserEmail,
+  updatePassword as updateUserPassword,
 } from "firebase/auth";
+
 
 const AuthContext = React.createContext();
 
@@ -41,13 +47,13 @@ export function AuthProvider({ children }) {
                 return providerId;
             }
           });
-
+    
           const message = `The email address is already in use by another account with ${
             providerNames.length > 1 ? "these providers: " : "this provider: "
           }${providerNames.join(", ")}. Please use ${
             providerNames.length > 1 ? "one of them" : "it"
           } to sign in.`;
-
+    
           setOnError(message);
           // You can display the message to the user using a UI element, like a notification or modal
         } else {
@@ -59,10 +65,23 @@ export function AuthProvider({ children }) {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
     
-          // Fetch user profile from Firestore and update the state
-          fetchUserProfile(uid);
+          // Fetch user data from Firestore
+          const userDocRef = doc(db, "users", uid);
+          const userDoc = await getDoc(userDocRef);
     
-          setCurrentUser(user);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // Update the currentUser object with the Firestore data
+            setCurrentUser((prevUser) => ({
+              ...prevUser,
+              displayName: userData.displayName,
+              phoneNumber: userData.phoneNumber,
+              photoURL: userData.photoURL,
+            }));
+    
+            // Set the profilePictureUrl
+            setProfilePictureUrl(userData.photoURL);
+          }
         }
       } catch (error) {
         console.log(error.code, error.message);
@@ -72,15 +91,32 @@ export function AuthProvider({ children }) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        setCurrentUser(user);
+    
+        // Fetch user data from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+    
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Update the currentUser object with the Firestore data
+          setCurrentUser((prevUser) => ({
+            ...prevUser,
+            displayName: userData.displayName,
+            phoneNumber: userData.phoneNumber,
+            photoURL: userData.photoURL,
+          }));
+    
+          // Set the profilePictureUrl
+          setProfilePictureUrl(userData.photoURL);
+        }
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
       }
-    },
+    },    
     logout: () => {
-      return auth.signOut()
+      return signOut(auth)
         .then(() => {
           setCurrentUser(null);
           console.log('logged out')
@@ -92,7 +128,7 @@ export function AuthProvider({ children }) {
         });
     },
     resetPassword: (email) => {
-      return auth.sendPasswordResetEmail(email)
+      return sendPasswordResetEmail(auth, email)
         .then(() => {
           console.log("Password reset email sent successfully!");
         })
@@ -104,7 +140,7 @@ export function AuthProvider({ children }) {
     },
     updateEmail: (email) => {
       try {
-        return currentUser.updateEmail(email);
+        return updateUserEmail(currentUser, email);
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -113,7 +149,7 @@ export function AuthProvider({ children }) {
     },
     updatePassword: (password) => {
       try {
-        return currentUser.updatePassword(password);
+        return updateUserPassword(currentUser, password);
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -122,28 +158,45 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const waitForUserDocument = async (user) => {
+    const userDocRef = doc(db, "users", user.uid);
+    let userDoc = await getDoc(userDocRef);
+  
+    // Wait until the user document exists
+    while (!userDoc.exists()) {
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms
+      userDoc = await getDoc(userDocRef);
+    }
+  
+    return userDoc;
+  };
+
+  
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const profilePictureUrl = result.user?.photoURL;
-      setProfilePictureUrl(profilePictureUrl);
-      // Extract user information
-      const userName = result.user?.displayName;
-      console.log("username:", userName);
-      const userPhone = ""; // Set this value based on your requirements
-
-      // Set custom claims
-      const setCustomClaims = httpsCallable(functions, "setCustomClaims");
-      await setCustomClaims({
-        uid: result.user?.uid,
-        name: userName,
-        phone: userPhone,
-      });
-
-      setCurrentUser(result.user);
+      const user = result?.user;
+      console.log("User signed in:", user);
+  
+      // Fetch user data from Firestore
+      const userDoc = await waitForUserDocument(user);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc?.data();
+        // Update the currentUser object with the Firestore data
+        setCurrentUser((prevUser) => ({
+          ...prevUser,
+          displayName: userData?.displayName || user?.displayName,
+          phoneNumber: userData?.phoneNumber || user?.phoneNumber,
+          photoURL: userData?.photoURL || user?.photoURL,
+        }));
+  
+        // Set the profilePictureUrl
+        setProfilePictureUrl(userData?.photoURL || user?.photoURL);
+      }
     } catch (error) {
-      console.log("Error is? ", error)
       if (error.code === "auth/account-exists-with-different-credential") {
+        // Original error handling code
         const userEmail = auth.currentUser?.email;
         const existingEmail = userEmail || error.customData?.email;
   
@@ -164,7 +217,6 @@ export function AuthProvider({ children }) {
   
         try {
           const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
-  
           if (providers.includes(emailProvider.providerId)) {
             const password = window.prompt(
               "Please provide the password for " + existingEmail
@@ -188,31 +240,37 @@ export function AuthProvider({ children }) {
         } catch (error) {
           setOnError("An unexpected error occurred. Please try again.");
         }
-        console.log("priofile image: ", profilePictureUrl);
-        console.log("user: ", currentUser)
+        console.log("profile image: ", profilePictureUrl);
+        console.log("user: ", currentUser);
       } else {
         setOnError("Error signing in with Google. Please try again.");
       }
     }
   };
-
+  
+  
   async function signInWithFacebook() {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
-      const profilePictureUrl = result.user?.photoURL;
-      setProfilePictureUrl(profilePictureUrl);
-      const userName = result.user?.displayName;
-      
-      const userPhone = ""; 
-
-      // Set custom claims
-      const setCustomClaims = httpsCallable(functions, "setCustomClaims");
-      await setCustomClaims({
-        uid: result.user?.uid,
-        name: userName,
-        phone: userPhone,
-      });
-      setCurrentUser(result.user);
+      const user = result?.user;
+      console.log("User signed in:", user);
+  
+      // Fetch user data from Firestore
+      const userDoc = await waitForUserDocument(user);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc?.data();
+        // Update the currentUser object with the Firestore data
+        setCurrentUser((prevUser) => ({
+          ...prevUser,
+          displayName: userData?.displayName || user?.displayName,
+          phoneNumber: userData?.phoneNumber || user?.phoneNumber,
+          photoURL: userData?.photoURL || user?.photoURL,
+        }));
+  
+        // Set the profilePictureUrl
+        setProfilePictureUrl(userData?.photoURL || user?.photoURL);
+      }
     } catch (error) {
       if (error.code === "auth/account-exists-with-different-credential") {
         const userEmail = auth.currentUser?.email;
@@ -262,10 +320,10 @@ export function AuthProvider({ children }) {
         setOnError("Error signing in with Facebook. Please try again.");
       }
     }
-  }
+  };
+  
 
- 
-  const fetchUserProfile = async (uid) => {
+  const fetchUserProfilePicture = async (uid) => {
     const userDocRef = doc(db, "users", uid);
     const userDocSnap = await getDoc(userDocRef);
   
@@ -276,25 +334,107 @@ export function AuthProvider({ children }) {
       console.log("User document not found");
     }
   };
+
+  const fetchAndUpdateCurrentUser = async () => {
+    if (!currentUser || !currentUser.uid) return console.log("no current user");
+  
+    try {
+      const userDocRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        console.log("Fetched photoURL:", userData.photoURL); // Add this line
+  
+        setCurrentUser((prevUser) => ({
+          ...prevUser,
+          displayName: userData.displayName,
+          phoneNumber: userData.phoneNumber,
+          photoURL: userData.photoURL,
+        }));
+  
+        // Set the profilePictureUrl
+        setProfilePictureUrl(userData.photoURL);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  
+  const storage = getStorage();
+
+  const updateProfile = async (uid, displayName, phoneNumber, profilePictureFile, callback) => {
+    if (!uid) {
+      console.error("Error updating user profile: Invalid user ID.");
+      return;
+    }
+  
+    try {
+      // Upload the image file to Firebase Storage
+      const storageRef = ref(storage, `profilePictures/${uid}`);
+      await uploadBytes(storageRef, profilePictureFile);
+      const profilePictureUrl = await getDownloadURL(storageRef);
+  
+      const userDocRef = doc(db, "users", uid);
+      await updateDoc(userDocRef, {
+        displayName,
+        phoneNumber,
+        photoURL: profilePictureUrl,
+        updatedAt: new Date().toISOString(),
+      });
+      console.log("User profile updated successfully.");
+      const user = auth.currentUser;
+      await user.reload();
+      setCurrentUser(user);
+  
+      // Call the callback function with the updated user data
+      callback({
+        displayName,
+        phoneNumber,
+        photoURL: profilePictureUrl,
+      });
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+    }
+  };
+  
   
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-
+      setLoading(true);
       if (user) {
-        await fetchUserProfile(user.uid);
+        // Fetch user data from Firestore and update the currentUser object
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+  
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setCurrentUser((prevUser) => ({
+            ...prevUser,
+            displayName: userData.displayName,
+            phoneNumber: userData.phoneNumber,
+            photoURL: userData.photoURL,
+          }));
+  
+          // Set the profilePictureUrl
+          setProfilePictureUrl(userData.photoURL);
+        }
+      } else {
+        setCurrentUser(null);
       }
+      setLoading(false);
     });
   
     return unsubscribe;
   }, []);
-
+  
+  
   const value = {
     currentUser,
     profilePictureUrl,
     onError,
-    fetchUserProfile,
+    updateProfile,
+    fetchAndUpdateCurrentUser,
     ...signInWithEmailPassword,
     signInWithFacebook,
     signInWithGoogle,
