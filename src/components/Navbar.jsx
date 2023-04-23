@@ -17,6 +17,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Avatar from '@mui/material/Avatar';
 
 import { useAuth } from "../firebase/auth";
@@ -167,31 +168,73 @@ const Navbar = ( { toggleShow } ) => {
         </IconButton>
         <span>Notifications</span>
       </MenuItem>
-      <MenuItem onClick={handleMobileMenuClose}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="false"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <span>Profile</span>
-      </MenuItem>
-      <MenuItem onClick={handleMobileMenuClose}>
-        <IconButton size="large" aria-label="login" color="inherit">
-          <LoginIcon />
-        </IconButton>
+      <Link to="/profile" color="inherit">
+        <MenuItem onClick={handleMobileMenuClose}>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="false"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          <span>Profile</span>
+        </MenuItem>
+      </Link>
+      {currentUser !== null ? (
+        <Box>
+          <Link to="/">
+            <MenuItem onClick={logout}>
+              <IconButton size="large" aria-label="logout" color="inherit">
+                <LogoutIcon />
+              </IconButton>
+              <Typography
+                rel="noopener follow"
+                onClick={logout}
+                color="inherit"
+              >
+                Logout
+              </Typography>
+            </MenuItem>
+          </Link>
+
+          <MenuItem>
+            <IconButton size="large" aria-label="login" color="inherit">
+              {loadingProfile ? (
+                <CircularProgress size={24} />
+              ) : currentUser !== null ? (
+                <Avatar
+                  alt="Profile picture"
+                  src={profilePictureUrl}
+                  sx={{ width: 24, height: 24 }}
+                />
+              ) : (
+                <AccountCircle />
+              )}
+            </IconButton>
+
+            <Typography variant="subtitle2">
+              {currentUser?.displayName}
+            </Typography>
+          </MenuItem>
+        </Box>
+      ) : (
         <Link
           to="/login"
           rel="noopener follow"
           onClick={toggleShow}
           color="inherit"
         >
-          <span>Login</span>
+          <MenuItem onClick={handleMobileMenuClose}>
+            <IconButton size="large" aria-label="login" color="inherit">
+              <LoginIcon />
+            </IconButton>
+
+            <span>Login</span>
+          </MenuItem>
         </Link>
-      </MenuItem>
+      )}
     </Menu>
   );
 
@@ -210,15 +253,7 @@ const Navbar = ( { toggleShow } ) => {
           sx={{ boxShadow: "none", backgroundColor: "primary.main" }}
         >
           <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
+            
             <Link
               to="/"
               className="me-auto"
@@ -226,9 +261,9 @@ const Navbar = ( { toggleShow } ) => {
             >
               <img
                 src={Logo}
-                className="d-none d-sm-block me-1 logo"
+                className="d-sm-block me-1 logo"
                 alt="Logo"
-                style={{ height: "50px", width: "250px" }}
+                style={{ height: "30px", width: "170px" }}
               />
             </Link>
 

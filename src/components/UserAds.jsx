@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box, Typography, Grid, Container } from '@mui/material';
-import ImageCard from './Cards/ImageCard'
-import Masonry from '@mui/lab/Masonry';
+import React from "react";
+import { Box, Typography, Grid, Container } from "@mui/material";
+import ImageCard from "./Cards/ImageCard";
+import Masonry from "@mui/lab/Masonry";
 
 const UserAds = ({ ads, recentSearches, favorites }) => {
   const renderAdItems = (items) => {
@@ -44,7 +44,11 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
         <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
           My ads
         </Typography>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={2}
+          sx={{ mx: "auto" }}
+        >
           {products?.map((item, index) => (
             <ImageCard
               key={index}
@@ -63,7 +67,11 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
         <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
           Searches
         </Typography>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={2}
+          sx={{ mx: "auto" }}
+        >
           {products?.map((item, index) => (
             <ImageCard
               key={index}
@@ -82,7 +90,11 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
         <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
           Favorites
         </Typography>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2} sx={{mx: "auto"}}>
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={2}
+          sx={{ mx: "auto" }}
+        >
           {products?.map((item, index) => (
             <ImageCard
               key={index}

@@ -1,61 +1,114 @@
 import React from "react";
+import VehicleCardIcons from '../Icons/VehicleCardIcons';
 import {
-  Box, 
-  Card, 
-  CardContent, 
-  CardMedia, 
-  Typography, 
-  Button, 
-  Divider } 
-  from '@mui/material';
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Chip,
+  Avatar
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-
-function VehicleCard( { img, title, location, distance, year, price } ) {
+const VehicleCard = ( { img, make, model, location, distance, year, price, user, color, doors, description } ) => {
   return (
-    <Card
-      sx={{
-        maxWidth: 345,
-        maxHeight: 750,
-        overflow: "hidden",
-        mx: 1,
-      }}
-      style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
-    >
-      <CardMedia
-        component="img"
-        sx={{ maxHeight: 350, overflow: "hidden" }}
-        image={img}
-        alt="Car"
-      />
-      <CardContent>
-      <Typography variant="subtitle2">{location}</Typography>
-        <Typography gutterBottom variant="h5" component="div">
-          {title}
-        </Typography>
-        <Divider sx={{ my: 2 }} color="text.primary" />
-        <Box
+    <Card sx={{ borderRadius: 2, boxShadow: 1, cursor: "pointer", mb: 2, borderBottom: 1, borderRight: 1 }}>
+      <Box display="flex">
+        <CardMedia
+          component="img"
+          image={img}
+          alt={make + model}
           sx={{
-            flexDirection: "row",
+            maxWidth: "33%",
+            maxHeight: "200px",
+            objectFit: "cover",
+            borderTopLeftRadius: 2,
+            borderBottomLeftRadius: 2,
+          }}
+        />
+        <CardContent
+          sx={{
             display: "flex",
+            flexDirection: "column",
             justifyContent: "space-between",
+            flexGrow: 1,
           }}
         >
-          <Typography variant="body1" color="text.secondary">
-            {distance}km
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {year}
-          </Typography>
-        </Box>
-        <Typography variant="h4" color="text.primary" sx={{ mt: 1 }}>
-          {price} NOK
-        </Typography>
-        <Button variant="contained" sx={{ mt: 2 }}>
-          <Typography variant="h6">See details</Typography>
-        </Button>
-      </CardContent>
+          <Box>
+            <Typography variant="h3" fontWeight="bold" sx={{mb: 2}}>
+              {price} $
+            </Typography>
+            <Typography variant="body1">
+              {make} <span>•</span> {model}
+            </Typography>
+            <Typography variant="body2" noWrap>
+              {description}
+            </Typography>
+            <Box display="flex" alignItems="center" flexWrap="wrap" mt={1}>
+              <Box display="flex" alignItems="center" mr={1}>
+                <VehicleCardIcons
+                  category="year"
+                  style={{ width: 30, height: 35 }}
+                />
+                <Typography variant="body2" ml={0.5}>
+                  {year}
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center" mr={1}>
+                <VehicleCardIcons
+                  category="mileage"
+                  style={{ width: 30, height: 35 }}
+                />
+                <Typography variant="body2" ml={0.5}>
+                  {distance} km
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center" mr={1}>
+                <VehicleCardIcons
+                  category="doors"
+                  style={{ width: 30, height: 35 }}
+                />
+                <Typography variant="body2" ml={0.5}>
+                  {doors} doors
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <VehicleCardIcons
+                  category="palette"
+                  style={{ width: 30, height: 35 }}
+                />
+                <Typography variant="body2" ml={0.5}>
+                  {color}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={2}
+          >
+            <Box display="flex" alignItems="center">
+              <LocationOnIcon fontSize="small" />
+              <Typography variant="body2" ml={0.5}>
+                {location}
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              
+              <Avatar
+                alt={user}
+                src={user}
+                sx={{ width: 24, height: 24 }}
+              />
+            </Box>
+          </Box>
+        </CardContent>
+      </Box>
     </Card>
   );
-}
+};
 
 export default VehicleCard;

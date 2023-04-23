@@ -34,7 +34,9 @@ export const tokens = (mode) => ({
         },
 
         red: {
-          1: "#F50057"
+          1: "#F50057",
+          2: "#fa5050",
+          3: "#61030c",
         }
       }),
 });
@@ -73,9 +75,12 @@ export const themeSettings = (mode) => {
             },
             secondary: {
               main: colors.red[1],
+              light: colors.red[2],
+              dark: colors.red[3],
             },
             text: {
               primary: '#000',
+              secondary: colors.blue[1]
             },
             background: {
               default: colors.white[1],

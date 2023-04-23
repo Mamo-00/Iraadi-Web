@@ -1,16 +1,24 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Login from "../../components/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { IconButton, Typography, Stack } from "@mui/material";
-import Masonry from '@mui/lab/Masonry';
-import CategoryIcons from "../../components/CategoryIcons";
+import CategoryIcons from "../../components/Icons/CategoryIcons";
 import { useTheme } from "@mui/material";
-import VehicleCard from "../../components/Cards/VehicleCard";
-
+import { products } from "../../utils/products";
+import CarsPromoCard from '../../components/Cards/PromotionCards/CarPromoCard'
+import {
+  IconButton,
+  Typography,
+  Stack,
+  Grid,
+  Box,
+  Fab,
+  ImageList,
+  ImageListItem,
+} from "@mui/material";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const Home = () => {
   const [open, setOpen] = useState(false);
@@ -21,73 +29,85 @@ const Home = () => {
     setOpen(!open);
   };
 
-  const products = [
-    {
-      title: "BMW X3",
-      location: "Bergen",
-      distance: 312,
-      year: 2017,
-      img: "https://images.pexels.com/photos/1805053/pexels-photo-1805053.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      price: 25000,
-    },
-    {
-      title: "Audi R8",
-      location: "Oslo",
-      distance: 52,
-      year: 2019,
-      img: "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      price: 545000,
-    },
-    {
-      title: "McLaren G4",
-      location: "Stavanger",
-      distance: 125,
-      year: 2020,
-      img: "https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      price: 2500000,
-    },
-    {
-      title: "Toyota Corolla",
-      location: "Ålesund",
-      distance: 278,
-      year: 2012,
-      img: "https://images.pexels.com/photos/376361/pexels-photo-376361.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      price: 15000,
-    },
-    {
-      title: "Mercedes Benz",
-      location: "Bergen",
-      distance: 212,
-      year: 2007,
-      img: "https://images.pexels.com/photos/3156482/pexels-photo-3156482.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      price: 40000,
-    },
-    {
-      title: "Tuk Tuk S8",
-      location: "Tromsø",
-      distance: 112,
-      year: 2010,
-      img: "https://cdn.fleetnews.co.uk/web-clean/1/root/new-tuk-tuks-provide-additional-support_w268.jpg",
-      price: 12000
-    },
-    {
-      title: "Tuk Tuk S4",
-      location: "Trondheim",
-      distance: 141,
-      year: 2009,
-      img: "https://cdn.pixabay.com/photo/2016/09/04/12/09/tuktuk-1643802__340.jpg",
-      price: 9000
-    },
-  ];
+  const Promo = ( { title } ) => {
+    return (
+      <>
+      <Typography variant="h4" color="primary" sx={{ my: 2 }}>
+        {title}
+      </Typography>
+      <ImageList
+        sx={{
+          maxWidth: 1010,
+          height: 270,
+          p: 1,
+          [theme.breakpoints.up("md")]: {
+            display: "none",
+          },
+        }}
+        cols={products?.length + 1} // +1 to show FAB component
+        rowHeight={260}
+      >
+        {products?.map((item, index) => (
+          <ImageListItem key={index}>
+            <CarsPromoCard
+              img={item?.img}
+              distance={item?.distance}
+              price={item?.price}
+              year={item?.year}
+              make={item?.make}
+              model={item?.model}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            />
+          </ImageListItem>
+        ))}
+        <ImageListItem sx={{ justifyContent: "center", mx: 1 }}>
+          <Fab color="primary" aria-label="view all">
+            <ArrowForwardIcon />
+          </Fab>
+          <Typography variant="subtitle1" sx={{ mt: 1 }}>
+            View All Items
+          </Typography>
+        </ImageListItem>
+      </ImageList>
+      <Stack
+        direction="row"
+        sx={{
+          [theme.breakpoints.down("md")]: {
+            display: "none",
+          },
+        }}
+      >
+        {products?.slice(0, 5).map((item, index) => (
+          <CarsPromoCard
+            key={index}
+            img={item?.img}
+            distance={item?.distance}
+            price={item?.price}
+            year={item?.year}
+            make={item?.make}
+            model={item?.model}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          />
+        ))}
+      </Stack>
+    </>
+    );
+    
+  };
 
   return (
     <div>
       <Navbar toggleShow={toggleShow} />
 
-      <Login
-        open={open}
-        toggleShow={toggleShow}
-      />
+      <Login open={open} toggleShow={toggleShow} />
 
       <Box
         sx={{
@@ -125,13 +145,15 @@ const Home = () => {
           <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
             <Stack direction="column" alignItems="center">
               <IconButton>
-                <CategoryIcons
-                  category="vehicle"
-                  style={{ width: 65, height: 50 }}
-                />
+                <Link to="/motors">
+                  <CategoryIcons
+                    category="vehicle"
+                    style={{ width: 65, height: 50 }}
+                  />
+                </Link>
               </IconButton>
               <Typography variant="body1" align="center" color="primary.main">
-                Vehicle
+                Motors
               </Typography>
             </Stack>
           </Grid>
@@ -182,34 +204,15 @@ const Home = () => {
           maxWidth: "1010px",
           mx: "auto",
           my: 4,
+          pb: 1,
           overflowX: "hidden",
         }}
+        textAlign="center"
       >
-        <Masonry
-          columns={{ xs: 1, sm: 2, md: 3 }}
-          spacing={2}
-          sx={{
-            alignContent: "center",
-            margin: "0 auto",
-          }}
-        >
-          {products?.map((item, index) => (
-            <VehicleCard
-              key={index}
-              img={item?.img}
-              title={item?.title}
-              distance={item?.distance}
-              price={item?.price}
-              year={item?.year}
-              location={item?.location}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            />
-          ))}
-        </Masonry>
+        <Promo title="Recently Looked At"/>
+        <Promo title="Popular Cars"/>
+        <Promo title="Popular Properties"/>
+        
       </Box>
       <Footer />
     </div>

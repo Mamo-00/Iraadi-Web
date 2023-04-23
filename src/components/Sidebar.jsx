@@ -1,295 +1,303 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { ReactComponent as Checkmark } from "../assets/Misc/checkmark.svg";
-
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  height: fit-content;
-  padding: 30px;
-`;
-
-const Title = styled.h2`
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #473f3f;
-  font-family: 'Inconsolata', monospace, sans-serif;
-`;
-
-const Filter = styled.div`
-  margin-bottom: 30px;
-`;
-
-const FilterTitle = styled.h3`
-  margin-bottom: 10px;
-  font-size: 20px;
-  color: #473f3f;
-  font-weight: 700;
-  font-family: 'Inconsolata', monospace, sans-serif;
-`;
-
-const Input = styled.input`
-  border-radius: 10px; 
-  border: none;
-
-  &:focus {
-    border: none;
-    outline: none;
-  }
-`;
-
-const Checkbox = styled.input`
-  appearance: none;
-  display: inline-block;
-  position: relative;
-  background-color: white;
-  border: 1px solid gray;
-  border-radius: 4px;
-  height: 16px;
-  width: 16px;
-  margin-right: 10px;
-  
-  &:before {
-    content: "";
-    position: absolute;
-    left: 3px;
-    top: 3px;
-    width: 10px;
-    height: 10px;
-    background-color: white;
-    border-radius: 4px;
-  }
-  &:checked:before {
-    content: "";
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 10px;
-    height: 10px;
-    background-color: gray;
-    border-radius: 4px;
-  }
-  &:focus {
-    outline: none;
-    border-color: blue;
-  }
-`; 
-
-
-
-const Label = styled.label`
-  font-family: 'Inconsolata', monospace, sans-serif;
-  font-size: 18px;
-  color: #473f3f;
-  font-weight: 700;
-`;
-
-const FilterOption = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-
-const FilterContainer = styled.div`
-  padding: 20px 20px 20px 5px;
-`;
-
-
-const ApplyButton = styled.button`
-  background-color: green;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  &:hover {
-    background-color: darkgreen;
-  }
-`;
+import React, { useState, useEffect } from "react";
+import { carMakes } from '../utils/carMakes'
+import {
+  Box,
+  Button,
+  FormControl,
+  Chip,
+  Stack,
+  Slider,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+  TextField
+} from "@mui/material";
 
 const Sidebar = () => {
-  const [priceRange, setPriceRange] = useState({
-    min: 0,
-    max: 1000,
-  });
+  const maxYear = new Date().getFullYear();
+  const minYear = 1930;
 
-  const handlePriceRangeChange = (event) => {
-    setPriceRange({
-      ...priceRange,
-      [event.target.name]: event.target.value,
+
+
+  const [location, setLocation] = useState("");
+  const [make, setMake] = useState("");
+  const [color, setColor] = useState("");
+  const [year, setYear] = useState([minYear, maxYear]);
+  const [mileage, setMileage] = useState([0, 1]);
+  const [doors, setDoors] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [fuels, setFuels] = useState([]);
+
+  const resetFilters = () => {
+    setLocation("");
+    setMake("");
+    setColor("");
+    setYear([minYear, maxYear]);
+    setDoors([]);
+    setTags([]);
+    setFuels([]);
+  };
+
+  const handleYearChange = (event, newValue) => {
+    setYear(newValue);
+  };
+
+ 
+  const handleLocationChange = (event) => {
+    setLocation(event.target.value);
+  };
+
+  const handleColorChange = (event) => {
+    setColor(event.target.value);
+  };
+
+  const handleMakeChange = (event) => {
+    setMake(event.target.value);
+  };
+
+  const doorOptions = ["One", "Two", "Three", "Four", "Five+"];
+  const handleDoorsChange = (value) => {
+    setDoors((prevState) => {
+      return prevState.includes(value)
+        ? prevState.filter((door) => door !== value)
+        : [...prevState, value];
     });
   };
 
-  const [brand, setBrand] = useState([]);
-
-  const handleBrandChange = (event) => {
-    if (event.target.checked) {
-      setBrand([...brand, event.target.value]);
-    } else {
-      setBrand(brand.filter((b) => b !== event.target.value));
-    }
+  const tagOptions = ["Premium", "Dealer"];
+  const handleTagsChange = (value) => {
+    setTags((prevState) => {
+      return prevState.includes(value)
+        ? prevState.filter((tag) => tag !== value)
+        : [...prevState, value];
+    });
   };
 
-  const [color, setColor] = useState([]);
+  const fuelOptions = ["Gas", "Diesel", "Electricity"];
+  const handleFuelsChange = (value) => {
+    setFuels((prevState) => {
+      return prevState.includes(value)
+        ? prevState.filter((fuel) => fuel !== value)
+        : [...prevState, value];
+    });
+  };
 
-  const handleColorChange = (event) => {
-    if (event.target.checked) {
-      setColor([...color, event.target.value]);
-    } else {
-      setColor(color.filter((c) => c !== event.target.value));
-    }
+  const handleMileageInputChange = (index, event) => {
+    const newMileage = [...mileage];
+    newMileage[index] = parseInt(event.target.value);
+    setMileage(newMileage);
   };
 
   return (
-    <Container>
-      <Title>Filter</Title>
-      <Filter>
-        <FilterTitle>Price Range</FilterTitle>
-        <div>
-          <Input
-            type="number"
-            name="min"
-            value={priceRange.min}
-            className="mb-3"
-            onChange={handlePriceRangeChange}
-          />
-          
-          <Input
-            type="number"
-            name="max"
-            value={priceRange.max}
-            onChange={handlePriceRangeChange}
-          />
-        </div>
-      </Filter>
-      <FilterTitle>Brand</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="brand-apple" type="checkbox" />
-          <Label htmlFor="brand-apple">Apple</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="brand-samsung" type="checkbox" />
-          <Label htmlFor="brand-samsung">Samsung</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="brand-google" type="checkbox" />
-          <Label htmlFor="brand-google">Google</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="brand-huawei" type="checkbox" />
-          <Label htmlFor="brand-huawei">Huawei</Label>
-        </FilterOption>
-      </FilterContainer>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        p: 1,
+        width: "300px",
+        position: "sticky",
+        top: 50,
+        mt: 4,
+      }}
+    >
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={resetFilters}
+        sx={{ mb: 2, width: "33%" }}
+      >
+        Reset
+      </Button>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <InputLabel id="location-label">Location</InputLabel>
+        <Select
+          labelId="location-label"
+          id="location-select"
+          value={location}
+          label="Location"
+          onChange={handleLocationChange}
+        >
+          <MenuItem value="Bergen">Mogadishu</MenuItem>
+          <MenuItem value="Oslo">Hargeysa</MenuItem>
+          <MenuItem value="Stavanger">Galkayo</MenuItem>
+          <MenuItem value="Ålesund">Burao</MenuItem>
+          <MenuItem value="Tromsø">Bosaso</MenuItem>
+          <MenuItem value="Trondheim">Kismayo</MenuItem>
+          <MenuItem value="Trondheim">Baidoa</MenuItem>
+        </Select>
+      </FormControl>
+      {/*Set Year */}
+      <Stack direction="row" sx={{ mb: 3 }}>
+        <Typography variant="subtitle2" sx={{ mr: 1 }}>
+          {year[0]}
+        </Typography>
+        <Slider
+          getAriaLabel={() => "model year"}
+          value={year}
+          onChange={handleYearChange}
+          valueLabelDisplay="auto"
+          min={minYear}
+          max={maxYear}
+          sx={{ mx: 1 }}
+        />
+        <Typography variant="subtitle2" sx={{ ml: 1 }}>
+          {year[1]}
+        </Typography>
+      </Stack>
 
-      <FilterTitle>Price</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="price-0-500" type="checkbox" />
-          <Label htmlFor="price-0-500">$0 - $500</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="price-500-1000" type="checkbox" />
-          <Label htmlFor="price-500-1000">$500 - $1000</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="price-1000-1500" type="checkbox" />
-          <Label htmlFor="price-1000-1500">$1000 - $1500</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="price-1500-above" type="checkbox" />
-          <Label htmlFor="price-1500-above">$1500 and above</Label>
-        </FilterOption>
-      </FilterContainer>
+      <Stack direction="row" sx={{ mb: 3 }}>
+        <TextField
+          variant="outlined"
+          type="number"
+          label="Km"
+          value={mileage[0]}
+          onChange={(event) => handleMileageInputChange(0, event)}
+          inputProps={{
+            step: 1000,
+            min: 0,
+            max: 1000000,
+            type: "number",
+          }}
+          sx={{ mr: 2}}
+        />
+        <Typography variant="subtitle2" sx={{ my: "auto" }}>Distance</Typography>
+        <TextField
+          variant="outlined"
+          type="number"
+          label="Km"
+          value={mileage[1]}
+          onChange={(event) => handleMileageInputChange(1, event)}
+          inputProps={{
+            step: 1000,
+            min: 0,
+            max: 1000000,
+            type: "number",
+          }}
+          sx={{ ml: 2 }}
+        />
+      </Stack>
 
-      <FilterTitle>Color</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="color-black" type="checkbox" />
-          <Label htmlFor="color-black">Black</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="color-white" type="checkbox" />
-          <Label htmlFor="color-white">White</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="color-gray" type="checkbox" />
-          <Label htmlFor="color-gray">Gray</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="color-red" type="checkbox" />
-          <Label htmlFor="color-red">Red</Label>
-        </FilterOption>
-      </FilterContainer>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Doors
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {doorOptions.map((door) => (
+            <Chip
+              key={door}
+              label={door}
+              color={doors.includes(door) ? "secondary" : "primary"}
+              onClick={() => handleDoorsChange(door)}
+            />
+          ))}
+        </Box>
+      </Box>
 
-      <FilterTitle>Size</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="size-xs" type="checkbox" />
-          <Label htmlFor="size-xs">XS</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="size-s" type="checkbox" />
-          <Label htmlFor="size-s">S</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="size-m" type="checkbox" />
-          <Label htmlFor="size-m">M</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="size-l" type="checkbox" />
-          <Label htmlFor="size-l">L</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="size-xl" type="checkbox" />
-          <Label htmlFor="size-xl">XL</Label>
-        </FilterOption>
-      </FilterContainer>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Tags
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {tagOptions.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              color={tags.includes(tag) ? "secondary" : "primary"}
+              onClick={() => handleTagsChange(tag)}
+            />
+          ))}
+        </Box>
+      </Box>
 
-      <FilterTitle>Gender</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="gender-male" type="checkbox" />
-          <Label htmlFor="gender-male">Male</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="gender-female" type="checkbox" />
-          <Label htmlFor="gender-female">Female</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="gender-unisex" type="checkbox" />
-          <Label htmlFor="gender-unisex">Unisex</Label>
-        </FilterOption>
-      </FilterContainer>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Fuels
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {fuelOptions.map((fuel) => (
+            <Chip
+              key={fuel}
+              label={fuel}
+              color={fuels.includes(fuel) ? "secondary" : "primary"}
+              onClick={() => handleFuelsChange(fuel)}
+            />
+          ))}
+        </Box>
+      </Box>
 
-      <FilterTitle>Material</FilterTitle>
-      <FilterContainer>
-        <FilterOption>
-          <Checkbox id="material-cotton" type="checkbox" />
-          <Label htmlFor="material-cotton">Cotton</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="material-polyester" type="checkbox" />
-          <Label htmlFor="material-polyester">Polyester</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="material-linen" type="checkbox" />
-          <Label htmlFor="material-linen">Linen</Label>
-        </FilterOption>
-        <FilterOption>
-          <Checkbox id="material-wool" type="checkbox" />
-          <Label htmlFor="material-wool">Wool</Label>
-        </FilterOption>
-      </FilterContainer>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <InputLabel id="make-label">Make</InputLabel>
+        <Select
+          labelId="make-label"
+          id="make-select"
+          value={make}
+          label="Make"
+          onChange={handleMakeChange}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "left",
+            },
+            transformOrigin: {
+              vertical: "top",
+              horizontal: "left",
+            },
+            getContentAnchorEl: null,
+            PaperProps: {
+              style: {
+                maxHeight: 200, // Set the maximum height of the dropdown here
+              },
+            },
+          }}
+        >
+          {carMakes.map((make) => (
+            <MenuItem key={make} value={make}>
+              {make}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-      <ApplyButton>Apply</ApplyButton>
-      
-    </Container>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <InputLabel id="color-label">Colors</InputLabel>
+        <Select
+          labelId="color-label"
+          id="color-select"
+          value={color}
+          label="Colors"
+          onChange={handleColorChange}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "left",
+            },
+            transformOrigin: {
+              vertical: "top",
+              horizontal: "left",
+            },
+            getContentAnchorEl: null,
+            PaperProps: {
+              style: {
+                maxHeight: 200, // Set the maximum height of the dropdown here
+              },
+            },
+          }}
+        >
+          <MenuItem value="red">Red</MenuItem>
+          <MenuItem value="orange">Orange</MenuItem>
+          <MenuItem value="green">Green</MenuItem>
+          <MenuItem value="blue">Blue</MenuItem>
+          <MenuItem value="white">White</MenuItem>
+          <MenuItem value="silver">Silver</MenuItem>
+          <MenuItem value="black">Black</MenuItem>
+          <MenuItem value="grey">Grey</MenuItem>
+        </Select>
+      </FormControl>
+      <Button variant="contained" color="primary">
+        Apply
+      </Button>
+    </Box>
   );
 };
 
