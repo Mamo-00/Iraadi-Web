@@ -269,14 +269,7 @@ const Navbar = ( { toggleShow } ) => {
 
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              {/* Light / Dark mode*/}
-              <IconButton onClick={colorMode.toggleColorMode}>
-                {theme.palette.mode === "dark" ? (
-                  <DarkModeOutlinedIcon />
-                ) : (
-                  <LightModeOutlinedIcon />
-                )}
-              </IconButton>
+              
 
               <IconButton
                 size="large"
@@ -297,39 +290,7 @@ const Navbar = ( { toggleShow } ) => {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                {loadingProfile ? (
-                  <CircularProgress size={24} />
-                ) : currentUser !== null ? (
-                  <Avatar
-                    alt="Profile picture"
-                    src={profilePictureUrl}
-                    sx={{ width: 24, height: 24 }}
-                  />
-                ) : (
-                  <AccountCircle />
-                )}
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
+              
             </Box>
           </Toolbar>
         </AppBar>

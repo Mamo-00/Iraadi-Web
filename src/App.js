@@ -16,10 +16,7 @@ function App() {
         <CssBaseline />
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/motors" element={<Motors />} />
+            <Route path="/*" element={<Home />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>

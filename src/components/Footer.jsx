@@ -14,7 +14,7 @@ const Footer = () => {
           backgroundColor: (theme) => theme.palette.primary.main,
           padding: (theme) => theme.spacing(3),
           color: "#fff",
-          mt: 2
+          mt: 2,
         }}
       >
         <Grid container spacing={4}>
