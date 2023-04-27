@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { auth, googleProvider, facebookProvider, emailProvider, functions, db } from "./firebase-config";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { httpsCallable } from "firebase/functions";
 import {
@@ -12,6 +12,9 @@ import {
   sendPasswordResetEmail,
   updateEmail as updateUserEmail,
   updatePassword as updateUserPassword,
+  signInWithRedirect,
+  getRedirectResult,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 
@@ -20,8 +23,6 @@ const AuthContext = React.createContext();
 export function useAuth() {
   return useContext(AuthContext);
 }
-
-export const DEFAULT_PROFILE_PICTURE_URL = "defaultProfilePicture";
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -171,29 +172,41 @@ export function AuthProvider({ children }) {
     return userDoc;
   };
 
-  
-  const signInWithGoogle = async () => {
+  const handleRedirectResult = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result?.user;
+      const result = await getRedirectResult(auth);
+      if (!result) return;
+  
+      const user = result.user;
       console.log("User signed in:", user);
   
       // Fetch user data from Firestore
       const userDoc = await waitForUserDocument(user);
   
       if (userDoc.exists()) {
-        const userData = userDoc?.data();
+        const userData = userDoc.data();
+  
         // Update the currentUser object with the Firestore data
         setCurrentUser((prevUser) => ({
           ...prevUser,
-          displayName: userData?.displayName || user?.displayName,
-          phoneNumber: userData?.phoneNumber || user?.phoneNumber,
-          photoURL: userData?.photoURL || user?.photoURL,
+          displayName: userData.displayName || user.displayName,
+          phoneNumber: userData.phoneNumber || user.phoneNumber,
+          photoURL: userData.photoURL || user.photoURL,
         }));
   
         // Set the profilePictureUrl
-        setProfilePictureUrl(userData?.photoURL || user?.photoURL);
+        setProfilePictureUrl(userData.photoURL || user.photoURL);
       }
+    } catch (error) {
+      console.error("Error handling redirect result:", error);
+    }
+  };
+  
+
+  
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       if (error.code === "auth/account-exists-with-different-credential") {
         // Original error handling code
@@ -228,7 +241,7 @@ export function AuthProvider({ children }) {
             await linkWithCredential(user, pendingCred);
           } else if (providers.includes(facebookProvider.providerId)) {
             facebookProvider.setCustomParameters({ login_hint: existingEmail });
-            const result = await signInWithPopup(auth, facebookProvider);
+            const result = await signInWithRedirect(auth, facebookProvider);
             await linkWithCredential(result.user, pendingCred);
           } else if (providers.includes(googleProvider.providerId)) {
             setOnError(
@@ -243,6 +256,7 @@ export function AuthProvider({ children }) {
         console.log("profile image: ", profilePictureUrl);
         console.log("user: ", currentUser);
       } else {
+        console.log("error is what?", error.code);
         setOnError("Error signing in with Google. Please try again.");
       }
     }
@@ -251,26 +265,7 @@ export function AuthProvider({ children }) {
   
   async function signInWithFacebook() {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-      const user = result?.user;
-      console.log("User signed in:", user);
-  
-      // Fetch user data from Firestore
-      const userDoc = await waitForUserDocument(user);
-  
-      if (userDoc.exists()) {
-        const userData = userDoc?.data();
-        // Update the currentUser object with the Firestore data
-        setCurrentUser((prevUser) => ({
-          ...prevUser,
-          displayName: userData?.displayName || user?.displayName,
-          phoneNumber: userData?.phoneNumber || user?.phoneNumber,
-          photoURL: userData?.photoURL || user?.photoURL,
-        }));
-  
-        // Set the profilePictureUrl
-        setProfilePictureUrl(userData?.photoURL || user?.photoURL);
-      }
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       if (error.code === "auth/account-exists-with-different-credential") {
         const userEmail = auth.currentUser?.email;
@@ -304,7 +299,7 @@ export function AuthProvider({ children }) {
             await linkWithCredential(user, pendingCred);
           } else if (providers.includes(googleProvider.providerId)) {
             googleProvider.setCustomParameters({ login_hint: existingEmail });
-            const result = await signInWithPopup(auth, googleProvider);
+            const result = await signInWithRedirect(auth, googleProvider);
             await linkWithCredential(result.user, pendingCred);
           } else if (providers.includes(facebookProvider.providerId)) {
             setOnError(
@@ -322,19 +317,6 @@ export function AuthProvider({ children }) {
     }
   };
   
-
-  const fetchUserProfilePicture = async (uid) => {
-    const userDocRef = doc(db, "users", uid);
-    const userDocSnap = await getDoc(userDocRef);
-  
-    if (userDocSnap.exists()) {
-      const userData = userDocSnap.data();
-      setProfilePictureUrl(userData.photoURL);
-    } else {
-      console.log("User document not found");
-    }
-  };
-
   const fetchAndUpdateCurrentUser = async () => {
     if (!currentUser || !currentUser.uid) return console.log("no current user");
   
@@ -344,21 +326,16 @@ export function AuthProvider({ children }) {
   
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log("Fetched photoURL:", userData.photoURL); // Add this line
-  
-        setCurrentUser((prevUser) => ({
-          ...prevUser,
+        return {
           displayName: userData.displayName,
           phoneNumber: userData.phoneNumber,
           photoURL: userData.photoURL,
-        }));
-  
-        // Set the profilePictureUrl
-        setProfilePictureUrl(userData.photoURL);
+        };
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
+    return null;
   };
   
   const storage = getStorage();
@@ -398,27 +375,13 @@ export function AuthProvider({ children }) {
     }
   };
   
-  
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
         // Fetch user data from Firestore and update the currentUser object
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-  
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setCurrentUser((prevUser) => ({
-            ...prevUser,
-            displayName: userData.displayName,
-            phoneNumber: userData.phoneNumber,
-            photoURL: userData.photoURL,
-          }));
-  
-          // Set the profilePictureUrl
-          setProfilePictureUrl(userData.photoURL);
-        }
+        setCurrentUser(user);
+        handleRedirectResult();
       } else {
         setCurrentUser(null);
       }
@@ -426,7 +389,7 @@ export function AuthProvider({ children }) {
     });
   
     return unsubscribe;
-  }, []);
+  }, [handleRedirectResult]);
   
   
   const value = {

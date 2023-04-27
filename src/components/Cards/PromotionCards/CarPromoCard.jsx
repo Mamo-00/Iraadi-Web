@@ -44,7 +44,6 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
             sx={{ maxHeight: 130, overflow: "hidden" }}
             image={img}
             alt="Car"
-            loading='lazy'
           />
         </Box>
         <CardContent sx={{ p: 1 }}>

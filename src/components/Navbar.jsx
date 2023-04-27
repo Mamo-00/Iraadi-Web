@@ -37,15 +37,18 @@ const Navbar = ( { toggleShow } ) => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const userFetched = useRef(false);
+
+  const [updatedUserData, setUpdatedUserData] = useState(null);
   const { currentUser, logout, profilePictureUrl, fetchAndUpdateCurrentUser } = useAuth();
   
   useEffect(() => {
     if (currentUser && !userFetched.current) {
       setLoadingProfile(true);
       fetchAndUpdateCurrentUser()
-        .then(() => {
+        .then((data) => {
           setLoadingProfile(false);
           userFetched.current = true;
+          setUpdatedUserData(data);
         })
         .catch((error) => {
           console.error("Error in fetchAndUpdateCurrentUser:", error);
@@ -53,6 +56,7 @@ const Navbar = ( { toggleShow } ) => {
     } else if (!currentUser) {
       setLoadingProfile(false);
       userFetched.current = false;
+      setUpdatedUserData(null);
     }
   }, [currentUser, fetchAndUpdateCurrentUser]);
 
@@ -96,18 +100,26 @@ const Navbar = ( { toggleShow } ) => {
       <Link to="/profile" color="inherit">
         <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       </Link>
-      
+
       {currentUser !== null ? (
         <Box>
           <Link to="/">
             <MenuItem onClick={logout}>
-              <Typography rel="noopener follow" onClick={logout} color="inherit">
+              <Typography
+                rel="noopener follow"
+                onClick={logout}
+                color="inherit"
+              >
                 Logout
               </Typography>
             </MenuItem>
           </Link>
 
-          <MenuItem><Typography variant="subtitle2">{currentUser?.displayName}</Typography></MenuItem>
+          <MenuItem>
+            <Typography variant="subtitle2">
+              {updatedUserData?.displayName || currentUser?.displayName}
+            </Typography>
+          </MenuItem>
         </Box>
       ) : (
         <Link
@@ -253,7 +265,6 @@ const Navbar = ( { toggleShow } ) => {
           sx={{ boxShadow: "none", backgroundColor: "primary.main" }}
         >
           <Toolbar>
-            
             <Link
               to="/"
               className="me-auto"
@@ -311,7 +322,7 @@ const Navbar = ( { toggleShow } ) => {
                 ) : currentUser !== null ? (
                   <Avatar
                     alt="Profile picture"
-                    src={profilePictureUrl}
+                    src={updatedUserData?.photoURL || currentUser?.photoURL}
                     sx={{ width: 24, height: 24 }}
                   />
                 ) : (

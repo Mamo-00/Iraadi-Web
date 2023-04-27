@@ -11,7 +11,7 @@ import { useAuth } from '../../firebase/auth';
 const Profile = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const { currentUser } = useAuth();
+  const { currentUser, fetchAndUpdateCurrentUser } = useAuth();
 
   // Fetch user's ads, recent searches, and favorites from Firestore
   const [ads, setAds] = useState([]);
@@ -33,7 +33,7 @@ const Profile = () => {
 
       <Login open={open} toggleShow={toggleShow} />
 
-      <ProfileForm />
+      <ProfileForm onUserDataUpdated={fetchAndUpdateCurrentUser} />
       <UserAds ads={ads} recentSearches={recentSearches} favorites={favorites} />
 
       <Footer />
