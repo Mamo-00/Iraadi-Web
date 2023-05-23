@@ -1,6 +1,15 @@
+html, body, #root {
+  height: 100%;
+}
+
 body {
-  
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+footer {
+  margin-top: auto;
 }
 
 .icon-style {

@@ -1,11 +1,11 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-
 const { initializeApp } = require("firebase-admin/app");
 
 initializeApp();
 
 async function createUserDocument(user, name, phone) {
+
   try {
     const createdAt = new Date().toISOString();
 
@@ -24,19 +24,19 @@ async function createUserDocument(user, name, phone) {
       // Add any other required fields with default values
     });
   } catch (error) {
-    console.error("Error creating user document:", error);
+    console.log("Error creating user document:", error);
   }
 }
 
 exports.setCustomClaims = functions.https.onCall(async (data, context) => {
   const { uid, name, phone } = data;
 
-  console.log("setCustomClaims data:", data);
+  const metadata = { resource: { type: "global" } };
 
   if (context.auth) {
-    console.log("setCustomClaims: setting custom claims for uid:", uid);
+
     await admin.auth().setCustomUserClaims(uid, { name, phone });
-    console.log("setCustomClaims: custom claims set for uid:", uid);
+
     return { status: "success" };
   } else {
     throw new functions.https.HttpsError("unauthenticated", "User not authenticated");
@@ -48,6 +48,7 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
 });
 
 exports.createUserWithEmailPassword = functions.https.onCall(async (data, context) => {
+  
   const { email, password, name, phone } = data;
 
   try {
@@ -55,17 +56,108 @@ exports.createUserWithEmailPassword = functions.https.onCall(async (data, contex
       email,
       password,
       displayName: name,
+      phoneNumber: phone,
     });
-
+    
     // Set custom claims
     await admin.auth().setCustomUserClaims(userRecord.uid, { name, phone });
 
     // Create user document
     await createUserDocument(userRecord, name, phone);
-
     return { uid: userRecord.uid };
   } catch (error) {
+    console.error("Error in createUserWithEmailPassword function:", error); 
     throw new functions.https.HttpsError("unknown", error.message);
   }
 });
+
+async function createAdDocument(ad, uid) {
+  try {
+    const createdAt = new Date().toISOString();
+
+    return admin.firestore().collection("ads").doc().set({
+      ...ad,
+      uid: uid,
+      createdAt: createdAt,
+      updatedAt: createdAt,
+      // Add any other required fields with default values
+    });
+  } catch (error) {
+    console.log("Error creating ad document:", error);
+  }
+}
+
+// Cloud Function to create a new ad
+exports.createAd = functions.https.onCall(async (data, context) => {
+  const { ad } = data;
+  const uid = context.auth.uid;
+
+  // Get the user's activity document
+  const activityRef = admin.firestore().collection('userActivity').doc(uid);
+  const activityDoc = await activityRef.get();
+
+  // Check if the user has already posted the maximum number of ads
+  if (activityDoc.exists) {
+    const activityData = activityDoc.data();
+    const timeSinceLastPost = Date.now() - activityData.lastPost;
+    const oneHour = 60 * 60 * 1000;
+    
+
+    // If it's been less than an hour since the last post, and the user has already posted 10 ads, reject the request
+    if (timeSinceLastPost < oneHour && activityData.postCount >= 3) {
+      throw new functions.https.HttpsError('resource-exhausted', 'You have reached the maximum number of posts for this time period. Please try again later.');
+    }
+  }
+  
+
+  // If the request was not rejected, create the ad and update the user's activity
+  await createAdDocument(ad, uid); 
+  await activityRef.set({
+    lastPost: Date.now(),
+    postCount: admin.firestore.FieldValue.increment(1)
+  }, { merge: true });
+
+  return { status: 'success' };
+});
+
+// Cloud Function to reset post counts every hour
+exports.resetPostCounts = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
+  const activityDocs = await admin.firestore().collection('userActivity').get();
+
+  // Reset the post count for each user
+  const batch = admin.firestore().batch();
+  activityDocs.forEach(doc => {
+    batch.update(doc.ref, { postCount: 0 });
+  });
+
+  await batch.commit();
+});
+
+exports.decrementPostCountOnAdDeletion = functions.firestore
+  .document('ads/{adId}')
+  .onDelete(async (snap, context) => {
+    const adData = snap.data();
+    const uid = adData.uid;
+
+    const activityRef = admin.firestore().collection('userActivity').doc(uid);
+    const activityDoc = await activityRef.get();
+
+    if (activityDoc.exists) {
+      const activityData = activityDoc.data();
+
+      // Check if the postCount is already at 0
+      if (activityData.postCount > 0) {
+        // Check the type of the ad
+        if (adData.type === 'regular') {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-1)
+          });
+        } else if (adData.type === 'premium') {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-2)
+          });
+        }
+      }
+    }
+  });
 

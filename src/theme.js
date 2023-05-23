@@ -54,9 +54,13 @@ export const themeSettings = (mode) => {
             // palette values for dark mode
             primary: {
               main: colors.blue[3] + " !important",
+              white: colors.white[2] + " !important",
             },
             secondary: {
               main: colors.blue[1],
+            },
+            tertiery: {
+              main: colors.white[2],
             },
             text: {
               primary: '#fff',
@@ -77,6 +81,9 @@ export const themeSettings = (mode) => {
               main: colors.red[1],
               light: colors.red[2],
               dark: colors.red[3],
+            },
+            tertiery: {
+              main: colors.white[2],
             },
             text: {
               primary: '#000',

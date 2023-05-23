@@ -152,7 +152,7 @@ const Home = () => {
                   />
                 </Link>
               </IconButton>
-              <Typography variant="body1" align="center" color="primary.main">
+              <Typography variant="body1" align="center" color="primary">
                 Motors
               </Typography>
             </Stack>
@@ -165,7 +165,7 @@ const Home = () => {
                   style={{ width: 65, height: 50 }}
                 />
               </IconButton>
-              <Typography variant="body1" align="center" color="primary.main">
+              <Typography variant="body1" align="center" color="primary">
                 Property
               </Typography>
             </Stack>

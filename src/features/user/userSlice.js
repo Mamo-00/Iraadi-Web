@@ -1,56 +1,639 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getDoc, doc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { db } from "./firebase"; // Update this import path to the correct path for your project
+import { createSlice, createAsyncThunk, createSelector, createEntityAdapter } from "@reduxjs/toolkit";
 
-// Fetch and update the current user
-export const fetchUser = createAsyncThunk("user/fetchUser", async () => {
-  const auth = getAuth();
-  const currentUser = auth.currentUser;
+import {
+  auth,
+  googleProvider,
+  facebookProvider,
+  emailProvider,
+  functions,
+  db,
+  storage
+} from "../../firebase/firebase-config";
+import {
+  
+  signInWithEmailAndPassword,
+  getRedirectResult,
+  signInWithCredential,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
+  signOut,
+  sendPasswordResetEmail,
+  updateEmail as updateUserEmail,
+  updatePassword as updateUserPassword,
+  signInWithRedirect,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { httpsCallable } from "firebase/functions";
 
-  if (!currentUser || !currentUser.uid) return console.log("no current user");
+import * as Sentry from "@sentry/react";
+
+// This function is a reference to a Firebase Cloud Function 
+// that will create a new user with an email and password.
+const createUserWithEmailPassword = httpsCallable(
+  functions,
+  "createUserWithEmailPassword"
+);
+
+// This asynchronous Redux action will attempt to sign up 
+// a new user with an email and password.
+export const signUpWithEmailPassword = createAsyncThunk(
+  "user/signUpWithEmailPassword",
+  async ({ email, password, name, phone }, { rejectWithValue }) => {
+     // Tries to sign up a user with the provided email, password, name, and phone number
+    try {
+      
+      const providers = await fetchSignInMethodsForEmail(auth, email);
+      if (providers.length > 0) {
+        const providerNames = providers.map((providerId) => {
+          switch (providerId) {
+            case "google.com":
+              return "Google";
+            case "facebook.com":
+              return "Facebook";
+            default:
+              return providerId;
+          }
+        });
+        // If an account already exists with the provided email, 
+        // it will reject the action with a custom message
+        const message = `The email address is already in use by another account with ${
+          providerNames.length > 1 ? "these providers: " : "this provider: "
+        }${providerNames.join(", ")}. Please use ${
+          providerNames.length > 1 ? "one of them" : "it"
+        } to sign in.`;
+
+        return rejectWithValue({ message });
+      } else {
+        // If successful, it will return the new user's data
+        const result = await createUserWithEmailPassword({
+          email,
+          password,
+          name,
+          phone,
+        });
+        
+        const uid = result.data.uid;
+        console.log("User created with UID:", uid);
+
+        // Return the user's data, without signing them in
+        return {
+          uid,
+          email,
+          displayName: name,
+          phoneNumber: phone,
+          // Add any other fields you'd like to return here
+        };
+      }
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      Sentry.captureException(error);
+      console.error("rejectWithValue signUp value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous Redux action will attempt to sign in 
+// a user with an email and password.
+export const signInWithEmailPassword = createAsyncThunk(
+  "user/signInWithEmailPassword",
+  async ({ loginEmail, loginPassword }, { rejectWithValue }) => {
+   // Tries to sign in a user with the provided email and password
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        loginEmail,
+        loginPassword
+      );
+      const user = userCredential.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      // If successful, it will return the user's data
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return {
+          uid: user.uid,
+          email: loginEmail,
+          displayName: userData.displayName,
+          phoneNumber: userData.phoneNumber,
+          photoURL: userData.photoURL,
+        };
+      }
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      Sentry.captureException(error);
+      console.error("rejectWithValue signIn value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous Redux action will sign out the current user.
+export const signOutUser = createAsyncThunk(
+  "user/signOut",
+  async (_, { rejectWithValue }) => {
+    // Tries to sign out the current user
+    try {
+      await signOut(auth);
+      // If successful, it will return null
+      return null;
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      Sentry.captureException(error);
+      console.error("rejectwithvalue signOutUser value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous Redux action will send a 
+// password reset email to the provided email.
+export const resetPassword = createAsyncThunk(
+  "user/resetPassword",
+  async (email, { rejectWithValue }) => {
+    // Tries to send a password reset email to the provided email
+    try {
+      await sendPasswordResetEmail(auth, email);
+      // If successful, it will return a success message
+      return "Password reset email sent successfully!";
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      Sentry.captureException(error);
+      console.error("rejectWithValue resetPassword value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous Redux action will update the current 
+// user's email to the provided email.
+export const updateEmail = createAsyncThunk(
+  "user/updateEmail",
+  async (email, { rejectWithValue }) => {
+     // Tries to update the current user's email to the provided email
+    try {
+      const user = auth.currentUser;
+      await updateUserEmail(user, email);
+      // If successful, it will return the new email
+      return email;
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      Sentry.captureException(error);
+      console.error("rejectWithValue updateEmail value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous Redux action will update the current 
+// user's password to the provided password.
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (password, { rejectWithValue }) => {
+    // Tries to update the current user's password to the provided password
+    try {
+      const user = auth.currentUser;
+      await updateUserPassword(user, password);
+      // If successful, it will return a success message
+      return "Password updated successfully!";
+    } catch (error) {
+      // If an error occurs, it will reject the action with the error message
+      // you can see the logs on iiraadi's sentry account
+      console.error("rejectWithValue updatePassword value:", error.message);
+      Sentry.captureException(error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This function waits for a user document to exist in Firestore.
+const waitForUserDocument = async (user) => {
+  const userDocRef = doc(db, "users", user.uid);
+  let userDoc = await getDoc(userDocRef);
+  // Continually checks if the user's document exists in Firestore
+  while (!userDoc.exists()) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    userDoc = await getDoc(userDocRef);
+  }
+  // If it does, it returns the document
+  // If it doesn't, it waits for a short period of time (0.1 sec) and checks again
+  return userDoc;
+  
+};
+
+/* This function handles the case where a user tries to sign in using Google or Facebook,
+but the email associated with their Google or Facebook account is already associated with another
+type of account. For instance, if the email is already associated with a password-based account, 
+this function will prompt the user for their password and then link the new sign-in method 
+(Google or Facebook) with the existing account.
+currently we are only using the google signin to avoid the
+auth/account-exists-with-different-credential error when triggered by facebook and only handle it 
+when it is triggered by email/password sign in */
+async function handleDifferentCredentialError(error, rejectWithValue) {
+  const userEmail = auth?.currentUser?.email;
+  const existingEmail = userEmail || error?.customData?.email;
+
+  const providerId = error.customData._tokenResponse.providerId;
+  const accessToken = error.customData._tokenResponse.oauthAccessToken;
+  const pendingCred =
+    providerId === "facebook.com"
+      ? facebookProvider.constructor.credential(accessToken)
+      : providerId === "google.com"
+      ? googleProvider.constructor.credential(accessToken)
+      : null;
+
+  if (!existingEmail) {
+    return rejectWithValue("An unexpected error occurred. Please try again.");
+  }
 
   try {
-    const userDocRef = doc(db, "users", currentUser.uid);
-    const userDoc = await getDoc(userDocRef);
-
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      return {
-        displayName: userData.displayName,
-        phoneNumber: userData.phoneNumber,
-        photoURL: userData.photoURL,
-      };
+    const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
+    if (providers.includes(emailProvider.providerId)) {
+      const password = window.prompt("Please provide the password for " + existingEmail);
+      const userCredential = await signInWithEmailAndPassword(auth, existingEmail, password);
+      const user = userCredential.user;
+      console.log("user:", user);
+      await linkWithCredential(user, pendingCred);
+    } else if (providers.includes(facebookProvider.providerId) && providerId === "google.com") {
+      // Sign in with Facebook
+      console.log("facebook");
+      facebookProvider.setCustomParameters({ login_hint: existingEmail });
+      const userCredential = await getRedirectResult(auth);
+      const user = userCredential.user;
+      await linkWithCredential(user, pendingCred);
+    } else if (providers.includes(googleProvider.providerId) && providerId === "facebook.com") {
+      // Sign in with Google
+      console.log("google");
+      googleProvider.setCustomParameters({ login_hint: existingEmail });
+      const userCredential = await getRedirectResult(auth);
+      console.log("auth:", auth);
+      console.log("user credential:", userCredential);
+      const user = userCredential?.user;
+      await linkWithCredential(user, pendingCred);
+    } else {
+      throw new Error("Unsupported provider.");
     }
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    Sentry.captureException(error);
+    console.log("Error in handleDifferentCredentialError:", error);
+    return rejectWithValue("An unexpected error occurred. Please try again.");
   }
-  return null;
+}
+
+// This asynchronous thunk function signs a user in with their Google account.
+export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
+  try {
+    await signInWithRedirect(auth, googleProvider);
+  } catch (error) {
+    // If there is an error during the sign-in process, 
+    // it will be caught and sent to Sentry for error tracking.
+    Sentry.captureException(error);
+    console.log("rejectwithvalue signInWithGoogle value:",error.message);
+    return rejectWithValue(error.message);
+  }
 });
 
-const userSlice = createSlice({
-  name: "user",
-  initialState: {
-    data: null,
-    loading: false,
-    error: null,
-  },
-  reducers: {
-    
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchUser.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(fetchUser.fulfilled, (state, action) => {
-      state.data = action.payload;
-      state.loading = false;
-    });
-    builder.addCase(fetchUser.rejected, (state, action) => {
-      state.error = action.error;
-      state.loading = false;
-    });
+// This asynchronous thunk function signs a user in with their Facebook account.
+export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
+  try {
+    await signInWithRedirect(auth, facebookProvider);
+  } catch (error) {
+    // If there is an error during the sign-in process, 
+    // it will be caught and sent to Sentry for error tracking.
+    Sentry.captureException(error);
+    console.log("rejectwithvalue signInWithFacebook value:",error.message);
+    return rejectWithValue(error.message);
+  }
+});
+
+// This asynchronous thunk function fetches and updates the current user's 
+// information in the Redux store.
+export const fetchAndUpdateCurrentUser = createAsyncThunk(
+  "user/fetchAndUpdateCurrentUser",
+  async (uid, { rejectWithValue }) => {
+    try {
+      // Log the user id for debugging purposes
+      console.log("user id value in fetch:", uid);
+
+      // Get a reference to the document in the 'users' collection with the provided uid
+      const userDocRef = doc(db, "users", uid);
+      
+      // Fetch the document from Firestore
+      const userDoc = await getDoc(userDocRef);
+      console.log("did it reach here? yes it did");
+
+      // Check if the document exists
+      if (userDoc.exists()) {
+        // If the document exists, get the data from the document
+        const userData = userDoc.data();
+        console.log("userData is:", userData);
+        // Return the user's display name, phone number, and profile picture URL
+        return {
+          displayName: userData.displayName,
+          phoneNumber: userData.phoneNumber,
+          photoURL: userData.photoURL,
+        };
+      } else {
+        // If the document does not exist, log a message and return null values
+        console.log("User document does not exist");
+        return {
+          displayName: null,
+          phoneNumber: null,
+          photoURL: null,
+        };
+      }
+    } catch (error) {
+      // If there's an error during this process, log the error message,
+      // capture the error with Sentry for error tracking, and reject the promise with the error message
+      Sentry.captureException(error);
+      console.log("rejectwithvalue fetchAndUpdate value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This asynchronous thunk function updates a user's profile information in the Firebase database.
+export const updateProfile = createAsyncThunk(
+  "user/updateProfile",
+  async (
+    { uid, displayName, phoneNumber, profilePictureFile },
+    { rejectWithValue }
+  ) => {
+    try {
+      let profilePictureUrl;
+
+      if (profilePictureFile) {
+        // Create a reference to the location in Firebase Storage where the profile picture will be stored.
+        const storageRef = ref(storage, `profilePictures/${uid}`);
+
+        // Upload the profile picture file to Firebase Storage.
+        await uploadBytes(storageRef, profilePictureFile);
+
+        // Once the upload is complete, get the download URL for the profile picture.
+        profilePictureUrl = await getDownloadURL(storageRef);
+      }
+
+      // Get a reference to the document in the 'users' collection with the provided uid.
+      const userDocRef = doc(db, "users", uid);
+
+      // Update the user document in Firestore with the new profile information and the current time as the updated time.
+      await updateDoc(userDocRef, {
+        displayName,
+        phoneNumber,
+        photoURL: profilePictureUrl,
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Get the current user from Firebase Authentication.
+      const user = auth.currentUser;
+
+      // Reload the user's authentication profile to ensure that the latest user information is available in the auth profile.
+      await user.reload();
+
+      // Return the new user profile information.
+      return {
+        displayName,
+        phoneNumber,
+        photoURL: profilePictureUrl,
+      };
+    } catch (error) {
+      // If there's an error during this process, reject the promise with the error message.
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// This adapter creates selectors for basic Redux CRUD operations.
+const userAdapter = createEntityAdapter({
+  selectId: (user) => user.uid,
+});
+
+// This is the initial state for the user slice of the Redux store.
+const initialState = userAdapter.getInitialState({
+  status: "idle",
+  error: null,
+  user: {
+    displayName: null,
+    phoneNumber: null,
+    photoURL: null,
   },
 });
+
+// This creates the Redux slice for user operations.
+const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    upsertUser: userAdapter.upsertOne,
+    removeAllUsers: userAdapter.removeAll,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(signUpWithEmailPassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(signUpWithEmailPassword.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        userAdapter.upsertOne(state, action.payload);
+        state.error = null;
+      })
+      .addCase(signUpWithEmailPassword.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(signInWithEmailPassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(signInWithEmailPassword.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        userAdapter.upsertOne(state, action.payload);
+        state.error = null;
+      })
+      .addCase(signInWithEmailPassword.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(signOutUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(signOutUser.fulfilled, (state) => {
+        state.status = "succeeded";
+        userAdapter.removeAll(state);
+        state.error = null;
+      })
+      .addCase(signOutUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateEmail.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateEmail.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        userAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { email: action.payload.email },
+        });
+        state.error = null;
+      })
+      .addCase(updateEmail.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updatePassword.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(signInWithGoogle.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        userAdapter.upsertOne(state, action.payload);
+        state.error = null;
+      })
+      .addCase(signInWithGoogle.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(signInWithFacebook.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        userAdapter.upsertOne(state, action.payload);
+        state.error = null;
+      })
+      .addCase(signInWithFacebook.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchAndUpdateCurrentUser.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAndUpdateCurrentUser.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user.displayName = action.payload.displayName;
+        state.user.phoneNumber = action.payload.phoneNumber;
+        state.user.photoURL = action.payload.photoURL;
+        state.error = null;
+      })
+      .addCase(fetchAndUpdateCurrentUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
+  },
+});
+
+// These are the Redux actions that can be dispatched for user operations.
+export const { upsertUser, removeAllUsers } = userSlice.actions;
+
+// This asynchronous thunk function listens for changes in the user's sign-in state.
+// If the user is signed in, their information is fetched from Firestore and saved in the Redux store.
+// If the user is not signed in, all user data is removed from the Redux store.
+export const signInStateChangeListener = createAsyncThunk(
+  "user/signInStateChangeListener",
+  async (_, { dispatch, rejectWithValue }) => {
+    // Register a listener for changes in the user's authentication state.
+    // This listener will be called each time the user's sign-in status changes.
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // If the user is signed in, wait for the user's document in Firestore to be available.
+        const userDoc = await waitForUserDocument(user);
+
+        // If the user's document exists, get the user data from it.
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+
+          // Prepare the payload with the user's data.
+          const payload = {
+            uid: user.uid,
+            email: user.email,
+            displayName: userData.displayName,
+            phoneNumber: userData.phoneNumber,
+            photoURL: userData.photoURL,
+          };
+
+          // Dispatch the upsertUser action to update the user's data in the Redux store.
+          dispatch(upsertUser(payload));
+        }
+      } else {
+        // If the user is not signed in, dispatch the removeAllUsers action to 
+        // clear the user data from the Redux store.
+        dispatch(removeAllUsers());
+      }
+    });
+
+    // Handle the redirect result if the user is signing in using a federated identity provider.
+    try {
+      const result = await getRedirectResult(auth);
+      if (result.user) {
+        // If the user successfully signed in, wait for the user's document in Firestore to be available.
+        const user = result.user;
+        const userDoc = await waitForUserDocument(user);
+
+        if (userDoc.exists()) {
+          // If the user's document exists, get the user data from it.
+          const userData = userDoc.data();
+          
+          // Prepare the payload with the user's data.
+          const payload = {
+            uid: user.uid,
+            displayName: userData.displayName || user.displayName,
+            phoneNumber: userData.phoneNumber || user.phoneNumber,
+            photoURL: userData.photoURL || user.photoURL,
+          };
+
+          // Dispatch the upsertUser action to update the user's data in the Redux store.
+          dispatch(upsertUser(payload));
+        }
+      }
+    } catch (error) {
+      // If an error occurred during the sign-in process, handle it.
+      if (error.code === "auth/account-exists-with-different-credential") {
+        // This specific error occurs when the user has already signed up using a 
+        // different sign-in method with the same email address.
+        // In this case, handle the error and try to merge the accounts.
+        try {
+          console.log("we reached the handle different credential error fucntnion");
+          await handleDifferentCredentialError(error, rejectWithValue);
+        } catch (e) {
+          console.log("we reached error");
+          // If handling the error failed, clear the user data from the Redux store.
+          dispatch(removeAllUsers());
+        }
+      }
+    }
+  }
+);
+
+export const {
+  selectAll: selectAllUsers,
+  selectById: selectUserById,
+  selectIds: selectUserIds,
+} = userAdapter.getSelectors((state) => state.user);
+
+export const selectCurrentUser = createSelector(selectAllUsers, (users) => (users.length > 0 ? users[0] : null));
 
 export default userSlice.reducer;

@@ -1,6 +1,7 @@
 import { React, useContext, useState, useEffect, useRef } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Fab from "@mui/material/Fab";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { Link  } from 'react-router-dom';
@@ -8,7 +9,6 @@ import Logo from '../assets/logo/page-logo.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -18,11 +18,14 @@ import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
 
-import { useAuth } from "../firebase/auth";
-import { DEFAULT_PROFILE_PICTURE_URL } from "../firebase/auth";
+import { useSelector, useDispatch } from 'react-redux';
+import { signOutUser, fetchAndUpdateCurrentUser, selectCurrentUser  } from '../features/user/userSlice';
+
 import { Typography, useTheme } from "@mui/material";
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { ColorModeContext, tokens } from "../theme";
 
 // https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
@@ -32,23 +35,26 @@ const Navbar = ( { toggleShow } ) => {
   const theme = useTheme();
   const colors = tokens("theme.palette.mode");
   const colorMode = useContext(ColorModeContext);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+
+  
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => selectCurrentUser(state));
+  
   const userFetched = useRef(false);
 
-  const [updatedUserData, setUpdatedUserData] = useState(null);
-  const { currentUser, logout, profilePictureUrl, fetchAndUpdateCurrentUser } = useAuth();
-  
+  // Add useEffect to handle loading state
   useEffect(() => {
     if (currentUser && !userFetched.current) {
       setLoadingProfile(true);
-      fetchAndUpdateCurrentUser()
-        .then((data) => {
+      dispatch(fetchAndUpdateCurrentUser(currentUser.uid))
+        .then(() => {
           setLoadingProfile(false);
           userFetched.current = true;
-          setUpdatedUserData(data);
         })
         .catch((error) => {
           console.error("Error in fetchAndUpdateCurrentUser:", error);
@@ -56,9 +62,9 @@ const Navbar = ( { toggleShow } ) => {
     } else if (!currentUser) {
       setLoadingProfile(false);
       userFetched.current = false;
-      setUpdatedUserData(null);
     }
-  }, [currentUser, fetchAndUpdateCurrentUser]);
+  }, [currentUser, dispatch]);
+  
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -78,6 +84,10 @@ const Navbar = ( { toggleShow } ) => {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleLogout = () => {
+    dispatch(signOutUser());
   };
 
   const menuId = 'primary-search-account-menu';
@@ -104,10 +114,10 @@ const Navbar = ( { toggleShow } ) => {
       {currentUser !== null ? (
         <Box>
           <Link to="/">
-            <MenuItem onClick={logout}>
+            <MenuItem onClick={handleLogout}>
               <Typography
                 rel="noopener follow"
-                onClick={logout}
+                onClick={handleLogout}
                 color="inherit"
               >
                 Logout
@@ -117,7 +127,7 @@ const Navbar = ( { toggleShow } ) => {
 
           <MenuItem>
             <Typography variant="subtitle2">
-              {updatedUserData?.displayName || currentUser?.displayName}
+              {currentUser?.displayName}
             </Typography>
           </MenuItem>
         </Box>
@@ -197,13 +207,13 @@ const Navbar = ( { toggleShow } ) => {
       {currentUser !== null ? (
         <Box>
           <Link to="/">
-            <MenuItem onClick={logout}>
+            <MenuItem onClick={handleLogout}>
               <IconButton size="large" aria-label="logout" color="inherit">
                 <LogoutIcon />
               </IconButton>
               <Typography
                 rel="noopener follow"
-                onClick={logout}
+                onClick={handleLogout}
                 color="inherit"
               >
                 Logout
@@ -218,7 +228,7 @@ const Navbar = ( { toggleShow } ) => {
               ) : currentUser !== null ? (
                 <Avatar
                   alt="Profile picture"
-                  src={profilePictureUrl}
+                  src={currentUser?.photoURL}
                   sx={{ width: 24, height: 24 }}
                 />
               ) : (
@@ -277,7 +287,29 @@ const Navbar = ( { toggleShow } ) => {
                 style={{ height: "30px", width: "170px" }}
               />
             </Link>
-
+            <Link to="/create-ad" style={{ marginLeft: "2rem" }}>
+              <Fab
+                variant="extended"
+                color="tertiery"
+                size="small"
+                aria-label="create ad"
+              >
+                {!isSmallScreen ? (
+                  <>
+                    <EditIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: "bold", pr: 1, letterSpacing: 0.75 }}
+                      color="primary"
+                    >
+                      Create ad
+                    </Typography>
+                  </>
+                ) : (
+                  <EditIcon color="primary" />
+                )}
+              </Fab>
+            </Link>
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               {/* Light / Dark mode*/}
@@ -322,7 +354,7 @@ const Navbar = ( { toggleShow } ) => {
                 ) : currentUser !== null ? (
                   <Avatar
                     alt="Profile picture"
-                    src={updatedUserData?.photoURL || currentUser?.photoURL}
+                    src={currentUser?.photoURL}
                     sx={{ width: 24, height: 24 }}
                   />
                 ) : (

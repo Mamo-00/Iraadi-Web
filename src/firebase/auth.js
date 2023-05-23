@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+/* import React, { useContext, useState, useEffect } from "react";
 import { auth, googleProvider, facebookProvider, emailProvider, functions, db } from "./firebase-config";
 import { doc, getDoc, updateDoc, setDoc, } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -409,3 +409,4 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+ */
