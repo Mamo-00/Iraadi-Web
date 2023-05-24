@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer';
 import Login from '../../components/Login';
 import 'bootstrap/dist/css/bootstrap.min.css';

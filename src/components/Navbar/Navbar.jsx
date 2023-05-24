@@ -22,11 +22,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { signOutUser, fetchAndUpdateCurrentUser, selectCurrentUser  } from '../features/user/userSlice';
+import { signOutUser, fetchAndUpdateCurrentUser, selectCurrentUser  } from '../../features/user/userSlice';
 
 import { Typography, useTheme } from "@mui/material";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { ColorModeContext, tokens } from "../theme";
+import { ColorModeContext, tokens } from "../../theme";
 
 // https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
 

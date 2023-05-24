@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "../../../components/Navbar";
+import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
-import Sidebar from "../../../components/Sidebar"
+import Sidebar from "../../../components/Sidebar/Sidebar"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useTheme, Stack, Box, Grid } from "@mui/material";
 import VehicleCard from "../../../components/Cards/VehicleCard";
