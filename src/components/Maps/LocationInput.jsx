@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import React, { useState, useEffect, useRef } from 'react';
+import ReactMapGL, { Marker, NavigationControl } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import Geocoder from 'react-map-gl-geocoder';
+
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const LocationInput = () => {
   const [location, setLocation] = useState({
@@ -11,7 +14,23 @@ const LocationInput = () => {
     error: null,
   });
 
-  const [watchId, setWatchId] = useState(null);
+  const [viewport, setViewport] = useState({
+    latitude: location.latitude,
+    longitude: location.longitude,
+    zoom: 14,
+    bearing: 0,
+    pitch: 0,
+  });
+
+  const mapRef = useRef();
+
+  const onMarkerDragEnd = (event) => {
+    setLocation({
+      ...location,
+      latitude: event.lngLat[1],
+      longitude: event.lngLat[0],
+    });
+  };
 
   const fetchLocation = () => {
     setLocation((prevState) => ({ ...prevState, loading: true }));
@@ -21,7 +40,7 @@ const LocationInput = () => {
         latitude: null,
         longitude: null,
         loading: false,
-        error: 'Geolocation is not supported by your browser',
+        error: "Geolocation is not supported by your browser",
       });
     } else {
       navigator.geolocation.getCurrentPosition(
@@ -32,10 +51,15 @@ const LocationInput = () => {
             loading: false,
             error: null,
           });
+          setViewport({
+            ...viewport,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
         },
         (error) => {
           let errorMessage;
-          switch(error.code) {
+          switch (error.code) {
             case error.PERMISSION_DENIED:
               errorMessage = "User denied the request for Geolocation.";
               break;
@@ -64,50 +88,47 @@ const LocationInput = () => {
 
   useEffect(() => {
     fetchLocation();
-    // Watch for location changes
-    if (navigator.geolocation) {
-      const id = navigator.geolocation.watchPosition((position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          loading: false,
-          error: null,
-        });
-      });
-      setWatchId(id);
-    }
-    // Clean up the watcher on unmount
-    return () => {
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
   }, []);
 
+  const handleGeocoderViewportChange = (newViewport) => {
+    const geocoderDefaultOverrides = { transitionDuration: 1000 };
+
+    return setViewport({
+      ...newViewport,
+      ...geocoderDefaultOverrides,
+    });
+  };
+
   return (
-    <Box>
-      {location.loading ? (
-        <Typography variant="body1">Loading...</Typography>
-      ) : location.error ? (
-        <Box>
-          <Typography variant="body1" color="error">
-            Error: {location.error}
-          </Typography>
-          <Button variant="contained" onClick={fetchLocation}>
-            Retry
-          </Button>
-        </Box>
-      ) : (
-        <Box>
-          <Typography variant="body1">
-            Latitude: {location.latitude}
-          </Typography>
-          <Typography variant="body1">
-            Longitude: {location.longitude}
-          </Typography>
-        </Box>
-      )}
-    </Box>
+    <>
+      <ReactMapGL
+        {...viewport}
+        width="100%"
+        height="100%"
+        mapStyle="mapbox://styles/mapbox/satellite-v9"
+        onViewportChange={setViewport}
+        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+        ref={mapRef}
+      >
+        <Marker
+          latitude={location.latitude}
+          longitude={location.longitude}
+          draggable
+          onDragEnd={onMarkerDragEnd}
+        >
+          <LocationOnIcon color='secondary'/>
+        </Marker>
+        <div style={{ position: "absolute", right: 10, top: 10 }}>
+          <NavigationControl />
+        </div>
+        <Geocoder
+          mapRef={mapRef}
+          onViewportChange={handleGeocoderViewportChange}
+          mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+          position="top-left"
+        />
+      </ReactMapGL>
+    </>
   );
 };
 

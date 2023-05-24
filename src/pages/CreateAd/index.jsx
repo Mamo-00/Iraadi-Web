@@ -40,6 +40,8 @@ const CreateAd = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("USD");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  
 
   const [priceError, setPriceError] = useState(false);
   const [titleError, setTitleError] = useState(false);
@@ -69,6 +71,10 @@ const CreateAd = () => {
 
   const handleCurrencyChange = (event) => {
     setCurrency(event.target.value);
+  };
+
+  const handleLocationChange = (newLocation) => {
+    setSelectedLocation(newLocation);
   };
 
   const toggleShow = (e) => {
@@ -231,6 +237,10 @@ const CreateAd = () => {
               </FormControl>
             </Stack>
           </Box>
+          {/* Location component goes here */}
+          <Box sx={{ mt: 2 }}>
+            <LocationInput onLocationChange={handleLocationChange} />
+          </Box>
           <Button variant="outlined" sx={{ mt: 2 }}>
             Categories
           </Button>
@@ -242,4 +252,4 @@ const CreateAd = () => {
   );
 };
 
-export default CreateAd
+export default CreateAd;
