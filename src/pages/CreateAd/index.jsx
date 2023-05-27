@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer';
 import Login from '../../components/Login';
+import LocationInput from '../../components/Maps/LocationInput';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {
@@ -41,6 +42,8 @@ const CreateAd = () => {
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [locationInText, setLocationInText] = useState('');
+
   
 
   const [priceError, setPriceError] = useState(false);
@@ -75,6 +78,7 @@ const CreateAd = () => {
 
   const handleLocationChange = (newLocation) => {
     setSelectedLocation(newLocation);
+    setLocationInText(newLocation);
   };
 
   const toggleShow = (e) => {
@@ -168,6 +172,8 @@ const CreateAd = () => {
           />
           <Box
             sx={{
+              display: 'flex',
+              flexDirection: 'column',
               [theme.breakpoints.down("sm")]: {
                 width: "100%",
               },
@@ -225,7 +231,7 @@ const CreateAd = () => {
                     <Typography
                       variant="h4"
                       fontWeight="bold"
-                      sx={{ mx: 1, display: 'inline-block' }}
+                      sx={{ mx: 1, display: "inline-block" }}
                       color="primary"
                     >
                       S
@@ -236,14 +242,56 @@ const CreateAd = () => {
                 </Select>
               </FormControl>
             </Stack>
+            <StyledTextField
+              error={descriptionError}
+              value={locationInText ? locationInText.placeName : ""}
+              onChange={handleLocationChange}
+              InputProps={{
+                readOnly: true,
+              }}
+              id="location"
+              label="Location"
+              variant="outlined"
+              size="small"
+              helperText={
+                !isSmallScreen
+                  ? "Place the marker where your item is located, if the marker is not automatically placed there. If the address is not accurate, manually type in your address"
+                  : "Place the marker where your item is located or manually type it in"
+              }
+              sx={{
+                [theme.breakpoints.down("sm")]: {
+                  width: "100%",
+                },
+                width: "75%",
+                mt: 4,
+              }}
+            />
+            <Box
+              sx={{
+                mt: 2,
+                [theme.breakpoints.down("sm")]: {
+                  width: "100%",
+                },
+                width: "50%",
+                height: 300,
+                border: "5px solid #4189DD",
+                borderRadius: "10px",
+              }}
+            >
+              <LocationInput onLocationChange={handleLocationChange} />
+            </Box>
           </Box>
           {/* Location component goes here */}
-          <Box sx={{ mt: 2 }}>
-            <LocationInput onLocationChange={handleLocationChange} />
-          </Box>
+
           <Button variant="outlined" sx={{ mt: 2 }}>
             Categories
           </Button>
+          <Typography variant="h4" sx={{ mt: 2 }}>
+            Latitude:{" "}
+            {selectedLocation ? selectedLocation.latitude : "Loading..."},
+            Longitude:{" "}
+            {selectedLocation ? selectedLocation.longitude : "Loading..."}
+          </Typography>
         </Stack>
       </Box>
 

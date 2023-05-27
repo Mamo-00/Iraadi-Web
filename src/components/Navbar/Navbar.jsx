@@ -5,7 +5,7 @@ import Fab from "@mui/material/Fab";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { Link  } from 'react-router-dom';
-import Logo from '../assets/logo/page-logo.png';
+import Logo from '../../assets/logo/page-logo.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';

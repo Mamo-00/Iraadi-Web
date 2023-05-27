@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ReactComponent as MarketIcon } from "../../assets/categoryIcons/market.svg";
-import { ReactComponent as VehicleIcon } from "../../assets/categoryIcons/vehicle.svg";
-import { ReactComponent as PropertyIcon } from "../../assets/categoryIcons/property.svg";
-import { ReactComponent as RentalIcon } from "../../assets/categoryIcons/rental.svg";
-import { ReactComponent as ValuablesIcon } from "../../assets/categoryIcons/valuables.svg";
+import { ReactComponent as MarketIcon } from "../../assets/categoryIcons/svg/market.svg";
+import { ReactComponent as VehicleIcon } from "../../assets/categoryIcons/svg/vehicle.svg";
+import { ReactComponent as PropertyIcon } from "../../assets/categoryIcons/svg/property.svg";
+import { ReactComponent as RentalIcon } from "../../assets/categoryIcons/svg/rental.svg";
+import { ReactComponent as ValuablesIcon } from "../../assets/categoryIcons/svg/valuables.svg";
 import { useTheme } from "@mui/material";
 
 const CategoryIcons = ({ category, ...props }) => {

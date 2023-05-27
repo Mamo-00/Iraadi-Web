@@ -4,9 +4,10 @@ import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer";
 import Login from "../../components/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import CategoryIcons from "../../components/Icons/CategoryIcons";
+import CategoryCard from "../../components/Cards/CategoryCard";
 import { useTheme } from "@mui/material";
 import { products } from "../../utils/products";
+import { categories } from "../../utils/categories";
 import CarsPromoCard from '../../components/Cards/PromotionCards/CarPromoCard'
 import {
   IconButton,
@@ -106,9 +107,9 @@ const Home = () => {
   return (
     <div>
       <Navbar toggleShow={toggleShow} />
-
+  
       <Login open={open} toggleShow={toggleShow} />
-
+  
       <Box
         sx={{
           flexGrow: 1,
@@ -120,82 +121,23 @@ const Home = () => {
           my: 4,
           py: 1,
           borderRadius: 4,
-          backgroundColor: "background.paper",
         }}
-        style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
+        
       >
         <Grid
           container
           spacing={2}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <Stack direction="column" alignItems="center">
-              <IconButton>
-                <CategoryIcons
-                  category="market"
-                  style={{ width: 65, height: 50 }}
-                />
-              </IconButton>
-              <Typography variant="body1" align="center" color="primary.main">
-                Market
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <Stack direction="column" alignItems="center">
-              <IconButton>
-                <Link to="/motors">
-                  <CategoryIcons
-                    category="vehicle"
-                    style={{ width: 65, height: 50 }}
-                  />
-                </Link>
-              </IconButton>
-              <Typography variant="body1" align="center" color="primary">
-                Motors
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-            <Stack direction="column" alignItems="center">
-              <IconButton>
-                <CategoryIcons
-                  category="property"
-                  style={{ width: 65, height: 50 }}
-                />
-              </IconButton>
-              <Typography variant="body1" align="center" color="primary">
-                Property
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <Stack direction="column" alignItems="center">
-              <IconButton>
-                <CategoryIcons
-                  category="rental"
-                  style={{ width: 65, height: 50 }}
-                />
-              </IconButton>
-              <Typography variant="body1" align="center" color="primary.main">
-                Rental
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item sm={6} sx={{ display: "flex", justifyContent: "center" }}>
-            <Stack direction="column" alignItems="center">
-              <IconButton>
-                <CategoryIcons
-                  category="valuables"
-                  style={{ width: 65, height: 50 }}
-                />
-              </IconButton>
-              <Typography variant="body1" align="center" color="primary.main">
-                Valuables
-              </Typography>
-            </Stack>
-          </Grid>
+          {categories.map((category, index) => (
+            <Grid item xs={6} sm={3} key={index}>
+              <CategoryCard 
+                category={category.name} 
+                subcategories={category.subcategories} 
+                image={category.image} 
+              />
+            </Grid>
+          ))}
         </Grid>
       </Box>
       <Box
