@@ -1,17 +1,22 @@
 import React, { useState } from "react";
+import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
 import Sidebar from "../../../components/Sidebar/Sidebar"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useTheme, Stack, Box, Grid } from "@mui/material";
-import VehicleCard from "../../../components/Cards/VehicleCard";
+import VehicleCard from "../../../components/Cards/DisplayCards/VehicleCard";
 
-import { products } from "../../../utils/products";
+import { useProducts } from "../../../utils/hooks/useProducts"
 
 const Motors = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
+
+  const { category, subcategory, subsubcategory } = useParams();
+
+  const motorProducts = useProducts(category, subcategory, subsubcategory);
 
   const toggleShow = (e) => {
     e.preventDefault();
@@ -29,7 +34,6 @@ const Motors = () => {
           maxWidth: "1010px",
           mx: "auto",
           my: 4,
-          
         }}
       >
         <Grid
@@ -42,9 +46,9 @@ const Motors = () => {
           </Grid>
           <Grid item sm={8}>
             <Stack direction="column" spacing={2}>
-              {products?.map((item, index) => (
+              {motorProducts.map((item) => (
                 <VehicleCard
-                  key={index}
+                  key={item?.id}
                   img={item?.img}
                   make={item?.make}
                   model={item?.model}

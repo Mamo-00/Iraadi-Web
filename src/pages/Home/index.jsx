@@ -10,7 +10,6 @@ import { products } from "../../utils/products";
 import { categories } from "../../utils/categories";
 import CarsPromoCard from '../../components/Cards/PromotionCards/CarPromoCard'
 import {
-  IconButton,
   Typography,
   Stack,
   Grid,

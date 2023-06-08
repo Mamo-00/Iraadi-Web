@@ -29,8 +29,8 @@ export default function CategoryCard({ category, subcategories, image }) {
     setExpanded(!expanded);
   };
 
-  const handleSubExpandClick = (index) => {
-    setExpandedSubs(prev => ({...prev, [index]: !prev[index]}));
+  const handleSubExpandClick = (name) => {
+    setExpandedSubs(prev => ({...prev, [name]: !prev[name]}));
   };
 
   return (
@@ -60,9 +60,8 @@ export default function CategoryCard({ category, subcategories, image }) {
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          
-          {subcategories.map((sub, index) => (
-            <Box key={index}>
+          {subcategories.map((sub) => (
+            <Box key={sub.name}>
               <Box
                 sx={{
                   display: "flex",
@@ -71,37 +70,44 @@ export default function CategoryCard({ category, subcategories, image }) {
                   cursor: sub.subcategories.length > 0 ? "pointer" : "default",
                 }}
                 onClick={() =>
-                  sub.subcategories.length > 0 && handleSubExpandClick(index)
+                  sub.subcategories.length > 0 && handleSubExpandClick(sub.name)
                 }
               >
                 <Link
-                  to={`/${category}`}
+                  to={`/${category.replace(/\s+/g, "-")}/${sub.name.replace(
+                    /\s+/g,
+                    "-"
+                  )}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <Typography paragraph>{sub.name}</Typography>
                 </Link>
                 {sub.subcategories.length > 0 && (
                   <ExpandMore
-                    expand={expandedSubs[index]}
-                    aria-expanded={expandedSubs[index]}
+                    expand={expandedSubs[sub.name]}
+                    aria-expanded={expandedSubs[sub.name]}
                     aria-label="show more"
                   >
                     <ExpandMoreIcon />
                   </ExpandMore>
                 )}
               </Box>
-              <Collapse in={expandedSubs[index]} timeout="auto" unmountOnExit>
+              <Collapse
+                in={expandedSubs[sub.name]}
+                timeout="auto"
+                unmountOnExit
+              >
                 {sub.subcategories &&
-                  sub.subcategories.map((subSub, index) => (
+                  sub.subcategories.map((subSub) => (
                     <Link
-                      to={`/${category}`}
+                      to={`/${category.replace(/\s+/g, "-")}/${sub.name.replace(
+                        /\s+/g,
+                        "-"
+                      )}/${subSub.name.replace(/\s+/g, "-")}`}
                       style={{ textDecoration: "none", color: "inherit" }}
+                      key={subSub.name}
                     >
-                      <Typography
-                        key={index}
-                        paragraph
-                        style={{ marginLeft: "20px" }}
-                      >
+                      <Typography paragraph sx={{ ml: 3}}>
                         {subSub.name}
                       </Typography>
                     </Link>

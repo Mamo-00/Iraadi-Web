@@ -1,20 +1,27 @@
 import React from "react";
-import VehicleCardIcons from '../Icons/VehicleCardIcons';
+import VehicleCardIcons from '../../Icons/VehicleCardIcons';
 import {
   Box,
   Card,
   CardContent,
   CardMedia,
   Typography,
-  Chip,
-  Avatar
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const VehicleCard = ( { img, make, model, location, distance, year, price, user, color, doors, description } ) => {
+const VehicleCard = ( { img, make, model, location, distance, year, price, color, doors, description } ) => {
   return (
-    <Card sx={{ borderRadius: 2, boxShadow: 1, cursor: "pointer", mb: 2, borderBottom: 1, borderRight: 1 }}>
-      <Box display="flex">
+    <Card
+      sx={{
+        borderRadius: 2,
+        boxShadow: 1,
+        cursor: "pointer",
+        mb: 2,
+        borderBottom: 1,
+        borderRight: 1,
+      }}
+    >
+      <Box display="flex" maxHeight={200}>
         <CardMedia
           component="img"
           image={img}
@@ -31,12 +38,12 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
           sx={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
             flexGrow: 1,
           }}
         >
           <Box>
-            <Typography variant="h3" fontWeight="bold" sx={{mb: 2}}>
+            <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
               {price} $
             </Typography>
             <Typography variant="body1">
@@ -45,13 +52,20 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
             <Typography variant="body2" noWrap>
               {description}
             </Typography>
-            <Box display="flex" alignItems="center" flexWrap="wrap" mt={1}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              flexWrap="wrap"
+              mt={1}
+            >
               <Box display="flex" alignItems="center" mr={1}>
                 <VehicleCardIcons
                   category="year"
                   style={{ width: 30, height: 35 }}
+                  aria-label="calender icon"
                 />
-                <Typography variant="body2" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5}>
                   {year}
                 </Typography>
               </Box>
@@ -59,8 +73,9 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
                 <VehicleCardIcons
                   category="mileage"
                   style={{ width: 30, height: 35 }}
+                  aria-label="speedometer icon"
                 />
-                <Typography variant="body2" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5}>
                   {distance} km
                 </Typography>
               </Box>
@@ -68,8 +83,9 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
                 <VehicleCardIcons
                   category="doors"
                   style={{ width: 30, height: 35 }}
+                  aria-label="door icon"
                 />
-                <Typography variant="body2" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5}>
                   {doors} doors
                 </Typography>
               </Box>
@@ -77,8 +93,9 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
                 <VehicleCardIcons
                   category="palette"
                   style={{ width: 30, height: 35 }}
+                  aria-label="palette icon"
                 />
-                <Typography variant="body2" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5}>
                   {color}
                 </Typography>
               </Box>
@@ -91,19 +108,12 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, user,
             mt={2}
           >
             <Box display="flex" alignItems="center">
-              <LocationOnIcon fontSize="small" />
+              <LocationOnIcon fontSize="small" aria-label="location icon"/>
               <Typography variant="body2" ml={0.5}>
                 {location}
               </Typography>
             </Box>
-            <Box display="flex" alignItems="center">
-              
-              <Avatar
-                alt={user}
-                src={user}
-                sx={{ width: 24, height: 24 }}
-              />
-            </Box>
+            <Box display="flex" alignItems="center"></Box>
           </Box>
         </CardContent>
       </Box>

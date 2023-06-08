@@ -1,0 +1,84 @@
+import React from "react";
+import { format } from 'date-fns';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+
+const ElectronicsCard = ( { img, title, location, price, category, usage, condition, date } ) => {
+  return (
+    <Card
+      sx={{
+        borderRadius: 2,
+        boxShadow: 1,
+        cursor: "pointer",
+        mb: 2,
+        borderBottom: 1,
+        borderRight: 1,
+      }}
+    >
+      <Box display="flex" maxHeight={200}>
+        <CardMedia
+          component="img"
+          image={img}
+          alt={`${category} image`}
+          sx={{
+            maxWidth: "33%",
+            maxHeight: "200px",
+            objectFit: "cover",
+            borderTopLeftRadius: 2,
+            borderBottomLeftRadius: 2,
+            borderRight: 2,
+          }}
+        />
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+            flexGrow: 1,
+          }}
+        >
+          <Box>
+            <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
+              {title}
+            </Typography>
+            <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
+              {price}$
+            </Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+              Usage: {usage}
+            </Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+              Condition: {condition}
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={2}
+          >
+            <Box display="flex" alignItems="center">
+              <LocationOnIcon fontSize="small" aria-label="location icon" />
+              <Typography variant="body2" ml={0.5}>
+                {location}
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              {isNaN(new Date(date).getTime())
+                ? "Invalid date"
+                : format(new Date(date), "dd MMMM yyyy")}
+            </Box>
+          </Box>
+        </CardContent>
+      </Box>
+    </Card>
+  );
+};
+
+export default ElectronicsCard;

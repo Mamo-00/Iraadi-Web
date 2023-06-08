@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Profile from "./pages/Profile";
 import CreateAd from "./pages/CreateAd";
 import Motors from "./pages/Categories/Motors";
+import Electronics from "./pages/Categories/Electronics";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 
@@ -24,13 +25,26 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/motors" element={<Motors />} />
-              <Route path="/create-ad" element={<CreateAd />} />
-            </Routes>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/create-ad" element={<CreateAd />} />
+
+          <Route path="/:category" element={<Electronics />} />
+          <Route path="/:category/:subcategory" element={<Electronics />} />
+          <Route
+            path="/:category/:subcategory/:subsubcategory"
+            element={<Electronics />}
+          />
+
+          <Route path="/:category" element={<Motors />} />
+          <Route path="/:category/:subcategory" element={<Motors />} />
+          <Route
+            path="/:category/:subcategory/:subsubcategory"
+            element={<Motors />}
+          />
+        </Routes>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

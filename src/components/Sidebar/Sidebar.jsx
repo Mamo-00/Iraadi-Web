@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { carMakes } from '../../utils/carMakes'
+import { carMakes } from "../../utils/carMakes";
 import {
   Box,
   Button,
@@ -11,14 +11,14 @@ import {
   MenuItem,
   Select,
   Typography,
-  TextField
+  TextField,
+  IconButton,
 } from "@mui/material";
+import  CloseRoundedIcon  from '@mui/icons-material/CloseRounded';
 
-const Sidebar = () => {
+const Sidebar = ( {close} ) => {
   const maxYear = new Date().getFullYear();
   const minYear = 1930;
-
-
 
   const [location, setLocation] = useState("");
   const [make, setMake] = useState("");
@@ -43,7 +43,6 @@ const Sidebar = () => {
     setYear(newValue);
   };
 
- 
   const handleLocationChange = (event) => {
     setLocation(event.target.value);
   };
@@ -105,10 +104,11 @@ const Sidebar = () => {
         variant="outlined"
         color="secondary"
         onClick={resetFilters}
-        sx={{ mb: 2, width: "33%" }}
+        sx={{ mb: 2, width: "33%", height: "50%" }}
       >
-        Reset
+        <Typography variant="button">Reset</Typography>
       </Button>
+
       <FormControl fullWidth sx={{ mb: 3 }}>
         <InputLabel id="location-label">Location</InputLabel>
         <Select
@@ -127,24 +127,29 @@ const Sidebar = () => {
           <MenuItem value="Trondheim">Baidoa</MenuItem>
         </Select>
       </FormControl>
+
       {/*Set Year */}
-      <Stack direction="row" sx={{ mb: 3 }}>
-        <Typography variant="subtitle2" sx={{ mr: 1 }}>
-          {year[0]}
-        </Typography>
-        <Slider
-          getAriaLabel={() => "model year"}
-          value={year}
-          onChange={handleYearChange}
-          valueLabelDisplay="auto"
-          min={minYear}
-          max={maxYear}
-          sx={{ mx: 1 }}
-        />
-        <Typography variant="subtitle2" sx={{ ml: 1 }}>
-          {year[1]}
-        </Typography>
-      </Stack>
+      <Box display="flex" flexDirection="column" textAlign="center">
+        <Typography variant="subtitle1">Year</Typography>
+        <Stack direction="row" sx={{ mb: 3 }}>
+          <Typography variant="subtitle2" sx={{ mr: 1 }}>
+            {year[0]}
+          </Typography>
+          <Slider
+            label="year"
+            getAriaLabel={() => "model year"}
+            value={year}
+            onChange={handleYearChange}
+            valueLabelDisplay="auto"
+            min={minYear}
+            max={maxYear}
+            sx={{ mx: 1 }}
+          />
+          <Typography variant="subtitle2" sx={{ ml: 1 }}>
+            {year[1]}
+          </Typography>
+        </Stack>
+      </Box>
 
       <Stack direction="row" sx={{ mb: 3 }}>
         <TextField
@@ -159,9 +164,11 @@ const Sidebar = () => {
             max: 1000000,
             type: "number",
           }}
-          sx={{ mr: 2}}
+          sx={{ mr: 2 }}
         />
-        <Typography variant="subtitle2" sx={{ my: "auto" }}>Distance</Typography>
+        <Typography variant="subtitle2" sx={{ my: "auto" }}>
+          Distance
+        </Typography>
         <TextField
           variant="outlined"
           type="number"
@@ -294,6 +301,43 @@ const Sidebar = () => {
           <MenuItem value="grey">Grey</MenuItem>
         </Select>
       </FormControl>
+
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <InputLabel id="color-label">Colors</InputLabel>
+        <Select
+          labelId="color-label"
+          id="color-select"
+          value={color}
+          label="Colors"
+          onChange={handleColorChange}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "left",
+            },
+            transformOrigin: {
+              vertical: "top",
+              horizontal: "left",
+            },
+            getContentAnchorEl: null,
+            PaperProps: {
+              style: {
+                maxHeight: 200, // Set the maximum height of the dropdown here
+              },
+            },
+          }}
+        >
+          <MenuItem value="red">Red</MenuItem>
+          <MenuItem value="orange">Orange</MenuItem>
+          <MenuItem value="green">Green</MenuItem>
+          <MenuItem value="blue">Blue</MenuItem>
+          <MenuItem value="white">White</MenuItem>
+          <MenuItem value="silver">Silver</MenuItem>
+          <MenuItem value="black">Black</MenuItem>
+          <MenuItem value="grey">Grey</MenuItem>
+        </Select>
+      </FormControl>
+
       <Button variant="contained" color="primary">
         Apply
       </Button>
