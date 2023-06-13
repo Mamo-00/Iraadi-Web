@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
-import Sidebar from "../../../components/Sidebar/Sidebar"
+import VehicleSideBar from "../../../components/Sidebar/VehicleSidebar"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useTheme, Stack, Box, Grid } from "@mui/material";
 import VehicleCard from "../../../components/Cards/DisplayCards/VehicleCard";
@@ -14,9 +14,10 @@ const Motors = () => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
 
-  const { category, subcategory, subsubcategory } = useParams();
+  const { subcategory, subsubcategory } = useParams();
 
-  const motorProducts = useProducts(category, subcategory, subsubcategory);
+  const motorProducts = useProducts("Motors", subcategory, subsubcategory);
+  console.log("motors product", motorProducts);
 
   const toggleShow = (e) => {
     e.preventDefault();
@@ -42,7 +43,7 @@ const Motors = () => {
           sx={{ display: "flex", justifyContent: "center" }}
         >
           <Grid item sm={4}>
-            <Sidebar />
+            <VehicleSideBar />
           </Grid>
           <Grid item sm={8}>
             <Stack direction="column" spacing={2}>

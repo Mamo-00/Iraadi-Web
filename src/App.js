@@ -31,17 +31,17 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-ad" element={<CreateAd />} />
 
-          <Route path="/:category" element={<Electronics />} />
-          <Route path="/:category/:subcategory" element={<Electronics />} />
+          <Route path="/Electronics" element={<Electronics />} />
+          <Route path="/Electronics/:subcategory" element={<Electronics />} />
           <Route
-            path="/:category/:subcategory/:subsubcategory"
+            path="/Electronics/:subcategory/:subsubcategory"
             element={<Electronics />}
           />
 
-          <Route path="/:category" element={<Motors />} />
-          <Route path="/:category/:subcategory" element={<Motors />} />
+          <Route path="/Motors" element={<Motors />} />
+          <Route path="/Motors/:subcategory" element={<Motors />} />
           <Route
-            path="/:category/:subcategory/:subsubcategory"
+            path="/Motors/:subcategory/:subsubcategory"
             element={<Motors />}
           />
         </Routes>

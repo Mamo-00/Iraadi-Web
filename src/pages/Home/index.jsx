@@ -6,8 +6,7 @@ import Login from "../../components/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CategoryCard from "../../components/Cards/CategoryCard";
 import { useTheme } from "@mui/material";
-import { products } from "../../utils/products";
-import { categories } from "../../utils/categories";
+import { products, categories } from "../../utils/products";
 import CarsPromoCard from '../../components/Cards/PromotionCards/CarPromoCard'
 import {
   Typography,
@@ -106,9 +105,9 @@ const Home = () => {
   return (
     <div>
       <Navbar toggleShow={toggleShow} />
-  
+
       <Login open={open} toggleShow={toggleShow} />
-  
+
       <Box
         sx={{
           flexGrow: 1,
@@ -121,7 +120,6 @@ const Home = () => {
           py: 1,
           borderRadius: 4,
         }}
-        
       >
         <Grid
           container
@@ -130,11 +128,7 @@ const Home = () => {
         >
           {categories.map((category, index) => (
             <Grid item xs={6} sm={3} key={index}>
-              <CategoryCard 
-                category={category.name} 
-                subcategories={category.subcategories} 
-                image={category.image} 
-              />
+              <CategoryCard category={category} image={category.image} />
             </Grid>
           ))}
         </Grid>
@@ -150,10 +144,9 @@ const Home = () => {
         }}
         textAlign="center"
       >
-        <Promo title="Recently Looked At"/>
-        <Promo title="Popular Cars"/>
-        <Promo title="Popular Properties"/>
-        
+        <Promo title="Recently Looked At" />
+        <Promo title="Popular Cars" />
+        <Promo title="Popular Properties" />
       </Box>
       <Footer />
     </div>

@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { subcategories, subsubcategories } from '../../utils/products'
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -21,10 +22,11 @@ const ExpandMore = styled((props) => {
   })
 }));
 
-export default function CategoryCard({ category, subcategories, image }) {
+export default function CategoryCard({ category, image }) {
+
+  
   const [expanded, setExpanded] = React.useState(false);
   const [expandedSubs, setExpandedSubs] = React.useState({});
-
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -35,7 +37,12 @@ export default function CategoryCard({ category, subcategories, image }) {
 
   return (
     <Card sx={{ maxWidth: 200, mx: "auto", my: "auto" }}>
-      <CardMedia component="img" height="150" image={image} alt={category} />
+      <CardMedia
+        component="img"
+        height="150"
+        image={image}
+        alt={category.name}
+      />
       <Box
         sx={{
           display: "flex",
@@ -47,7 +54,7 @@ export default function CategoryCard({ category, subcategories, image }) {
       >
         <CardContent sx={{ textAlign: "center" }}>
           <Typography variant="h6" color="text.secondary">
-            {category}
+            {category.name}
           </Typography>
         </CardContent>
         <ExpandMore
@@ -60,61 +67,79 @@ export default function CategoryCard({ category, subcategories, image }) {
       </Box>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {subcategories.map((sub) => (
-            <Box key={sub.name}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  cursor: sub.subcategories.length > 0 ? "pointer" : "default",
-                }}
-                onClick={() =>
-                  sub.subcategories.length > 0 && handleSubExpandClick(sub.name)
-                }
-              >
-                <Link
-                  to={`/${category.replace(/\s+/g, "-")}/${sub.name.replace(
-                    /\s+/g,
-                    "-"
-                  )}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  <Typography paragraph>{sub.name}</Typography>
-                </Link>
-                {sub.subcategories.length > 0 && (
-                  <ExpandMore
-                    expand={expandedSubs[sub.name]}
-                    aria-expanded={expandedSubs[sub.name]}
-                    aria-label="show more"
+          {/* 
+          Here, I've used an immediately invoked function expression (IIFE) to create a new scope inside the JSX. This allows us to declare variables and run code before returning the JSX elements. Good for debugging.
+           */}
+          {(() => {
+            const filteredSubcategories = subcategories.filter(
+              (sub) => sub.categoryId === category.id
+            );
+            return filteredSubcategories.map((sub) => {
+              const subSubcategories = subsubcategories.filter(
+                (subsub) => subsub.subcategoryId === sub.id
+              );
+              return (
+                <Box key={sub.name}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      cursor:
+                        subSubcategories.length > 0 ? "pointer" : "default",
+                    }}
+                    onClick={() =>
+                      subSubcategories.length > 0 &&
+                      handleSubExpandClick(sub.name)
+                    }
                   >
-                    <ExpandMoreIcon />
-                  </ExpandMore>
-                )}
-              </Box>
-              <Collapse
-                in={expandedSubs[sub.name]}
-                timeout="auto"
-                unmountOnExit
-              >
-                {sub.subcategories &&
-                  sub.subcategories.map((subSub) => (
                     <Link
-                      to={`/${category.replace(/\s+/g, "-")}/${sub.name.replace(
+                      to={`/${category.name.replace(
                         /\s+/g,
                         "-"
-                      )}/${subSub.name.replace(/\s+/g, "-")}`}
+                      )}/${sub.name.replace(/\s+/g, "-")}`}
                       style={{ textDecoration: "none", color: "inherit" }}
-                      key={subSub.name}
                     >
-                      <Typography paragraph sx={{ ml: 3}}>
-                        {subSub.name}
-                      </Typography>
+                      <Typography paragraph>{sub.name}</Typography>
                     </Link>
-                  ))}
-              </Collapse>
-            </Box>
-          ))}
+                    {subSubcategories.length > 0 && (
+                      <ExpandMore
+                        expand={expandedSubs[sub.name]}
+                        aria-expanded={expandedSubs[sub.name]}
+                        aria-label="show more"
+                      >
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    )}
+                  </Box>
+                  <Collapse
+                    in={expandedSubs[sub.name]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    {subSubcategories &&
+                      subSubcategories.map((subSub) => (
+                        <Link
+                          to={`/${category.name.replace(
+                            /\s+/g,
+                            "-"
+                          )}/${sub.name.replace(
+                            /\s+/g,
+                            "-"
+                          )}/${subSub.name.replace(/\s+/g, "-")}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                          key={subSub.name}
+                        >
+                          <Typography paragraph sx={{ ml: 3 }}>
+                            {subSub.name}
+                          </Typography>
+                        </Link>
+                      ))}
+                  </Collapse>
+                </Box>
+              );
+            });
+          })()}
         </CardContent>
       </Collapse>
     </Card>

@@ -24,13 +24,27 @@ export const useProducts = (category, subcategory, subsubcategory) => {
 
   return useMemo(() => {
     const filteredProducts = products
-      .filter(
-        (product) =>
-          (!categoryId || product.categoryId === categoryId) &&
-          (!subcategoryId || product.subcategoryId === subcategoryId) &&
-          (!subsubcategoryId || product.subsubcategoryId === subsubcategoryId)
-      );
+      .filter((product) => {
+        // Always apply the category filter
+        if (product.categoryId !== categoryId) {
+          return false;
+        }
+
+        // Only apply the subcategory filter if a subcategory is defined
+        if (subcategoryId && product.subcategoryId !== subcategoryId) {
+          return false;
+        }
+
+        // Only apply the subsubcategory filter if a subsubcategory is defined
+        if (subsubcategoryId && product.subsubcategoryId !== subsubcategoryId) {
+          return false;
+        }
+
+        // If none of the above conditions were met, this product matches all filters
+        return true;
+      });
 
     return filteredProducts;
   }, [categoryId, subcategoryId, subsubcategoryId]);
 };
+

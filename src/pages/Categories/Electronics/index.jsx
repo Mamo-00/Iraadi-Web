@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
-import Sidebar from "../../../components/Sidebar/Sidebar";
+import ElectronicsSidebar from "../../../components/Sidebar/ElectronicsSidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   useTheme,
@@ -31,9 +31,12 @@ const Electronics = () => {
   const [sortOption, setSortOption] = useState('Default');
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const { category, subcategory, subsubcategory } = useParams();
+  const { subcategory, subsubcategory } = useParams();
+  console.log("subcategory:", subcategory);
+  console.log("subsubcategory:", subsubcategory);
 
-  const electronicProducts = useProducts(category, subcategory, subsubcategory);
+  const electronicProducts = useProducts("Electronics", subcategory, subsubcategory);
+  console.log("electronics product", electronicProducts);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -164,7 +167,7 @@ const Electronics = () => {
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         >
-          <Sidebar />
+          <ElectronicsSidebar />
         </Drawer>
       </Box>
       <Backdrop open={sidebarOpen} onClick={() => setSidebarOpen(false)} />
@@ -193,7 +196,6 @@ const Electronics = () => {
                     price={item?.price}
                     location={item?.location}
                     user={item?.user}
-                    category={category}
                     usage={item?.usage}
                     condition={item?.condition}
                     date={item?.date}

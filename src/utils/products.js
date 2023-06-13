@@ -1,20 +1,50 @@
+import Motors from '../assets/categoryIcons/picture/white-car-in-orange-background.jpg';
+import Electronics from '../assets/categoryIcons/picture/electronics-in grey-background.jpg';
+import Furniture from '../assets/categoryIcons/picture/furniture-on-brown-background.jpg';
+import PropertySale from '../assets/categoryIcons/picture/House-in-Africa.jpg';
+import MobileDevices from '../assets/categoryIcons/picture/mobile-devices.jpg'
+
 export const categories = [
-  { id: 1, name: "Motors" },
-  { id: 2, name: "Electronics" },
+  { id: 1, name: "Motors", image: Motors, },
+  { id: 2, name: "Electronics", image: Electronics, },
+  { id: 3, name: 'Furniture & Interior', image: Furniture,},
+  { id: 4, name: 'Property for Sale', image: PropertySale,},
+  { id: 5, name: 'Mobile Devices', image: MobileDevices,},
   // ... other categories ...
 ];
 
 export const subcategories = [
   { id: 1, name: "Cars", categoryId: 1 },
-  { id: 2, name: "Tuktuk", categoryId: 1 },
-  { id: 3, name: "Computers", categoryId: 2 },
+  { id: 2, name: "Motorcycles", categoryId: 1 },
+  { id: 3, name: "Boats", categoryId: 1 },
+  { id: 4, name: "Tuktuk", categoryId: 1 },
+
+  { id: 5, name: "Computers", categoryId: 2 },
+  { id: 6, name: "Home Appliances", categoryId: 2 },
+  { id: 7, name: "Photo and Video", categoryId: 2 },
+  { id: 8, name: "Gaming", categoryId: 2 },
+  { id: 9, name: "Televisions", categoryId: 2 },
+  { id: 10, name: "Audio", categoryId: 2 },
+
+  { id: 11, name: "Bedroom", categoryId: 3 },
   // ... other subcategories ...
 ];
 
 export const subsubcategories = [
   // If you have subsubcategories, they would go here
-  { id: 1, name: "Desktop", categoryId: 2, subcategoryId: 3 },
-  { id: 2, name: "Laptop", categoryId: 2, subcategoryId: 3 },
+  { id: 1,name: "Sportsbike", categoryId: 1, subcategoryId: 2 },
+  { id: 2, name: "Scooter", categoryId: 1, subcategoryId: 2 },
+  { id: 3, name: "Moped", categoryId: 1, subcategoryId: 2 },
+
+  { id: 4,name: "Sailboat", categoryId: 1, subcategoryId: 3 },
+  { id: 5, name: "Motorboat", categoryId: 1, subcategoryId: 3 },
+  { id: 6, name: "Kayak", categoryId: 1, subcategoryId: 3 },
+  { id: 7, name: "Canoe", categoryId: 1, subcategoryId: 3 },
+
+  { id: 8, name: "White Goods", categoryId: 2, subcategoryId: 6 },
+  { id: 9, name: "Small Appliances", categoryId: 2, subcategoryId: 6 },
+  { id: 10, name: "Desktop", categoryId: 2, subcategoryId: 5 },
+  { id: 11, name: "Laptop", categoryId: 2, subcategoryId: 5 },
 ];
 
 export const products = [
@@ -23,6 +53,7 @@ export const products = [
     location: "Bergen",
     distance: 312,
     year: 2017,
+    title: "Nice barely used car with low milage for sale",
     img: "https://images.pexels.com/photos/1805053/pexels-photo-1805053.jpeg?auto=compress&cs=tinysrgb&w=1600",
     price: 25000,
     description:
@@ -43,6 +74,7 @@ export const products = [
     location: "Oslo",
     distance: 52,
     year: 2019,
+    title: "Nice barely used car with low milage for sale",
     img: "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg?auto=compress&cs=tinysrgb&w=1600",
     price: 545000,
     description:
@@ -63,6 +95,7 @@ export const products = [
     location: "Stavanger",
     distance: 125,
     year: 2020,
+    title: "Nice barely used car with low milage for sale",
     img: "https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=1600",
     price: 2500000,
     description:
@@ -83,6 +116,7 @@ export const products = [
     location: "Ålesund",
     distance: 278,
     year: 2012,
+    title: "Nice barely used car with low milage for sale",
     img: "https://images.pexels.com/photos/376361/pexels-photo-376361.jpeg?auto=compress&cs=tinysrgb&w=1600",
     price: 15000,
     description:
@@ -103,6 +137,7 @@ export const products = [
     location: "Bergen",
     distance: 212,
     year: 2007,
+    title: "Nice barely used car with low milage for sale",
     img: "https://images.pexels.com/photos/3156482/pexels-photo-3156482.jpeg?auto=compress&cs=tinysrgb&w=1600",
     price: 40000,
     description:
@@ -123,6 +158,7 @@ export const products = [
     location: "Tromsø",
     distance: 112,
     year: 2010,
+    title: "Nice barely used tuktuk with low milage for sale",
     img: "https://cdn.fleetnews.co.uk/web-clean/1/root/new-tuk-tuks-provide-additional-support_w268.jpg",
     price: 12000,
     description:
@@ -143,6 +179,7 @@ export const products = [
     location: "Trondheim",
     distance: 141,
     year: 2009,
+    title: "Nice barely used tuktuk with low milage for sale",
     img: "https://cdn.pixabay.com/photo/2016/09/04/12/09/tuktuk-1643802__340.jpg",
     price: 9000,
     description:
@@ -171,13 +208,13 @@ export const products = [
     user: "mamo",
     date: "2022-05-26",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 1,
+    subcategoryId: 5,
+    subsubcategoryId: 10,
   },
   {
     id: 9,
     location: "Xamar",
-    title: "Gaming PC with powerful specs for sale",
+    title: "Gaming Laptop with powerful specs for sale",
     img: "https://www.ubuy.co.no/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvNzFTTlhPU1ZJNkwuX0FDX1NMMTUwMF8uanBn.jpg",
     price: 25,
     description:
@@ -187,8 +224,8 @@ export const products = [
     user: "mamo",
     date: "2023-04-16",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 1,
+    subcategoryId: 5,
+    subsubcategoryId: 11,
   },
   {
     id: 10,
@@ -203,8 +240,8 @@ export const products = [
     user: "mamo",
     date: "2021-07-07",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 2,
+    subcategoryId: 5,
+    subsubcategoryId: 10,
   },
   {
     id: 11,
@@ -219,13 +256,13 @@ export const products = [
     user: "mamo",
     date: "2022-05-20",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 1,
+    subcategoryId: 5,
+    subsubcategoryId: 10,
   },
   {
     id: 12,
     location: "Burco",
-    title: "Gaming PC with powerful specs for sale",
+    title: "Gaming Laptop with powerful specs for sale",
     img: "https://www.ubuy.co.no/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvNzFTTlhPU1ZJNkwuX0FDX1NMMTUwMF8uanBn.jpg",
     price: 2000,
     description:
@@ -235,8 +272,8 @@ export const products = [
     user: "mamo",
     date: "2023-04-12",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 2,
+    subcategoryId: 5,
+    subsubcategoryId: 11,
   },
   {
     id: 13,
@@ -251,13 +288,13 @@ export const products = [
     user: "mamo",
     date: "2020-08-16",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 2,
+    subcategoryId: 5,
+    subsubcategoryId: 10,
   },
   {
     id: 14,
     location: "Dhuusamareeb",
-    title: "Gaming PC with powerful specs for sale",
+    title: "Gaming Laptop with powerful specs for sale",
     img: "https://www.ubuy.co.no/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvNzFTTlhPU1ZJNkwuX0FDX1NMMTUwMF8uanBn.jpg",
     price: 37000,
     description:
@@ -267,7 +304,7 @@ export const products = [
     user: "mamo",
     date: "2023-12-17",
     categoryId: 2,
-    subcategoryId: 3,
-    subsubcategoryId: 2,
+    subcategoryId: 5,
+    subsubcategoryId: 11,
   },
 ];

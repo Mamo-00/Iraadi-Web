@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const ElectronicsCard = ( { img, title, location, price, category, usage, condition, date } ) => {
+const ElectronicsCard = ( { img, title, location, price, usage, condition, date } ) => {
   return (
     <Card
       sx={{
@@ -25,7 +25,7 @@ const ElectronicsCard = ( { img, title, location, price, category, usage, condit
         <CardMedia
           component="img"
           image={img}
-          alt={`${category} image`}
+          alt={title}
           sx={{
             maxWidth: "33%",
             maxHeight: "200px",

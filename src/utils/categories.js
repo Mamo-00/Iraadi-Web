@@ -12,24 +12,24 @@ export const categories = [
     subcategories: [
       {
         name: 'Cars',
-        subcategories: [
-          {
-            name: 'Sedan',
-            subcategories: []
-          },
-          {
-            name: 'SUV',
-            subcategories: [] // Sub-sub-subcategories, if any
-          },
-          {
-            name: 'Truck',
-            subcategories: [] // Sub-sub-subcategories, if any
-          }
-        ]
+        subcategories: []
       },
       {
         name: 'Motorcycles',
-        subcategories: [] // Sub-subcategories, if any
+        subcategories: [
+          {
+            name: 'Sport Bike',
+            subcategories: []
+          },
+          {
+            name: 'Scooter',
+            subcategories: [] // Sub-sub-subcategories, if any
+          },
+          {
+            name: 'Moped',
+            subcategories: [] // Sub-sub-subcategories, if any
+          }
+        ] // Sub-subcategories, if any
       },
       {
         name: 'Tuktuk',
@@ -37,7 +37,25 @@ export const categories = [
       },
       {
         name: 'Boats',
-        subcategories: [] // Sub-subcategories, if any
+        subcategories: [
+          
+          {
+            name: 'Sailboat',
+            subcategories: []
+          },
+          {
+            name: 'Motorboat',
+            subcategories: [] // Sub-sub-subcategories, if any
+          },
+          {
+            name: 'Kayak',
+            subcategories: [] // Sub-sub-subcategories, if any
+          },
+          {
+            name: 'Canoe',
+            subcategories: []
+          }
+        ] // Sub-subcategories, if any
       }
     ]
   },
