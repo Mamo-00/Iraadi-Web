@@ -106,12 +106,12 @@ const CreateAd = () => {
         }}
         textAlign="center"
       >
-        <Typography variant="h2" color="primary" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h2" color="text.primary" sx={{ fontWeight: "bold" }}>
           Welcome!
         </Typography>
         <Typography
           variant="h4"
-          color="primary"
+          color="text.primary"
           sx={{ fontWeight: "bold", mt: 2, mb: 4 }}
         >
           Please fill in the information that best suits your ad
@@ -141,6 +141,7 @@ const CreateAd = () => {
                 width: "100%",
               },
               width: "75%",
+              color: "text.primary",
             }}
           />
           <StyledTextField
@@ -168,6 +169,7 @@ const CreateAd = () => {
               },
               width: "75%",
               mt: 4,
+              color: "text.primary",
             }}
           />
           <Box
@@ -220,11 +222,11 @@ const CreateAd = () => {
                   label="Currency"
                 >
                   <MenuItem value="USD">
-                    <AttachMoneyOutlinedIcon color="primary" sx={{ mr: 1 }} />
+                    <AttachMoneyOutlinedIcon color="text.primary" sx={{ mr: 1 }} />
                     USD
                   </MenuItem>
                   <MenuItem value="EUR">
-                    <EuroSymbolOutlinedIcon color="primary" sx={{ mr: 1 }} />
+                    <EuroSymbolOutlinedIcon color="text.primary" sx={{ mr: 1 }} />
                     EUR
                   </MenuItem>
                   <MenuItem value="SOS">
@@ -232,7 +234,7 @@ const CreateAd = () => {
                       variant="h4"
                       fontWeight="bold"
                       sx={{ mx: 1, display: "inline-block" }}
-                      color="primary"
+                      color="text.primary"
                     >
                       S
                     </Typography>{" "}

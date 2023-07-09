@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.40e73a85.css",
-    "main.js": "/static/js/main.915b0038.js",
+    "main.css": "/static/css/main.920118fc.css",
+    "main.js": "/static/js/main.d262cbb9.js",
     "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2877d54f94f30c5d563c.ttf",
     "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.13e40630e5866f777de8.ttf",
     "static/media/House-in-Africa.jpg": "/static/media/House-in-Africa.4b0428ed3aba9691f1b3.jpg",
@@ -12,8 +12,8 @@
     "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.7be2266f1be21c44ecd4.woff2",
     "static/media/white-car-in-orange-background.jpg": "/static/media/white-car-in-orange-background.45af33340106f936d0be.jpg",
     "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.146404900f7550a9719d.ttf",
-    "static/media/page-logo.png": "/static/media/page-logo.5b4360a1805596d88a51.png",
     "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.8bedd7cfa43a6c358cdd.woff2",
+    "static/media/iiraadi-site-logo-camel.png": "/static/media/iiraadi-site-logo-camel.905e3b6ef5a90fcec216.png",
     "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.6c0a7b774ffa1cf0a059.ttf",
     "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.497d535001197a9c5b38.woff2",
     "static/media/palette.svg": "/static/media/palette.ed7e607e51d0364164ffcfa609cb0161.svg",
@@ -23,11 +23,11 @@
     "static/media/car-door.svg": "/static/media/car-door.e6cbf9a8ba91bef8ee5a16a60379c6f9.svg",
     "static/media/arrow_left.svg": "/static/media/arrow_left.db6e2d88c7c35a775ce4.svg",
     "static/media/arrow_right.svg": "/static/media/arrow_right.f7c6ac6d310d3b82f0a0.svg",
-    "main.40e73a85.css.map": "/static/css/main.40e73a85.css.map",
-    "main.915b0038.js.map": "/static/js/main.915b0038.js.map"
+    "main.920118fc.css.map": "/static/css/main.920118fc.css.map",
+    "main.d262cbb9.js.map": "/static/js/main.d262cbb9.js.map"
   },
   "entrypoints": [
-    "static/css/main.40e73a85.css",
-    "static/js/main.915b0038.js"
+    "static/css/main.920118fc.css",
+    "static/js/main.d262cbb9.js"
   ]
 }

@@ -31,7 +31,7 @@ const Home = () => {
   const Promo = ( { title } ) => {
     return (
       <>
-      <Typography variant="h4" color="primary" sx={{ my: 2 }}>
+      <Typography variant="h4" color="text.primary" sx={{ my: 2 }}>
         {title}
       </Typography>
       <ImageList
@@ -106,7 +106,7 @@ const Home = () => {
     <div>
       <Navbar toggleShow={toggleShow} />
 
-      <Login open={open} toggleShow={toggleShow} />
+      <Login open={open} toggleShow={toggleShow} setOpen={setOpen}/>
 
       <Box
         sx={{

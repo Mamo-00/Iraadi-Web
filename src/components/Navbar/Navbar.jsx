@@ -5,7 +5,7 @@ import Fab from "@mui/material/Fab";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { Link  } from 'react-router-dom';
-import Logo from '../../assets/logo/page-logo.png';
+import Logo from '../../assets/logo/iiraadi-site-logo-camel.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -47,6 +47,16 @@ const Navbar = ( { toggleShow } ) => {
   
   const userFetched = useRef(false);
 
+  const updateAvatar = () => {
+    // This function doesn't need to do anything.
+    // It's purpose is to trigger a re-render of the Navbar component.
+  };
+
+  useEffect(() => {
+    // Call the updateAvatar function to trigger a re-render
+    updateAvatar();
+  }, [currentUser?.photoURL]);
+
   // Add useEffect to handle loading state
   useEffect(() => {
     if (currentUser && !userFetched.current) {
@@ -63,7 +73,8 @@ const Navbar = ( { toggleShow } ) => {
       setLoadingProfile(false);
       userFetched.current = false;
     }
-  }, [currentUser, dispatch]);
+  }, [currentUser, currentUser?.photoURL, dispatch]);
+
   
 
   const isMenuOpen = Boolean(anchorEl);
@@ -253,6 +264,7 @@ const Navbar = ( { toggleShow } ) => {
                 <CircularProgress size={24} />
               ) : currentUser !== null ? (
                 <Avatar
+                  key={currentUser?.photoURL}
                   alt="Profile picture"
                   src={currentUser?.photoURL}
                   sx={{ width: 24, height: 24 }}
@@ -310,7 +322,7 @@ const Navbar = ( { toggleShow } ) => {
                 src={Logo}
                 className="d-sm-block me-1 logo"
                 alt="Logo"
-                style={{ height: "30px", width: "170px" }}
+                style={{ height: "50px", width: "198px" }}
               />
             </Link>
             <Link to="/create-ad" style={{ marginLeft: "2rem" }}>
@@ -326,7 +338,7 @@ const Navbar = ( { toggleShow } ) => {
                     <Typography
                       variant="h5"
                       sx={{ fontWeight: "bold", pr: 1, letterSpacing: 0.75 }}
-                      color="primary"
+                      color="text.primary"
                     >
                       Create ad
                     </Typography>
@@ -350,7 +362,7 @@ const Navbar = ( { toggleShow } ) => {
               <IconButton
                 size="large"
                 aria-label="show 4 new mails"
-                color="inherit"
+                color="text.secondary"
               >
                 <Badge badgeContent={4} color="secondary">
                   <MailIcon />
@@ -360,7 +372,7 @@ const Navbar = ( { toggleShow } ) => {
               <IconButton
                 size="large"
                 aria-label="show 17 new notifications"
-                color="inherit"
+                color="text.secondary"
               >
                 <Badge badgeContent={17} color="secondary">
                   <NotificationsIcon />
@@ -379,6 +391,7 @@ const Navbar = ( { toggleShow } ) => {
                   <CircularProgress size={24} />
                 ) : currentUser !== null ? (
                   <Avatar
+                    key={currentUser?.photoURL}
                     alt="Profile picture"
                     src={currentUser?.photoURL}
                     sx={{ width: 24, height: 24 }}

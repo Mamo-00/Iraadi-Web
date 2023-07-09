@@ -41,7 +41,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
   return (
     <Container maxWidth="sm">
       <Box textAlign="center" my={4}>
-        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
+        <Typography variant="h3" color="text.primary" sx={{ mb: 4 }}>
           My ads
         </Typography>
         <Masonry
@@ -64,7 +64,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
       </Box>
 
       <Box textAlign="center" my={4}>
-        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
+        <Typography variant="h3" color="text.primary" sx={{ mb: 4 }}>
           Searches
         </Typography>
         <Masonry
@@ -87,7 +87,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
       </Box>
 
       <Box textAlign="center" my={4}>
-        <Typography variant="h3" color="primary" sx={{ mb: 4 }}>
+        <Typography variant="h3" color="text.primary" sx={{ mb: 4 }}>
           Favorites
         </Typography>
         <Masonry

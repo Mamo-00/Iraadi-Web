@@ -15,10 +15,11 @@ export const tokens = (mode) => ({
           //200: "#1a3758",
           //300: "#275285",
           //400: "#346eb1",
-          1: "#4189dd",
+          1: "#DFCB90",
+          2: "#B18E30",
+          3: "#D0AA3A",
           //600: "#67a1e4",
-          2: "#8db8eb",
-          3: "#08061f"
+          //700: "#8cb8e8",
           //800: "#b3d0f1",
           //900: "#d9e7f8",
         },
@@ -29,8 +30,10 @@ export const tokens = (mode) => ({
           2: "#fff",
         },
 
-        blue: {
-          1: "#4189DD",
+        golden: {
+          1: "#DFCB90",
+          2: "#B18E30",
+          3: "#D0AA3A",
         },
 
         red: {
@@ -75,7 +78,7 @@ export const themeSettings = (mode) => {
         : {
             // palette values for light mode
             primary: {
-              main: colors.blue[1],
+              main: colors.golden[1],
             },
             secondary: {
               main: colors.red[1],
@@ -86,8 +89,8 @@ export const themeSettings = (mode) => {
               main: colors.white[2],
             },
             text: {
-              primary: '#000',
-              secondary: colors.blue[1]
+              primary: colors.golden[2],
+              secondary: colors.golden[3]
             },
             background: {
               default: colors.white[1],

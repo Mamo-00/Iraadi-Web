@@ -161,3 +161,38 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
     }
   });
 
+// Cloud Function to fetch categories
+exports.fetchCategories = functions.https.onCall(async (data, context) => {
+  try {
+    const categoriesSnapshot = await admin.firestore().collection('categories').get();
+    const categories = categoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    return { status: 'success', categories };
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw new functions.https.HttpsError('unknown', error.message);
+  }
+});
+
+// Cloud Function to fetch subcategories
+exports.fetchSubcategories = functions.https.onCall(async (data, context) => {
+  try {
+    const subcategoriesSnapshot = await admin.firestore().collection('subcategories').get();
+    const subcategories = subcategoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    return { status: 'success', subcategories };
+  } catch (error) {
+    console.error("Error fetching subcategories:", error);
+    throw new functions.https.HttpsError('unknown', error.message);
+  }
+});
+
+// Cloud Function to fetch sub-subcategories
+exports.fetchSubSubcategories = functions.https.onCall(async (data, context) => {
+  try {
+    const subSubcategoriesSnapshot = await admin.firestore().collection('sub-subcategories').get();
+    const subSubcategories = subSubcategoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    return { status: 'success', subSubcategories };
+  } catch (error) {
+    console.error("Error fetching sub-subcategories:", error);
+    throw new functions.https.HttpsError('unknown', error.message);
+  }
+});

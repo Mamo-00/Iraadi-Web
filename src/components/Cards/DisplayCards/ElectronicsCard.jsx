@@ -44,16 +44,16 @@ const ElectronicsCard = ( { img, title, location, price, usage, condition, date 
           }}
         >
           <Box>
-            <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
+            <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }} color="text.primary">
               {title}
             </Typography>
-            <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
+            <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }} color="text.primary">
               {price}$
             </Typography>
-            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }} color="text.primary">
               Usage: {usage}
             </Typography>
-            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }} color="text.primary">
               Condition: {condition}
             </Typography>
           </Box>

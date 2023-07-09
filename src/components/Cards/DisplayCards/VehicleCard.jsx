@@ -65,7 +65,7 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, color
                   style={{ width: 30, height: 35 }}
                   aria-label="calender icon"
                 />
-                <Typography variant="body1" fontWeight="bold" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5} color="text.primary">
                   {year}
                 </Typography>
               </Box>
@@ -75,7 +75,7 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, color
                   style={{ width: 30, height: 35 }}
                   aria-label="speedometer icon"
                 />
-                <Typography variant="body1" fontWeight="bold" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5} color="text.primary">
                   {distance} km
                 </Typography>
               </Box>
@@ -85,7 +85,7 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, color
                   style={{ width: 30, height: 35 }}
                   aria-label="door icon"
                 />
-                <Typography variant="body1" fontWeight="bold" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5} color="text.primary">
                   {doors} doors
                 </Typography>
               </Box>
@@ -95,7 +95,7 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, color
                   style={{ width: 30, height: 35 }}
                   aria-label="palette icon"
                 />
-                <Typography variant="body1" fontWeight="bold" ml={0.5}>
+                <Typography variant="body1" fontWeight="bold" ml={0.5} color="text.primary">
                   {color}
                 </Typography>
               </Box>
@@ -109,7 +109,7 @@ const VehicleCard = ( { img, make, model, location, distance, year, price, color
           >
             <Box display="flex" alignItems="center">
               <LocationOnIcon fontSize="small" aria-label="location icon"/>
-              <Typography variant="body2" ml={0.5}>
+              <Typography variant="body2" ml={0.5} color="text.primary">
                 {location}
               </Typography>
             </Box>

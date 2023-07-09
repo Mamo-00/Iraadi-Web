@@ -8,16 +8,23 @@ import {
   Box,
   Typography,
   InputLabel,
+  Snackbar,
+  Alert,
+  Slide,
 } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfile, fetchAndUpdateCurrentUser, selectCurrentUser } from '../features/user/userSlice';
 
+const TransitionLeft = (props) => {
+  return <Slide {...props} direction="left" />;
+}
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => selectCurrentUser(state));
-  console.log("user:", user);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [firestoreData, setFirestoreData] = useState({});
@@ -92,7 +99,19 @@ const ProfileForm = () => {
     await dispatch(updateProfile(payload));
   
     console.log("Updated user data:", { displayName, phoneNumber, profilePicture });
+  
+    // Open the Snackbar
+    setOpenSnackbar(true);
   };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+  
+    setOpenSnackbar(false);
+  };
+  
   
   useEffect(() => {
     if (user === undefined) {
@@ -125,25 +144,40 @@ const ProfileForm = () => {
   useEffect(() => {
     console.log("previewUrl is:", previewUrl);
   }, [previewUrl]);
-  
 
   return (
     <Container maxWidth="sm">
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        TransitionComponent={TransitionLeft}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Profile updated successfully!
+        </Alert>
+      </Snackbar>
+
       {loading ? (
         <Box textAlign="center" my={4}>
-          <CircularProgress sx={ { mx: "auto", mt: 5 } }/>
+          <CircularProgress sx={{ mx: "auto", mt: 5 }} />
         </Box>
       ) : (
         <>
           <Box textAlign="center" my={4}>
-            <Typography variant="h2" color="primary">
+            <Typography variant="h2" color="text.primary">
               My Profile
             </Typography>
           </Box>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="h4" color="primary">
+                <Typography variant="h4" color="text.primary">
                   Edit Profile
                 </Typography>
               </Grid>
@@ -151,7 +185,11 @@ const ProfileForm = () => {
                 {profilePicture && (
                   <Box mt={2}>
                     <Avatar
-                      src={previewUrl === (null || undefined) ? profilePicture : previewUrl}
+                      src={
+                        previewUrl === (null || undefined)
+                          ? profilePicture
+                          : previewUrl
+                      }
                       alt={displayName}
                       sx={{ mb: 2 }}
                       onLoad={() => {

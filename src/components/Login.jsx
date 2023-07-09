@@ -42,10 +42,11 @@ import {
   signInWithGoogle,
   signInWithFacebook,
 } from '../features/user/userSlice';
+import { set } from 'date-fns';
 
 
 
-const Login = ( { toggleShow, open } ) => {
+const Login = ( { toggleShow, open, setOpen } ) => {
   
   const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState('');
@@ -59,7 +60,7 @@ const Login = ( { toggleShow, open } ) => {
     // Phone useStates
   const [phone, setPhone] = useState('');
   const [formattedPhone, setFormattedPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('US');
+  const [countryCode, setCountryCode] = useState('NO');
 
     // The other fields
   const [name, setName] = useState('');
@@ -101,12 +102,15 @@ const Login = ( { toggleShow, open } ) => {
   };
 
   const handleFacebookLogin = () => {
-    dispatch(signInWithFacebook());
+    console.log("Facebook login button clicked");
+    dispatch(signInWithFacebook()).catch((error) => console.log("Error during dispatch:", error));
   };
-
+  
   const handleGoogleLogin = () => {
-    dispatch(signInWithGoogle());
+    console.log("Google login button clicked");
+    dispatch(signInWithGoogle()).catch((error) => console.log("Error during dispatch:", error));
   };
+  
 
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -199,7 +203,7 @@ const Login = ( { toggleShow, open } ) => {
                       Google
                     </Typography>
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     onClick={handleFacebookLogin}
                     startIcon={
@@ -213,7 +217,7 @@ const Login = ( { toggleShow, open } ) => {
                     >
                       Facebook
                     </Typography>
-                  </Button>
+                  </Button> */}
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   or:
@@ -266,11 +270,12 @@ const Login = ( { toggleShow, open } ) => {
                     console.log("email in login.jsx:", loginEmail);
                     dispatch(
                       signInWithEmailPassword({ loginEmail, loginPassword })
-                    )
+                      //toggleShow deosn't work here
+                    ).then(setOpen(!open))
                       .catch((error) => {
                         setError(error.message);
                       })
-                      .then(() => {});
+                      
                   }}
                 >
                   Sign in
@@ -282,13 +287,14 @@ const Login = ( { toggleShow, open } ) => {
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   Sign up with:
                 </Typography>
-                <Box display="flex" justifyContent="center" mt={2}>
+                <Box display="flex" justifyContent="space-evenly" mt={2}>
                   <Button
                     variant="outlined"
                     onClick={handleGoogleLogin}
                     startIcon={
                       <GoogleIcon fontSize="large" color="secondary" />
                     }
+                    
                   >
                     <Typography
                       variant="h5"
@@ -298,12 +304,13 @@ const Login = ( { toggleShow, open } ) => {
                       Google
                     </Typography>
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     onClick={handleFacebookLogin}
                     startIcon={
                       <FacebookIcon fontSize="large" color="primary" />
                     }
+                    
                   >
                     <Typography
                       variant="h5"
@@ -312,7 +319,7 @@ const Login = ( { toggleShow, open } ) => {
                     >
                       Facebook
                     </Typography>
-                  </Button>
+                  </Button> */}
                 </Box>
                 <Typography align="center" variant="body1" sx={{ mt: 2 }}>
                   or:

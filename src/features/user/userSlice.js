@@ -258,29 +258,43 @@ async function handleDifferentCredentialError(error, rejectWithValue) {
   try {
     const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
     if (providers.includes(emailProvider.providerId)) {
-      const password = window.prompt("Please provide the password for " + existingEmail);
-      const userCredential = await signInWithEmailAndPassword(auth, existingEmail, password);
+      const password = window.prompt(
+        "Please provide the password for " + existingEmail
+      );
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        existingEmail,
+        password
+      );
       const user = userCredential.user;
       console.log("user:", user);
       await linkWithCredential(user, pendingCred);
-    } else if (providers.includes(facebookProvider.providerId) && providerId === "google.com") {
+    } else if (
+      providers.includes(facebookProvider.providerId) &&
+      providerId === "google.com"
+    ) {
       // Sign in with Facebook
       console.log("facebook");
       facebookProvider.setCustomParameters({ login_hint: existingEmail });
       const userCredential = await getRedirectResult(auth);
       const user = userCredential.user;
       await linkWithCredential(user, pendingCred);
-    } else if (providers.includes(googleProvider.providerId) && providerId === "facebook.com") {
+    } else if (
+      providers.includes(googleProvider.providerId) &&
+      providerId === "facebook.com"
+    ) {
       // Sign in with Google
       console.log("google");
       googleProvider.setCustomParameters({ login_hint: existingEmail });
+      console.log("auth:", auth);
       const userCredential = await getRedirectResult(auth);
       console.log("auth:", auth);
       console.log("user credential:", userCredential);
+      if (!userCredential) {
+        throw new Error("User credential is null");
+      }
       const user = userCredential?.user;
       await linkWithCredential(user, pendingCred);
-    } else {
-      throw new Error("Unsupported provider.");
     }
   } catch (error) {
     Sentry.captureException(error);
@@ -293,6 +307,7 @@ async function handleDifferentCredentialError(error, rejectWithValue) {
 export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
   try {
     await signInWithRedirect(auth, googleProvider);
+   
   } catch (error) {
     // If there is an error during the sign-in process, 
     // it will be caught and sent to Sentry for error tracking.
@@ -304,16 +319,21 @@ export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async 
 
 // This asynchronous thunk function signs a user in with their Facebook account.
 export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
+  console.log("Starting Facebook sign-in redirect operation...");
   try {
     await signInWithRedirect(auth, facebookProvider);
+    console.log("Facebook sign-in redirect operation completed successfully.");
+    // Add a delay before calling getRedirectResult
+    await new Promise(resolve => setTimeout(resolve, 60000));
   } catch (error) {
-    // If there is an error during the sign-in process, 
-    // it will be caught and sent to Sentry for error tracking.
+    console.log("Error during Facebook sign-in redirect operation:", error);
     Sentry.captureException(error);
     console.log("rejectwithvalue signInWithFacebook value:",error.message);
     return rejectWithValue(error.message);
   }
 });
+
+
 
 // This asynchronous thunk function fetches and updates the current user's 
 // information in the Redux store.
@@ -596,7 +616,7 @@ export const signInStateChangeListener = createAsyncThunk(
         if (userDoc.exists()) {
           // If the user's document exists, get the user data from it.
           const userData = userDoc.data();
-          
+
           // Prepare the payload with the user's data.
           const payload = {
             uid: user.uid,
@@ -612,19 +632,25 @@ export const signInStateChangeListener = createAsyncThunk(
     } catch (error) {
       // If an error occurred during the sign-in process, handle it.
       if (error.code === "auth/account-exists-with-different-credential") {
-        // This specific error occurs when the user has already signed up using a 
+        // This specific error occurs when the user has already signed up using a
         // different sign-in method with the same email address.
         // In this case, handle the error and try to merge the accounts.
         try {
-          console.log("we reached the handle different credential error fucntnion");
+          console.log(
+            "we reached the handle different credential error function"
+          );
           await handleDifferentCredentialError(error, rejectWithValue);
         } catch (e) {
           console.log("we reached error");
           // If handling the error failed, clear the user data from the Redux store.
           dispatch(removeAllUsers());
         }
+      } else {
+        dispatch(removeAllUsers());
+        return rejectWithValue(error.message);
       }
     }
+    
   }
 );
 

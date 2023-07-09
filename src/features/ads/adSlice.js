@@ -3,6 +3,7 @@ import { db } from "./firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "./firebaseConfig";
 import * as Sentry from "@sentry/react";
+import { createSlice, createAsyncThunk, createEntityAdapter } from "@reduxjs/toolkit";
 
 // Async thunks
 export const fetchAds = createAsyncThunk('ads/fetchAds', async ( { rejectWithValue } ) => {
@@ -60,9 +61,12 @@ export const deleteAd = createAsyncThunk('ads/deleteAd', async (adId, { rejectWi
 });
 
 // Slice
+const adsAdapter = createEntityAdapter();
+
+// Slice
 const adSlice = createSlice({
   name: 'ads',
-  initialState: { ads: [], status: 'idle', error: null },
+  initialState: adsAdapter.getInitialState({ status: 'idle', error: null }),
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -71,25 +75,29 @@ const adSlice = createSlice({
       })
       .addCase(fetchAds.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.ads = action.payload;
+        adsAdapter.setAll(state, action.payload);
       })
       .addCase(fetchAds.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
       .addCase(postAd.fulfilled, (state, action) => {
-        state.ads.push(action.payload);
+        adsAdapter.addOne(state, action.payload);
       })
       .addCase(updateAd.fulfilled, (state, action) => {
-        const index = state.ads.findIndex((ad) => ad.id === action.payload.id);
-        if (index !== -1) {
-          state.ads[index] = action.payload;
-        }
+        adsAdapter.upsertOne(state, action.payload);
       })
       .addCase(deleteAd.fulfilled, (state, action) => {
-        state.ads = state.ads.filter((ad) => ad.id !== action.payload);
+        adsAdapter.removeOne(state, action.payload);
       });
   },
 });
 
 export default adSlice.reducer;
+
+// Selectors
+export const {
+  selectAll: selectAllAds,
+  selectById: selectAdById,
+  selectIds: selectAdIds,
+} = adsAdapter.getSelectors((state) => state.ads);

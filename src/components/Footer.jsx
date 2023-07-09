@@ -19,31 +19,40 @@ const Footer = () => {
       >
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h5" >About</Typography>
+
+            <Typography variant="h5" color="text.primary">About</Typography>
+
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">About Us</Typography>
+              <Typography color="#fff">About Us</Typography>
             </Link>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">Contact Us</Typography>
+              <Typography color="#fff">Contact Us</Typography>
             </Link>
+
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h5" >Help Center</Typography>
+
+            <Typography variant="h5" color="text.primary">Help Center</Typography>
+
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">FAQs</Typography>
+              <Typography color="#fff">FAQs</Typography>
             </Link>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">Terms & Conditions</Typography>
+              <Typography color="#fff">Terms & Conditions</Typography>
             </Link>
+
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h5" >Policies</Typography>
+
+            <Typography variant="h5" color="text.primary">Policies</Typography>
+
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">Privacy Policy</Typography>
+              <Typography color="#fff">Privacy Policy</Typography>
             </Link>
             <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
-              <Typography color="text.primary">Return Policy</Typography>
+              <Typography color="#fff">Return Policy</Typography>
             </Link>
+            
           </Grid>
           <Grid
             item
