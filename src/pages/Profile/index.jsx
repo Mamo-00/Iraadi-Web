@@ -24,9 +24,7 @@ const Profile = () => {
 
   return (
     <div>
-      <Navbar toggleShow={toggleShow} />
-
-      <Login open={open} toggleShow={toggleShow} />
+      <Navbar />
 
       <ProfileForm />
 

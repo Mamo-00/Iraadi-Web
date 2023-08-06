@@ -12,7 +12,7 @@ const PhonesAndTablets = () => {
   return (
     <Box>
       <Navbar />
-      <Login />
+      
       <Footer />
     </Box>
   );

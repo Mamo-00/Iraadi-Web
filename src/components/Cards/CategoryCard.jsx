@@ -68,7 +68,8 @@ export default function CategoryCard({ category, image }) {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           {/* 
-          Here, I've used an immediately invoked function expression (IIFE) to create a new scope inside the JSX. This allows us to declare variables and run code before returning the JSX elements. Good for debugging.
+          Here, I've used an immediately invoked function expression (IIFE) to create a new scope inside the JSX. 
+          This allows us to declare variables and run code before returning the JSX elements. Good for debugging.
            */}
           {(() => {
             const filteredSubcategories = subcategories.filter(

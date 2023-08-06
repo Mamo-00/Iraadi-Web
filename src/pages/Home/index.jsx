@@ -18,15 +18,12 @@ import {
   ImageListItem,
 } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useDispatch } from 'react-redux';
 
 const Home = () => {
-  const [open, setOpen] = useState(false);
-  const theme = useTheme();
+  const dispatch = useDispatch();
 
-  const toggleShow = (e) => {
-    e.preventDefault();
-    setOpen(!open);
-  };
+  const theme = useTheme();
 
   const Promo = ( { title } ) => {
     return (
@@ -104,9 +101,7 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar toggleShow={toggleShow} />
-
-      <Login open={open} toggleShow={toggleShow} setOpen={setOpen}/>
+      <Navbar />
 
       <Box
         sx={{

@@ -1,4 +1,8 @@
 const functions = require("firebase-functions");
+const sharp = require('sharp');
+const { Storage } = require('@google-cloud/storage');
+const storage = new Storage();
+
 const admin = require("firebase-admin");
 const { initializeApp } = require("firebase-admin/app");
 
@@ -108,6 +112,39 @@ exports.createAd = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError('resource-exhausted', 'You have reached the maximum number of posts for this time period. Please try again later.');
     }
   }
+
+  // handle image upload and compression for images. This function will receive the image file, 
+  // compress it to the desired size, and then upload it to Firebase Storage.
+  exports.uploadAndCompressImage = functions.https.onCall(async (data, context) => {
+    // Check for authentication
+    if (!context.auth) {
+      throw new functions.https.HttpsError('unauthenticated', 'User not authenticated');
+    }
+  
+    // Decode the base64 image
+    const imageBuffer = Buffer.from(data.image, 'base64');
+  
+    // Compress the image to the desired size (400KB)
+    let compressedImage;
+    let quality = 100;
+    do {
+      compressedImage = await sharp(imageBuffer)
+        .jpeg({ quality: quality })
+        .toBuffer();
+      quality -= 5; // Reduce quality incrementally
+    } while (compressedImage.length > 400 * 1024 && quality > 0);
+  
+    // Define the path in Firebase Storage
+    const filePath = `profilePictures/${context.auth.uid}.jpg`;
+  
+    // Upload the compressed image to Firebase Storage
+    const file = storage.bucket().file(filePath);
+    await file.save(compressedImage, { contentType: 'image/jpeg' });
+  
+    // Return the download URL
+    const downloadURL = await file.getSignedUrl({ action: 'read', expires: '03-09-2491' });
+    return { status: 'success', url: downloadURL[0] };
+  });  
   
 
   // If the request was not rejected, create the ad and update the user's activity

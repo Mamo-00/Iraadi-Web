@@ -101,6 +101,8 @@ export const signUpWithEmailPassword = createAsyncThunk(
 export const signInWithEmailPassword = createAsyncThunk(
   "user/signInWithEmailPassword",
   async ({ loginEmail, loginPassword }, { rejectWithValue }) => {
+    console.log("email and password sent from Login.jsx:", loginEmail);
+
    // Tries to sign in a user with the provided email and password
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -122,6 +124,7 @@ export const signInWithEmailPassword = createAsyncThunk(
           displayName: userData.displayName,
           phoneNumber: userData.phoneNumber,
           photoURL: userData.photoURL,
+          role: userData.role,
         };
       }
     } catch (error) {
@@ -129,7 +132,7 @@ export const signInWithEmailPassword = createAsyncThunk(
       // you can see the logs on iiraadi's sentry account
       Sentry.captureException(error);
       console.error("rejectWithValue signIn value:", error.message);
-      return rejectWithValue(error.message);
+      return rejectWithValue("something went wrong with sign in");
     }
   }
 );
@@ -304,18 +307,18 @@ async function handleDifferentCredentialError(error, rejectWithValue) {
 }
 
 // This asynchronous thunk function signs a user in with their Google account.
-export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
-  try {
-    await signInWithRedirect(auth, googleProvider);
-   
-  } catch (error) {
-    // If there is an error during the sign-in process, 
-    // it will be caught and sent to Sentry for error tracking.
-    Sentry.captureException(error);
-    console.log("rejectwithvalue signInWithGoogle value:",error.message);
-    return rejectWithValue(error.message);
-  }
-});
+  export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    
+    } catch (error) {
+      // If there is an error during the sign-in process, 
+      // it will be caught and sent to Sentry for error tracking.
+      Sentry.captureException(error);
+      console.log("rejectwithvalue signInWithGoogle value:",error.message);
+      return rejectWithValue(error.message);
+    }
+  });
 
 // This asynchronous thunk function signs a user in with their Facebook account.
 export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
@@ -333,7 +336,29 @@ export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", as
   }
 });
 
+// This asynchronous thunk function uploads and compresses the profile picture.
+export const uploadAndCompressProfilePicture = createAsyncThunk(
+  "user/uploadAndCompressProfilePicture",
+  async (profilePictureFile, { rejectWithValue }) => {
+    try {
+      // Convert the file to a base64 string
+      const reader = new FileReader();
+      reader.readAsDataURL(profilePictureFile);
+      const base64String = await new Promise((resolve) => {
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+      });
 
+      // Call the Cloud Function to upload and compress the image
+      const uploadAndCompressImage = httpsCallable(functions, "uploadAndCompressImage");
+      const response = await uploadAndCompressImage({ image: base64String });
+
+      // Return the download URL
+      return response.data.url;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 // This asynchronous thunk function fetches and updates the current user's 
 // information in the Redux store.
@@ -361,6 +386,7 @@ export const fetchAndUpdateCurrentUser = createAsyncThunk(
           displayName: userData.displayName,
           phoneNumber: userData.phoneNumber,
           photoURL: userData.photoURL,
+          role: userData.role
         };
       } else {
         // If the document does not exist, log a message and return null values
@@ -369,6 +395,7 @@ export const fetchAndUpdateCurrentUser = createAsyncThunk(
           displayName: null,
           phoneNumber: null,
           photoURL: null,
+          role: null,
         };
       }
     } catch (error) {
@@ -445,6 +472,7 @@ const initialState = userAdapter.getInitialState({
     displayName: null,
     phoneNumber: null,
     photoURL: null,
+    role: null
   },
 });
 
@@ -557,11 +585,15 @@ const userSlice = createSlice({
         state.user.displayName = action.payload.displayName;
         state.user.phoneNumber = action.payload.phoneNumber;
         state.user.photoURL = action.payload.photoURL;
+        state.user.role = action.payload.role;
         state.error = null;
       })
       .addCase(fetchAndUpdateCurrentUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(uploadAndCompressProfilePicture.fulfilled, (state, action) => {
+        state.user.photoURL = action.payload;
       });
   },
 });
@@ -585,14 +617,16 @@ export const signInStateChangeListener = createAsyncThunk(
         // If the user's document exists, get the user data from it.
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          console.log("user doc values:", userData);
 
           // Prepare the payload with the user's data.
           const payload = {
-            uid: user.uid,
-            email: user.email,
+            uid: userData.uid,
+            email: userData.email,
             displayName: userData.displayName,
             phoneNumber: userData.phoneNumber,
             photoURL: userData.photoURL,
+            role: userData.role
           };
 
           // Dispatch the upsertUser action to update the user's data in the Redux store.
@@ -623,6 +657,7 @@ export const signInStateChangeListener = createAsyncThunk(
             displayName: userData.displayName || user.displayName,
             phoneNumber: userData.phoneNumber || user.phoneNumber,
             photoURL: userData.photoURL || user.photoURL,
+            role: userData.role || user.role,
           };
 
           // Dispatch the upsertUser action to update the user's data in the Redux store.

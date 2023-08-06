@@ -22,7 +22,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { signOutUser, fetchAndUpdateCurrentUser, selectCurrentUser  } from '../../features/user/userSlice';
+import { 
+  signOutUser, 
+  fetchAndUpdateCurrentUser, 
+  selectCurrentUser 
+} from '../../features/user/userSlice';
 
 import { Typography, useTheme } from "@mui/material";
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -172,7 +176,6 @@ const Navbar = ( { toggleShow } ) => {
         <Link
           to="/login"
           rel="noopener follow"
-          onClick={toggleShow}
           color="inherit"
         >
           <MenuItem>Login</MenuItem>
@@ -283,7 +286,6 @@ const Navbar = ( { toggleShow } ) => {
         <Link
           to="/login"
           rel="noopener follow"
-          onClick={toggleShow}
           color="inherit"
         >
           <MenuItem onClick={handleMobileMenuClose}>
@@ -322,7 +324,7 @@ const Navbar = ( { toggleShow } ) => {
                 src={Logo}
                 className="d-sm-block me-1 logo"
                 alt="Logo"
-                style={{ height: "50px", width: "198px" }}
+                style={{ height: "50px", width: "178px" }}
               />
             </Link>
             <Link to="/create-ad" style={{ marginLeft: "2rem" }}>

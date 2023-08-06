@@ -26,9 +26,8 @@ const Motors = () => {
 
   return (
     <div>
-      <Navbar toggleShow={toggleShow} />
+      <Navbar />
 
-      <Login open={open} toggleShow={toggleShow} />
       <Box
         sx={{
           flexGrow: 1,

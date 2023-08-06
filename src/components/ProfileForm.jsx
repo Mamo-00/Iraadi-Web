@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfile, fetchAndUpdateCurrentUser, selectCurrentUser } from '../features/user/userSlice';
+import { updateProfile, fetchAndUpdateCurrentUser, selectCurrentUser, uploadAndCompressProfilePicture } from '../features/user/userSlice';
 
 const TransitionLeft = (props) => {
   return <Slide {...props} direction="left" />;
@@ -86,23 +86,36 @@ const ProfileForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
   
+    let profilePictureUrl = profilePicture; // Use existing URL if no new file is selected
+  
+    if (profilePictureFile) {
+      // Call the Redux thunk function to upload and compress the profile picture
+      const resultAction = await dispatch(uploadAndCompressProfilePicture(profilePictureFile));
+      if (uploadAndCompressProfilePicture.fulfilled.match(resultAction)) {
+        profilePictureUrl = resultAction.payload; // Get the new URL from the fulfilled action
+      } else {
+        // Handle the error if the upload and compression failed
+        setError("Failed to upload and compress profile picture.");
+        return;
+      }
+    }
+  
     const payload = {
       uid: user?.uid,
       displayName,
-      phoneNumber
+      phoneNumber,
+      profilePictureUrl, // Include the new or existing profile picture URL
     };
-  
-    if (profilePictureFile) {
-      payload.profilePictureFile = profilePictureFile;
-    }
   
     await dispatch(updateProfile(payload));
   
-    console.log("Updated user data:", { displayName, phoneNumber, profilePicture });
+    console.log("Updated user data:", { displayName, phoneNumber, profilePictureUrl });
   
     // Open the Snackbar
     setOpenSnackbar(true);
   };
+  
+  
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -118,32 +131,27 @@ const ProfileForm = () => {
       console.log("user is undefined", user);
       return;
     }
-    if (user !== undefined && user !== null && !isUserFetched) { // Added isUserFetched check here
+    if (user !== undefined && user !== null && !isUserFetched) {
       setLoading(true);
       console.log("user value in useEffect:", user);
       dispatch(fetchAndUpdateCurrentUser(user.uid))
         .then((data) => {
-          if(data !== null) {
+          if (data !== null) {
             setFirestoreData(data);
             setDisplayName(data.displayName || user.displayName);
             setPhoneNumber(data.phoneNumber || user.phoneNumber);
-            setProfilePicture(data.photoURL || user.photoURL || "");
+            setProfilePicture(data.photoURL || user.photoURL || ""); // Set the profilePicture state variable
             setPreviewUrl(data.photoURL || user.photoURL || "");
           }
         })
         .finally(() => {
           setLoading(false);
-          setIsUserFetched(true); // Set isUserFetched to true after dispatch completes
+          setIsUserFetched(true);
         });
-    }
-    else {
+    } else {
       console.log("user could not be found", user);
     }
-  }, [user, dispatch, isUserFetched]); // Added isUserFetched as a dependency
-
-  useEffect(() => {
-    console.log("previewUrl is:", previewUrl);
-  }, [previewUrl]);
+  }, [user, dispatch, isUserFetched]);
 
   return (
     <Container maxWidth="sm">
