@@ -25,7 +25,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { 
   signOutUser, 
   fetchAndUpdateCurrentUser, 
-  selectCurrentUser 
+  selectCurrentUser,
 } from '../../features/user/userSlice';
 
 import { Typography, useTheme } from "@mui/material";
@@ -34,7 +34,7 @@ import { ColorModeContext, tokens } from "../../theme";
 
 // https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
 
-const Navbar = ( { toggleShow } ) => {
+const Navbar = () => {
 
   const theme = useTheme();
   const colors = tokens("theme.palette.mode");
@@ -48,36 +48,26 @@ const Navbar = ( { toggleShow } ) => {
   
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => selectCurrentUser(state));
+
   
   const userFetched = useRef(false);
 
-  const updateAvatar = () => {
-    // This function doesn't need to do anything.
-    // It's purpose is to trigger a re-render of the Navbar component.
-  };
 
   useEffect(() => {
-    // Call the updateAvatar function to trigger a re-render
-    updateAvatar();
-  }, [currentUser?.photoURL]);
-
-  // Add useEffect to handle loading state
-  useEffect(() => {
-    if (currentUser && !userFetched.current) {
-      setLoadingProfile(true);
-      dispatch(fetchAndUpdateCurrentUser(currentUser.uid))
-        .then(() => {
-          setLoadingProfile(false);
-          userFetched.current = true;
-        })
-        .catch((error) => {
-          console.error("Error in fetchAndUpdateCurrentUser:", error);
-        });
-    } else if (!currentUser) {
+    setLoadingProfile(true);
+    dispatch(fetchAndUpdateCurrentUser(currentUser?.uid))
+      .then(() => {
+        setLoadingProfile(false);
+      })
+      .catch((error) => {
+        console.error("Error in fetchAndUpdateCurrentUser:", error);
+      });
+  
+    if (!currentUser) {
       setLoadingProfile(false);
-      userFetched.current = false;
     }
-  }, [currentUser, currentUser?.photoURL, dispatch]);
+  }, [currentUser?.photoURL, dispatch]);
+  
 
   
 
@@ -396,7 +386,7 @@ const Navbar = ( { toggleShow } ) => {
                     key={currentUser?.photoURL}
                     alt="Profile picture"
                     src={currentUser?.photoURL}
-                    sx={{ width: 24, height: 24 }}
+                    sx={{ width: 30, height: 30 }}
                   />
                 ) : (
                   <AccountCircle />

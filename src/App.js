@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import Profile from "./pages/Profile";
 import CreateAd from "./pages/CreateAd";
 import Motors from "./pages/Categories/Motors";
+import FAQ from "./pages/FAQ";
 import Electronics from "./pages/Categories/Electronics";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
@@ -38,6 +39,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/unauthorized" element={<UnAuthorized />} />
+            <Route path="/FAQ" element={<FAQ />} />
 
             {/*Protected Routes*/}
             <Route element={<RequireAuth allowedRoles={'user'} />}>

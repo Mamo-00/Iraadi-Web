@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Grid, Typography, Link, IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Container, Grid, Typography, IconButton } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -22,10 +23,10 @@ const Footer = () => {
 
             <Typography variant="h5" color="text.primary">About</Typography>
 
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="#" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">About Us</Typography>
             </Link>
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="#" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">Contact Us</Typography>
             </Link>
 
@@ -34,10 +35,10 @@ const Footer = () => {
 
             <Typography variant="h5" color="text.primary">Help Center</Typography>
 
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="/FAQ" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">FAQs</Typography>
             </Link>
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="#" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">Terms & Conditions</Typography>
             </Link>
 
@@ -46,10 +47,10 @@ const Footer = () => {
 
             <Typography variant="h5" color="text.primary">Policies</Typography>
 
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="#" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">Privacy Policy</Typography>
             </Link>
-            <Link href="#" sx={{ color: "#fff", textDecoration: "none" }}>
+            <Link to="#" sx={{ color: "#fff", textDecoration: "none" }}>
               <Typography color="#fff">Return Policy</Typography>
             </Link>
             
@@ -79,7 +80,7 @@ const Footer = () => {
               <FacebookIcon />
             </IconButton>
             <IconButton
-              href="#"
+              href="https://www.instagram.com/iiraadi.net1/?hl=en"
               target="_blank"
               rel="noopener noreferrer"
               sx={{

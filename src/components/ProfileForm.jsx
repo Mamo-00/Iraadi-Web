@@ -15,6 +15,8 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfile, fetchAndUpdateCurrentUser, selectCurrentUser, uploadAndCompressProfilePicture } from '../features/user/userSlice';
+import imageCompression from 'browser-image-compression';
+
 
 const TransitionLeft = (props) => {
   return <Slide {...props} direction="left" />;
@@ -35,6 +37,7 @@ const ProfileForm = () => {
   const [phoneNumber, setPhoneNumber] = useState(user ? user.phoneNumber : "");
 
   const [profilePicture, setProfilePicture] = useState(user ? user.photoURL : "");
+  console.log("old profile picutre", profilePicture);
   const [previewUrl, setPreviewUrl] = useState(user ? user.photoURL : "");
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
@@ -63,8 +66,9 @@ const ProfileForm = () => {
     reader.readAsDataURL(file);
   };
   
-  const handleProfilePictureChange = (event) => {
+  const handleProfilePictureChange = async (event) => {
     const file = event.target.files[0];
+    console.log('file value', file);
   
     if (file.size === 0) {
       // Display an error message to the user
@@ -76,72 +80,75 @@ const ProfileForm = () => {
       return; //add comments to code using gpt
     }
   
-    
-  
-    setProfilePictureFile(file);
-    readImageAsDataURL(file);
+    // Compress the image before setting it to state
+    const options = {
+      maxSizeMB: 0.4, // (400KB)
+      maxWidthOrHeight: 4000,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      setProfilePictureFile(compressedFile);
+      readImageAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Error occurred while compressing image:', error);
+    }
   };
   
-  
-  const handleSubmit = async (event) => {
+  // this code will force a reload when the save button is clicked.
+  // this is a temporary solution as we don't want reloads to update 
+  // state.
+  // TODO: change the code into updating the profile picture everywhere 
+  // in the app by rerender rather than reload. 
+  const handleSubmit = (event) => {
     event.preventDefault();
-  
-    let profilePictureUrl = profilePicture; // Use existing URL if no new file is selected
-  
-    if (profilePictureFile) {
-      // Call the Redux thunk function to upload and compress the profile picture
-      const resultAction = await dispatch(uploadAndCompressProfilePicture(profilePictureFile));
-      if (uploadAndCompressProfilePicture.fulfilled.match(resultAction)) {
-        profilePictureUrl = resultAction.payload; // Get the new URL from the fulfilled action
-      } else {
-        // Handle the error if the upload and compression failed
-        setError("Failed to upload and compress profile picture.");
-        return;
-      }
-    }
   
     const payload = {
       uid: user?.uid,
       displayName,
       phoneNumber,
-      profilePictureUrl, // Include the new or existing profile picture URL
+      profilePictureFile,
     };
   
-    await dispatch(updateProfile(payload));
-  
-    console.log("Updated user data:", { displayName, phoneNumber, profilePictureUrl });
-  
-    // Open the Snackbar
-    setOpenSnackbar(true);
+    dispatch(updateProfile(payload))
+      .then(() => {
+        // Redirect with a query parameter to indicate success
+        window.location.href = window.location.pathname + '?profileUpdated=true';
+      });
   };
-  
-  
 
   const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
-  
+
     setOpenSnackbar(false);
   };
-  
-  
+
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileUpdated = urlParams.get("profileUpdated");
+
+    if (profileUpdated === 'true') {
+      setOpenSnackbar(true);
+    
+      // Clear the query parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     if (user === undefined) {
-      console.log("user is undefined", user);
       return;
     }
     if (user !== undefined && user !== null && !isUserFetched) {
       setLoading(true);
-      console.log("user value in useEffect:", user);
-      dispatch(fetchAndUpdateCurrentUser(user.uid))
+      dispatch(fetchAndUpdateCurrentUser(user?.uid))
         .then((data) => {
           if (data !== null) {
             setFirestoreData(data);
-            setDisplayName(data.displayName || user.displayName);
-            setPhoneNumber(data.phoneNumber || user.phoneNumber);
-            setProfilePicture(data.photoURL || user.photoURL || ""); // Set the profilePicture state variable
-            setPreviewUrl(data.photoURL || user.photoURL || "");
+            setDisplayName(data?.displayName || user?.displayName);
+            setPhoneNumber(data?.phoneNumber || user?.phoneNumber);
+            setProfilePicture(data?.photoURL || user?.photoURL || ""); // Set the profilePicture state variable
+            setPreviewUrl(data?.photoURL || user?.photoURL || "");
           }
         })
         .finally(() => {
@@ -149,7 +156,7 @@ const ProfileForm = () => {
           setIsUserFetched(true);
         });
     } else {
-      console.log("user could not be found", user);
+      return;
     }
   }, [user, dispatch, isUserFetched]);
 
@@ -203,7 +210,6 @@ const ProfileForm = () => {
                       onLoad={() => {
                         setIsImageLoading(false);
                         setError("");
-                        console.log("preview url in onLoad", previewUrl);
                       }}
                       onError={() => {
                         setIsImageLoading(false);

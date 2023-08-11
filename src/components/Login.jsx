@@ -27,7 +27,7 @@ import {
   Twitter as TwitterIcon,
 } from "@mui/icons-material";
 
-import backgroundImage from '../assets/background/desert-3-login.jpg';
+import backgroundImage from '../assets/background/desert-4-login.jpg';
 import Logo from '../assets/logo/iiraadi-site-logo-camel.png';
 
 import { AsYouType, getCountries, parsePhoneNumber, isValidNumber } from 'libphonenumber-js';
@@ -112,12 +112,20 @@ const Login = () => {
 
   const handleGoogleLogin = () => {
     console.log("Google login button clicked");
-    dispatch(signInWithGoogle()).then(() => {
-      console.log("are we reaching the navigation part?");
-      navigate(from, { replace: true });
-      console.log("are we? no? sh*t.");
-    }).catch((error) => console.log("Error during google login dispatch:", error));
+    console.log('from value:', from);
+    // Store the original destination in the session storage
+    sessionStorage.setItem('originalDestination', from);
+    dispatch(signInWithGoogle())
+      .then(() => {
+        // Retrieve the original destination from the session storage
+        const originalDestination = sessionStorage.getItem('originalDestination') || '/';
+        navigate(originalDestination, { replace: true });
+        // Clear the session storage
+        sessionStorage.removeItem('originalDestination');
+      })
+      .catch((error) => console.log("Error during google login dispatch:", error));
   };
+  
 
 
   const handleChange = (event, newValue) => {

@@ -28,6 +28,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { httpsCallable } from "firebase/functions";
 
 import * as Sentry from "@sentry/react";
+import imageCompression from 'browser-image-compression';
 
 // This function is a reference to a Firebase Cloud Function 
 // that will create a new user with an email and password.
@@ -336,7 +337,7 @@ export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", as
   }
 });
 
-// This asynchronous thunk function uploads and compresses the profile picture.
+// This asynchronous thunk function uploads the profile picture.
 export const uploadAndCompressProfilePicture = createAsyncThunk(
   "user/uploadAndCompressProfilePicture",
   async (profilePictureFile, { rejectWithValue }) => {
@@ -348,9 +349,9 @@ export const uploadAndCompressProfilePicture = createAsyncThunk(
         reader.onload = () => resolve(reader.result.split(',')[1]);
       });
 
-      // Call the Cloud Function to upload and compress the image
-      const uploadAndCompressImage = httpsCallable(functions, "uploadAndCompressImage");
-      const response = await uploadAndCompressImage({ image: base64String });
+      // Call the Cloud Function to upload the image
+      const uploadImage = httpsCallable(functions, "uploadImage");
+      const response = await uploadImage({ image: base64String });
 
       // Return the download URL
       return response.data.url;
@@ -380,7 +381,6 @@ export const fetchAndUpdateCurrentUser = createAsyncThunk(
       if (userDoc.exists()) {
         // If the document exists, get the data from the document
         const userData = userDoc.data();
-        console.log("userData is:", userData);
         // Return the user's display name, phone number, and profile picture URL
         return {
           displayName: userData.displayName,
@@ -419,11 +419,19 @@ export const updateProfile = createAsyncThunk(
       let profilePictureUrl;
 
       if (profilePictureFile) {
+        // Compress the image before uploading it to Firebase Storage
+        const options = {
+          maxSizeMB: 0.4, // (400KB)
+          maxWidthOrHeight: 4000,
+          useWebWorker: true,
+        };
+        const compressedFile = await imageCompression(profilePictureFile, options);
+
         // Create a reference to the location in Firebase Storage where the profile picture will be stored.
         const storageRef = ref(storage, `profilePictures/${uid}`);
 
-        // Upload the profile picture file to Firebase Storage.
-        await uploadBytes(storageRef, profilePictureFile);
+        // Upload the compressed profile picture file to Firebase Storage.
+        await uploadBytes(storageRef, compressedFile);
 
         // Once the upload is complete, get the download URL for the profile picture.
         profilePictureUrl = await getDownloadURL(storageRef);
@@ -458,6 +466,7 @@ export const updateProfile = createAsyncThunk(
     }
   }
 );
+
 
 // This adapter creates selectors for basic Redux CRUD operations.
 const userAdapter = createEntityAdapter({
@@ -592,6 +601,13 @@ const userSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user.displayName = action.payload.displayName;
+        state.user.phoneNumber = action.payload.phoneNumber;
+        state.user.photoURL = action.payload.photoURL;
+        state.error = null;
+      })      
       .addCase(uploadAndCompressProfilePicture.fulfilled, (state, action) => {
         state.user.photoURL = action.payload;
       });
@@ -617,7 +633,6 @@ export const signInStateChangeListener = createAsyncThunk(
         // If the user's document exists, get the user data from it.
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          console.log("user doc values:", userData);
 
           // Prepare the payload with the user's data.
           const payload = {
@@ -642,6 +657,7 @@ export const signInStateChangeListener = createAsyncThunk(
     // Handle the redirect result if the user is signing in using a federated identity provider.
     try {
       const result = await getRedirectResult(auth);
+      console.log('result of the redirect:', result);
       if (result.user) {
         // If the user successfully signed in, wait for the user's document in Firestore to be available.
         const user = result.user;

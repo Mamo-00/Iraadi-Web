@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
-const sharp = require('sharp');
-const { Storage } = require('@google-cloud/storage');
+const { Storage } = require("@google-cloud/storage");
+const cors = require("cors")({ origin: true });
+
 const storage = new Storage();
 
 const admin = require("firebase-admin");
@@ -9,7 +10,6 @@ const { initializeApp } = require("firebase-admin/app");
 initializeApp();
 
 async function createUserDocument(user, name, phone) {
-
   try {
     const createdAt = new Date().toISOString();
 
@@ -38,12 +38,14 @@ exports.setCustomClaims = functions.https.onCall(async (data, context) => {
   const metadata = { resource: { type: "global" } };
 
   if (context.auth) {
-
     await admin.auth().setCustomUserClaims(uid, { name, phone });
 
     return { status: "success" };
   } else {
-    throw new functions.https.HttpsError("unauthenticated", "User not authenticated");
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "User not authenticated"
+    );
   }
 });
 
@@ -51,41 +53,46 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
   return createUserDocument(user, user.displayName, user.phoneNumber);
 });
 
-exports.createUserWithEmailPassword = functions.https.onCall(async (data, context) => {
-  
-  const { email, password, name, phone } = data;
+exports.createUserWithEmailPassword = functions.https.onCall(
+  async (data, context) => {
+    const { email, password, name, phone } = data;
 
-  try {
-    const userRecord = await admin.auth().createUser({
-      email,
-      password,
-      displayName: name,
-      phoneNumber: phone,
-    });
-    
-    // Set custom claims
-    await admin.auth().setCustomUserClaims(userRecord.uid, { name, phone });
+    try {
+      const userRecord = await admin.auth().createUser({
+        email,
+        password,
+        displayName: name,
+        phoneNumber: phone,
+      });
 
-    // Create user document
-    await createUserDocument(userRecord, name, phone);
-    return { uid: userRecord.uid };
-  } catch (error) {
-    console.error("Error in createUserWithEmailPassword function:", error); 
-    throw new functions.https.HttpsError("unknown", error.message);
+      // Set custom claims
+      await admin.auth().setCustomUserClaims(userRecord.uid, { name, phone });
+
+      // Create user document
+      await createUserDocument(userRecord, name, phone);
+      return { uid: userRecord.uid };
+    } catch (error) {
+      console.error("Error in createUserWithEmailPassword function:", error);
+      throw new functions.https.HttpsError("unknown", error.message);
+    }
   }
-});
+);
 
 async function createAdDocument(ad, uid) {
   try {
     const createdAt = new Date().toISOString();
 
-    return admin.firestore().collection("ads").doc().set({
-      ...ad,
-      uid: uid,
-      createdAt: createdAt,
-      updatedAt: createdAt,
-      // Add any other required fields with default values
-    });
+    return admin
+      .firestore()
+      .collection("ads")
+      .doc()
+      .set({
+        ...ad,
+        uid: uid,
+        createdAt: createdAt,
+        updatedAt: createdAt,
+        // Add any other required fields with default values
+      });
   } catch (error) {
     console.log("Error creating ad document:", error);
   }
@@ -97,7 +104,7 @@ exports.createAd = functions.https.onCall(async (data, context) => {
   const uid = context.auth.uid;
 
   // Get the user's activity document
-  const activityRef = admin.firestore().collection('userActivity').doc(uid);
+  const activityRef = admin.firestore().collection("userActivity").doc(uid);
   const activityDoc = await activityRef.get();
 
   // Check if the user has already posted the maximum number of ads
@@ -105,78 +112,55 @@ exports.createAd = functions.https.onCall(async (data, context) => {
     const activityData = activityDoc.data();
     const timeSinceLastPost = Date.now() - activityData.lastPost;
     const oneHour = 60 * 60 * 1000;
-    
 
     // If it's been less than an hour since the last post, and the user has already posted 10 ads, reject the request
     if (timeSinceLastPost < oneHour && activityData.postCount >= 3) {
-      throw new functions.https.HttpsError('resource-exhausted', 'You have reached the maximum number of posts for this time period. Please try again later.');
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        "You have reached the maximum number of posts for this time period. Please try again later."
+      );
     }
   }
 
-  // handle image upload and compression for images. This function will receive the image file, 
-  // compress it to the desired size, and then upload it to Firebase Storage.
-  exports.uploadAndCompressImage = functions.https.onCall(async (data, context) => {
-    // Check for authentication
-    if (!context.auth) {
-      throw new functions.https.HttpsError('unauthenticated', 'User not authenticated');
-    }
-  
-    // Decode the base64 image
-    const imageBuffer = Buffer.from(data.image, 'base64');
-  
-    // Compress the image to the desired size (400KB)
-    let compressedImage;
-    let quality = 100;
-    do {
-      compressedImage = await sharp(imageBuffer)
-        .jpeg({ quality: quality })
-        .toBuffer();
-      quality -= 5; // Reduce quality incrementally
-    } while (compressedImage.length > 400 * 1024 && quality > 0);
-  
-    // Define the path in Firebase Storage
-    const filePath = `profilePictures/${context.auth.uid}.jpg`;
-  
-    // Upload the compressed image to Firebase Storage
-    const file = storage.bucket().file(filePath);
-    await file.save(compressedImage, { contentType: 'image/jpeg' });
-  
-    // Return the download URL
-    const downloadURL = await file.getSignedUrl({ action: 'read', expires: '03-09-2491' });
-    return { status: 'success', url: downloadURL[0] };
-  });  
-  
-
   // If the request was not rejected, create the ad and update the user's activity
-  await createAdDocument(ad, uid); 
-  await activityRef.set({
-    lastPost: Date.now(),
-    postCount: admin.firestore.FieldValue.increment(1)
-  }, { merge: true });
+  await createAdDocument(ad, uid);
+  await activityRef.set(
+    {
+      lastPost: Date.now(),
+      postCount: admin.firestore.FieldValue.increment(1),
+    },
+    { merge: true }
+  );
 
-  return { status: 'success' };
+  return { status: "success" };
 });
+
 
 // Cloud Function to reset post counts every hour
-exports.resetPostCounts = functions.pubsub.schedule('every 1 hours').onRun(async (context) => {
-  const activityDocs = await admin.firestore().collection('userActivity').get();
+exports.resetPostCounts = functions.pubsub
+  .schedule("every 1 hours")
+  .onRun(async (context) => {
+    const activityDocs = await admin
+      .firestore()
+      .collection("userActivity")
+      .get();
 
-  // Reset the post count for each user
-  const batch = admin.firestore().batch();
-  activityDocs.forEach(doc => {
-    batch.update(doc.ref, { postCount: 0 });
+    // Reset the post count for each user
+    const batch = admin.firestore().batch();
+    activityDocs.forEach((doc) => {
+      batch.update(doc.ref, { postCount: 0 });
+    });
+
+    await batch.commit();
   });
 
-  await batch.commit();
-});
-
 exports.decrementPostCountOnAdDeletion = functions.firestore
-  .document('ads/{adId}')
+  .document("ads/{adId}")
   .onDelete(async (snap, context) => {
     const adData = snap.data();
     const uid = adData.uid;
 
-    const activityRef = admin.firestore().collection('userActivity').doc(uid);
+    const activityRef = admin.firestore().collection("userActivity").doc(uid);
     const activityDoc = await activityRef.get();
 
     if (activityDoc.exists) {
@@ -185,13 +169,13 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
       // Check if the postCount is already at 0
       if (activityData.postCount > 0) {
         // Check the type of the ad
-        if (adData.type === 'regular') {
+        if (adData.type === "regular") {
           await activityRef.update({
-            postCount: admin.firestore.FieldValue.increment(-1)
+            postCount: admin.firestore.FieldValue.increment(-1),
           });
-        } else if (adData.type === 'premium') {
+        } else if (adData.type === "premium") {
           await activityRef.update({
-            postCount: admin.firestore.FieldValue.increment(-2)
+            postCount: admin.firestore.FieldValue.increment(-2),
           });
         }
       }
@@ -201,35 +185,55 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
 // Cloud Function to fetch categories
 exports.fetchCategories = functions.https.onCall(async (data, context) => {
   try {
-    const categoriesSnapshot = await admin.firestore().collection('categories').get();
-    const categories = categoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    return { status: 'success', categories };
+    const categoriesSnapshot = await admin
+      .firestore()
+      .collection("categories")
+      .get();
+    const categories = categoriesSnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    return { status: "success", categories };
   } catch (error) {
     console.error("Error fetching categories:", error);
-    throw new functions.https.HttpsError('unknown', error.message);
+    throw new functions.https.HttpsError("unknown", error.message);
   }
 });
 
 // Cloud Function to fetch subcategories
 exports.fetchSubcategories = functions.https.onCall(async (data, context) => {
   try {
-    const subcategoriesSnapshot = await admin.firestore().collection('subcategories').get();
-    const subcategories = subcategoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    return { status: 'success', subcategories };
+    const subcategoriesSnapshot = await admin
+      .firestore()
+      .collection("subcategories")
+      .get();
+    const subcategories = subcategoriesSnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    return { status: "success", subcategories };
   } catch (error) {
     console.error("Error fetching subcategories:", error);
-    throw new functions.https.HttpsError('unknown', error.message);
+    throw new functions.https.HttpsError("unknown", error.message);
   }
 });
 
 // Cloud Function to fetch sub-subcategories
-exports.fetchSubSubcategories = functions.https.onCall(async (data, context) => {
-  try {
-    const subSubcategoriesSnapshot = await admin.firestore().collection('sub-subcategories').get();
-    const subSubcategories = subSubcategoriesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    return { status: 'success', subSubcategories };
-  } catch (error) {
-    console.error("Error fetching sub-subcategories:", error);
-    throw new functions.https.HttpsError('unknown', error.message);
+exports.fetchSubSubcategories = functions.https.onCall(
+  async (data, context) => {
+    try {
+      const subSubcategoriesSnapshot = await admin
+        .firestore()
+        .collection("sub-subcategories")
+        .get();
+      const subSubcategories = subSubcategoriesSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      return { status: "success", subSubcategories };
+    } catch (error) {
+      console.error("Error fetching sub-subcategories:", error);
+      throw new functions.https.HttpsError("unknown", error.message);
+    }
   }
-});
+);
