@@ -78,13 +78,13 @@ exports.createUserWithEmailPassword = functions.https.onCall(
   }
 );
 
-async function createAdDocument(ad, uid) {
+async function createAdDocument(ad, uid, collectionName) {
   try {
     const createdAt = new Date().toISOString();
 
     return admin
       .firestore()
-      .collection("ads")
+      .collection(collectionName)
       .doc()
       .set({
         ...ad,
@@ -100,7 +100,7 @@ async function createAdDocument(ad, uid) {
 
 // Cloud Function to create a new ad
 exports.createAd = functions.https.onCall(async (data, context) => {
-  const { ad } = data;
+  const { ad, collectionName } = data;
   const uid = context.auth.uid;
 
   // Get the user's activity document
@@ -114,7 +114,7 @@ exports.createAd = functions.https.onCall(async (data, context) => {
     const oneHour = 60 * 60 * 1000;
 
     // If it's been less than an hour since the last post, and the user has already posted 10 ads, reject the request
-    if (timeSinceLastPost < oneHour && activityData.postCount >= 3) {
+    if (timeSinceLastPost < oneHour && activityData.postCount >= 10) {
       throw new functions.https.HttpsError(
         "resource-exhausted",
         "You have reached the maximum number of posts for this time period. Please try again later."
@@ -123,7 +123,7 @@ exports.createAd = functions.https.onCall(async (data, context) => {
   }
 
   // If the request was not rejected, create the ad and update the user's activity
-  await createAdDocument(ad, uid);
+  await createAdDocument(ad, uid, collectionName);
   await activityRef.set(
     {
       lastPost: Date.now(),
@@ -182,6 +182,90 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
     }
   });
 
+  exports.decrementPostCountOnCarAdDeletion = functions.firestore
+  .document("cars/{adId}")
+  .onDelete(async (snap, context) => {
+    const adData = snap.data();
+    const uid = adData.uid;
+
+    const activityRef = admin.firestore().collection("userActivity").doc(uid);
+    const activityDoc = await activityRef.get();
+
+    if (activityDoc.exists) {
+      const activityData = activityDoc.data();
+
+      // Check if the postCount is already at 0
+      if (activityData.postCount > 0) {
+        // Check the type of the ad
+        if (adData.type === "regular") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-1),
+          });
+        } else if (adData.type === "premium") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-2),
+          });
+        }
+      }
+    }
+  });
+  
+  exports.decrementPostCountOnPropertyAdDeletion = functions.firestore
+  .document("property/{adId}")
+  .onDelete(async (snap, context) => {
+    const adData = snap.data();
+    const uid = adData.uid;
+
+    const activityRef = admin.firestore().collection("userActivity").doc(uid);
+    const activityDoc = await activityRef.get();
+
+    if (activityDoc.exists) {
+      const activityData = activityDoc.data();
+
+      // Check if the postCount is already at 0
+      if (activityData.postCount > 0) {
+        // Check the type of the ad
+        if (adData.type === "regular") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-1),
+          });
+        } else if (adData.type === "premium") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-2),
+          });
+        }
+      }
+    }
+  });
+
+  exports.decrementPostCountOnJobsAdDeletion = functions.firestore
+  .document("jobs/{adId}")
+  .onDelete(async (snap, context) => {
+    const adData = snap.data();
+    const uid = adData.uid;
+
+    const activityRef = admin.firestore().collection("userActivity").doc(uid);
+    const activityDoc = await activityRef.get();
+
+    if (activityDoc.exists) {
+      const activityData = activityDoc.data();
+
+      // Check if the postCount is already at 0
+      if (activityData.postCount > 0) {
+        // Check the type of the ad
+        if (adData.type === "regular") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-1),
+          });
+        } else if (adData.type === "premium") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-2),
+          });
+        }
+      }
+    }
+  });
+
 // Cloud Function to fetch categories
 exports.fetchCategories = functions.https.onCall(async (data, context) => {
   try {
@@ -193,6 +277,7 @@ exports.fetchCategories = functions.https.onCall(async (data, context) => {
       ...doc.data(),
       id: doc.id,
     }));
+    console.log('functions', categories);
     return { status: "success", categories };
   } catch (error) {
     console.error("Error fetching categories:", error);

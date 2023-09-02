@@ -30,10 +30,11 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
   return (
     <Card
       sx={{
-        width: 230,
-        maxHeight: 260,
+        width: 210,
+        height: 240,
         overflow: "hidden",
         mx: 1,
+        borderRadius: 2
       }}
       style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
     >
@@ -41,7 +42,7 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
         <Box position="relative">
           <CardMedia
             component="img"
-            sx={{ maxHeight: 130, overflow: "hidden" }}
+            sx={{ maxHeight: 140, overflow: "hidden" }}
             image={img}
             alt="Car"
           />
@@ -49,7 +50,7 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
         <CardContent sx={{ p: 1 }}>
           <Stack direction="column">
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="h4" color="text.secondary" sx={{ pt: 1 }}>
+              <Typography variant="h4" color="text.primary" sx={{ pt: 1 }}>
                 {price}$
               </Typography>
               <IconButton

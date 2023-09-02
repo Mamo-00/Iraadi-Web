@@ -87,7 +87,7 @@ const CreateAd = () => {
   };
 
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <Navbar  />
 
       <Box

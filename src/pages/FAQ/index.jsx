@@ -7,7 +7,7 @@ import { Container, Typography, Card, CardContent, Box, useTheme } from "@mui/ma
 const FAQ = () => {
   const theme = useTheme();
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <Navbar />
       <Box
         sx={{

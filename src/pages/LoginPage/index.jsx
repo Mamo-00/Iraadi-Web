@@ -8,7 +8,7 @@ const LoginPage = () => {
 
 
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       
       <Login />
     </div>

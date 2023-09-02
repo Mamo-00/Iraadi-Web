@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Fab from "@mui/material/Fab";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import { Link  } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../../assets/logo/iiraadi-site-logo-camel.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,13 +20,16 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
+import SearchIcon from '@mui/icons-material/Search';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { 
-  signOutUser, 
-  fetchAndUpdateCurrentUser, 
+import {
+  signOutUser,
+  fetchAndUpdateCurrentUser,
   selectCurrentUser,
 } from '../../features/user/userSlice';
+
+import { Search, SearchIconWrapper, StyledInputBase } from '../../utils/Searchbar/'
 
 import { Typography, useTheme } from "@mui/material";
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -40,16 +43,16 @@ const Navbar = () => {
   const colors = tokens("theme.palette.mode");
   const colorMode = useContext(ColorModeContext);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  
+
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => selectCurrentUser(state));
 
-  
+
   const userFetched = useRef(false);
 
 
@@ -62,14 +65,14 @@ const Navbar = () => {
       .catch((error) => {
         console.error("Error in fetchAndUpdateCurrentUser:", error);
       });
-  
+
     if (!currentUser) {
       setLoadingProfile(false);
     }
   }, [currentUser?.photoURL, dispatch]);
-  
 
-  
+
+
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -291,20 +294,20 @@ const Navbar = () => {
   );
 
   return (
-    <Box sx={{ backgroundColor: "primary.main", widht: "100vw" }}>
+    <Box sx={{ backgroundColor: "background.default", width: "100vw" }}>
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           mx: "auto",
-          backgroundColor: "primary.main",
+          backgroundColor: "background.default",
         }}
       >
         <AppBar
           position="static"
-          sx={{ boxShadow: "none", backgroundColor: "primary.main" }}
+          sx={{ boxShadow: "none", backgroundColor: "background.default" }}
         >
-          <Toolbar>
+          <Toolbar sx={{ backgroundColor: "background.default" }}>
             <Link
               to="/"
               className="me-auto"
@@ -314,9 +317,28 @@ const Navbar = () => {
                 src={Logo}
                 className="d-sm-block me-1 logo"
                 alt="Logo"
-                style={{ height: "50px", width: "178px" }}
+                style={{ height: "45px", width: "160px" }}
               />
             </Link>
+            {!isSmallScreen ? (
+              <>
+                <Box width={'60%'}>
+                  <Search>
+                    <SearchIconWrapper>
+                      <SearchIcon sx={{ color: 'primary.main' }} />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      placeholder="Search…"
+                      inputProps={{ 'aria-label': 'search' }}
+                    />
+                  </Search>
+                </Box>
+              </>
+            ) : (
+              <Box display={'none'}>
+              </Box>
+            )}
+            <Box sx={{ flexGrow: 1 }} />
             <Link to="/create-ad" style={{ marginLeft: "2rem" }}>
               <Fab
                 variant="extended"
@@ -324,52 +346,44 @@ const Navbar = () => {
                 size="small"
                 aria-label="create ad"
               >
-                {!isSmallScreen ? (
-                  <>
-                    <EditIcon sx={{ mr: 1 }} color="primary" />
-                    <Typography
-                      variant="h5"
-                      sx={{ fontWeight: "bold", pr: 1, letterSpacing: 0.75 }}
-                      color="text.primary"
-                    >
-                      Create ad
-                    </Typography>
-                  </>
-                ) : (
-                  <EditIcon color="primary" />
-                )}
+                <EditIcon color="primary" />
               </Fab>
             </Link>
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              {/* Light / Dark mode*/}
-              <IconButton onClick={colorMode.toggleColorMode}>
-                {theme.palette.mode === "dark" ? (
-                  <DarkModeOutlinedIcon />
-                ) : (
-                  <LightModeOutlinedIcon />
-                )}
-              </IconButton>
+              {/* TODO: Implement light/dark mode toggle at a later time */}
+              {/*
+            <IconButton onClick={colorMode.toggleColorMode}>
+              {theme.palette.mode === "dark" ? (
+                <DarkModeOutlinedIcon />
+              ) : (
+                <LightModeOutlinedIcon />
+              )}
+            </IconButton>
+            */}
 
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="text.secondary"
-              >
-                <Badge badgeContent={4} color="secondary">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
+              {/* TODO: Implement message and notification icons at a later time */}
+              {/*
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="text.secondary"
+            >
+              <Badge badgeContent={4} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
 
-              <IconButton
-                size="large"
-                aria-label="show 17 new notifications"
-                color="text.secondary"
-              >
-                <Badge badgeContent={17} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="text.secondary"
+            >
+              <Badge badgeContent={17} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            */}
               <IconButton
                 size="large"
                 edge="end"
@@ -377,7 +391,7 @@ const Navbar = () => {
                 aria-controls={menuId}
                 aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
-                color="inherit"
+                color= 'primary.main'
               >
                 {loadingProfile ? (
                   <CircularProgress size={24} />
@@ -389,7 +403,7 @@ const Navbar = () => {
                     sx={{ width: 30, height: 30 }}
                   />
                 ) : (
-                  <AccountCircle />
+                  <AccountCircle color="primary.main" sx={{ width: 30, height: 30 }}/>
                 )}
               </IconButton>
             </Box>
@@ -406,11 +420,30 @@ const Navbar = () => {
               </IconButton>
             </Box>
           </Toolbar>
+          {!isSmallScreen ? (
+            <><Box display={'none'}>
+            </Box>
+
+            </>
+          ) : (
+            <Box width={'100%'} px={2} py={1}>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon sx={{ color: 'primary.main' }} />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </Box>
+          )}
         </AppBar>
         {renderMobileMenu}
         {renderMenu}
       </Box>
     </Box>
   );
+
 }
 export default Navbar;

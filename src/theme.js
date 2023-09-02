@@ -30,17 +30,23 @@ export const tokens = (mode) => ({
           2: "#fff",
         },
 
-        golden: {
-          1: "#DFCB90",
-          2: "#B18E30",
-          3: "#D0AA3A",
+        blue: {
+          1: "#A0DAF7",
+          2: "#59B1E3",
+          3: "#2879AA",
+          4: "#133E56",
         },
 
-        red: {
+        golden: {
           1: "#F50057",
-          2: "#fa5050",
-          3: "#61030c",
+          2: "#D0AA3A",
+          3: "#DFCB90",
+        },
+
+        black: {
+          1: "#1B1B1B",
         }
+
       }),
 });
 
@@ -78,52 +84,63 @@ export const themeSettings = (mode) => {
         : {
             // palette values for light mode
             primary: {
-              main: colors.golden[1],
+              main: colors.blue[3],
             },
             secondary: {
-              main: colors.red[1],
-              light: colors.red[2],
-              dark: colors.red[3],
+              main: colors.golden[1],
+              light: colors.golden[2],
+              dark: colors.golden[3],
             },
             tertiery: {
-              main: colors.white[2],
+              main: colors.blue[2],
             },
             text: {
-              primary: colors.golden[2],
-              secondary: colors.golden[3]
+              primary: colors.black[1],
+              secondary: colors.blue[2]
             },
             background: {
-              default: colors.white[1],
-              paper: colors.white[2],
+              default: colors.white[2],
+              paper: colors.white[1],
             },
           }),
     },
     typography: {
-      fontFamily: ["roboto", "sans-serif"].join(","),
+      fontFamily: ["Source Sans Pro", "monospace"].join(","),
       fontSize: 12,
       h1: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 40,
       },
       h2: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 32,
       },
       h3: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 24,
       },
       h4: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 20,
       },
       h5: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 16,
       },
       h6: {
-        fontFamily: ["Inconsolata", "monospace"].join(","),
+        fontFamily: ["montserrat", "monospace"].join(","),
         fontSize: 14,
+      },
+    },
+    components: {
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            '&:hover': {
+              backgroundColor: '#2879AA25', // Change this to your desired color
+            },
+          },
+        },
       },
     },
   };

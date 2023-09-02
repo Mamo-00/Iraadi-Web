@@ -13,7 +13,7 @@ const Profile = () => {
   const [favorites, setFavorites] = useState([]);
 
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <Navbar />
 
       <ProfileForm />
