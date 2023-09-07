@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,17 +13,18 @@ import {
   ImageListItem,
   Breadcrumbs,
 } from "@mui/material";
-import React from 'react';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../features/user/userSlice';
 
-const ProductDetail = ({ ad }) => {
+const ProductDetail = ({ad}) => {
   const currentUser = useSelector((state) => selectCurrentUser(state));
+  const { category, subcategroy, subsubcategory, idProductName } = useParams();
+  const id = idProductName.split('-')[0];
 
   const { title, location, price, description, lastUpdated, published, phoneNumber } = ad;
-  const categoryPath = useSelector(selectCategoryPath); // Replace with your selector
+  const categoryPath = useSelector(); // Replace with your selector
 
 
   return (

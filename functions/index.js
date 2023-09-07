@@ -137,7 +137,7 @@ exports.createAd = functions.https.onCall(async (data, context) => {
 
 
 // Cloud Function to reset post counts every hour
-exports.resetPostCounts = functions.pubsub
+/* exports.resetPostCounts = functions.pubsub
   .schedule("every 1 hours")
   .onRun(async (context) => {
     const activityDocs = await admin
@@ -152,7 +152,7 @@ exports.resetPostCounts = functions.pubsub
     });
 
     await batch.commit();
-  });
+  }); */
 
 exports.decrementPostCountOnAdDeletion = functions.firestore
   .document("ads/{adId}")

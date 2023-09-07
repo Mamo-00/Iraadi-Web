@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import Profile from "./pages/Profile";
 import CreateAd from "./pages/CreateAd";
 import Motors from "./pages/Categories/Motors";
+import ProductDetail from "./pages/ProductDetail";
 import FAQ from "./pages/FAQ";
 import Electronics from "./pages/Categories/Electronics";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -37,6 +38,7 @@ function App() {
 
             {/*Public Routes*/}
             <Route path="/" element={<Home />} />
+            <Route path="/:category/:subcategory/:subsubcategory/:id-product-name" element={<ProductDetail />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/unauthorized" element={<UnAuthorized />} />
             <Route path="/FAQ" element={<FAQ />} />
@@ -56,10 +58,10 @@ function App() {
             />
 
             {/*Motors Routes*/}
-            <Route path="/Motors" element={<Motors />} />
-            <Route path="/Motors/:subcategory" element={<Motors />} />
+            <Route path="/Vehicles" element={<Motors />} />
+            <Route path="/Vehicles/:subcategory" element={<Motors />} />
             <Route
-              path="/Motors/:subcategory/:subsubcategory"
+              path="/Vehicles/:subcategory/:subsubcategory"
               element={<Motors />}
             />
 

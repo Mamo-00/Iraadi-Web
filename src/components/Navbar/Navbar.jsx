@@ -5,7 +5,7 @@ import Fab from "@mui/material/Fab";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
-import Logo from '../../assets/logo/iiraadi-site-logo-camel.png';
+import Logo from '../../assets/logo/iiraadi-notext-logo.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -317,7 +317,7 @@ const Navbar = () => {
                 src={Logo}
                 className="d-sm-block me-1 logo"
                 alt="Logo"
-                style={{ height: "45px", width: "160px" }}
+                style={{ width: "65px", height: "50px" }}
               />
             </Link>
             {!isSmallScreen ? (
@@ -414,7 +414,7 @@ const Navbar = () => {
                 aria-controls={mobileMenuId}
                 aria-haspopup="true"
                 onClick={handleMobileMenuOpen}
-                color="inherit"
+                color="primary.main"
               >
                 <MoreIcon />
               </IconButton>

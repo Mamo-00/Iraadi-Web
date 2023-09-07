@@ -62,7 +62,7 @@ const Electronics = () => {
           top: -1, // top=0 gives a small gap at the top on mobile
           bgcolor: "background.default",
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           mx: "auto",
           my: 4,
         }}
@@ -155,7 +155,7 @@ const Electronics = () => {
         sx={{
           zIndex: 1400,
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           mx: "auto",
           my: 4,
         }}
@@ -173,7 +173,7 @@ const Electronics = () => {
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           mx: "auto",
           my: 4,
         }}
@@ -193,7 +193,7 @@ const Electronics = () => {
                     img={item?.img}
                     price={item?.price}
                     location={item?.location}
-                    user={item?.user}
+                    user={item?.uid}
                     usage={item?.usage}
                     condition={item?.condition}
                     date={item?.date}

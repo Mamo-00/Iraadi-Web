@@ -119,7 +119,7 @@ export default function CategoryCard({ category, subcategories, subsubcategories
                     <Collapse in={expandedSubs[sub.id]} timeout='auto' unmountOnExit sx={{ textAlign: 'left' }}>
                       {displaySubsubcategories.map((subSub) => (
                         <Link to={`/${category.name.replace(/\s+/g, '-')}/${sub.name.replace(/\s+/g, '-')}/${subSub.name.replace(/\s+/g, '-')}`} style={{ textDecoration: 'none', color: 'inherit' }} key={subSub.id}>
-                          <Typography variant="body1" sx={{ ml: 1, mb: 1 }}>{subSub?.name}</Typography>
+                          <Typography variant="body1" sx={{ ml: 1, mb: 1 }}>• {subSub?.name}</Typography>
                         </Link>
                       ))}
                       {relevantSubsubcategories.length > 5 && (
