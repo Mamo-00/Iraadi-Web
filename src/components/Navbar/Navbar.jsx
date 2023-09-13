@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
 import Logo from '../../assets/logo/iiraadi-notext-logo.png';
+import LogoWithText from '../../assets/logo/iiraadi-with-text-logo.png';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -30,10 +31,12 @@ import {
 } from '../../features/user/userSlice';
 
 import { Search, SearchIconWrapper, StyledInputBase } from '../../utils/Searchbar/'
+import SearchBar from "../SearchBar";
 
 import { Typography, useTheme } from "@mui/material";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ColorModeContext, tokens } from "../../theme";
+import { MarginRounded } from "@mui/icons-material";
 
 // https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
 
@@ -42,7 +45,8 @@ const Navbar = () => {
   const theme = useTheme();
   const colors = tokens("theme.palette.mode");
   const colorMode = useContext(ColorModeContext);
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isPhone = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -194,7 +198,9 @@ const Navbar = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+       {/* TODO: Implement light/dark mode toggle at a later time */}
+       {/* TODO: Implement message and notification icons at a later time */}
+      {/* <MenuItem>
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
@@ -222,7 +228,7 @@ const Navbar = () => {
           </Badge>
         </IconButton>
         <span>Notifications</span>
-      </MenuItem>
+      </MenuItem> */}
       <Link to="/profile" color="inherit">
         <MenuItem onClick={handleMobileMenuClose}>
           <IconButton
@@ -308,7 +314,10 @@ const Navbar = () => {
           sx={{ boxShadow: "none", backgroundColor: "background.default" }}
         >
           <Toolbar sx={{ backgroundColor: "background.default" }}>
-            <Link
+
+            {/* LOGO */}
+            {!isPhone ? (
+              <Link
               to="/"
               className="me-auto"
               sx={{ color: "#fff", backgroundColor: "inherit" }}
@@ -320,25 +329,37 @@ const Navbar = () => {
                 style={{ width: "65px", height: "50px" }}
               />
             </Link>
-            {!isSmallScreen ? (
+            ) : (
+              <Link
+              to="/"
+              className="me-auto"
+              sx={{ color: "#fff", backgroundColor: "inherit" }}
+            >
+              <img
+                src={LogoWithText}
+                className="d-sm-block me-1 logo"
+                alt="Logo"
+                style={{ width: "185px", height: "57px" }}
+              />
+            </Link>
+            )}
+            
+
+            {/*Searchbar */}
+            {!isPhone ? (
               <>
-                <Box width={'60%'}>
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon sx={{ color: 'primary.main' }} />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                      placeholder="Search…"
-                      inputProps={{ 'aria-label': 'search' }}
-                    />
-                  </Search>
+                <Box width={"60%"} marginLeft={2}>
+                  <SearchBar />
                 </Box>
               </>
             ) : (
-              <Box display={'none'}>
-              </Box>
+              <Box display={"none"}></Box>
             )}
+
+            {/*Spacing*/}
             <Box sx={{ flexGrow: 1 }} />
+
+            {/*Create Ad button*/}
             <Link to="/create-ad" style={{ marginLeft: "2rem" }}>
               <Fab
                 variant="extended"
@@ -346,13 +367,25 @@ const Navbar = () => {
                 size="small"
                 aria-label="create ad"
               >
-                <EditIcon color="primary" />
+                <EditIcon sx={{ mr: 1 }} color="primary" />
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: "normal", pr: 1, letterSpacing: 0.75 }}
+                  color="text.primary"
+                >
+                  Create ad
+                </Typography>
               </Fab>
             </Link>
+
+            {/*Spacing*/}
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              {/* TODO: Implement light/dark mode toggle at a later time */}
-              {/*
+
+            {/*Menu button either as profile picture or MoreIcon from MUI*/}
+            {!isPhone ? (
+              <Box>
+                {/* TODO: Implement light/dark mode toggle at a later time */}
+                {/*
             <IconButton onClick={colorMode.toggleColorMode}>
               {theme.palette.mode === "dark" ? (
                 <DarkModeOutlinedIcon />
@@ -362,8 +395,8 @@ const Navbar = () => {
             </IconButton>
             */}
 
-              {/* TODO: Implement message and notification icons at a later time */}
-              {/*
+                {/* TODO: Implement message and notification icons at a later time */}
+                {/*
             <IconButton
               size="large"
               aria-label="show 4 new mails"
@@ -384,58 +417,56 @@ const Navbar = () => {
               </Badge>
             </IconButton>
             */}
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color= 'primary.main'
-              >
-                {loadingProfile ? (
-                  <CircularProgress size={24} />
-                ) : currentUser !== null ? (
-                  <Avatar
-                    key={currentUser?.photoURL}
-                    alt="Profile picture"
-                    src={currentUser?.photoURL}
-                    sx={{ width: 30, height: 30 }}
-                  />
-                ) : (
-                  <AccountCircle color="primary.main" sx={{ width: 30, height: 30 }}/>
-                )}
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="primary.main"
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="primary.main"
+                >
+                  {loadingProfile ? (
+                    <CircularProgress size={24} />
+                  ) : currentUser !== null ? (
+                    <Avatar
+                      key={currentUser?.photoURL}
+                      alt="Profile picture"
+                      src={currentUser?.photoURL}
+                      sx={{ width: 30, height: 30 }}
+                    />
+                  ) : (
+                    <AccountCircle
+                      color="primary.main"
+                      sx={{ width: 30, height: 30 }}
+                    />
+                  )}
+                </IconButton>
+              </Box>
+            ) : (
+              <Box>
+                <IconButton
+                  size="large"
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="primary.main"
+                >
+                  <MoreIcon />
+                </IconButton>
+              </Box>
+            )}
           </Toolbar>
-          {!isSmallScreen ? (
-            <><Box display={'none'}>
-            </Box>
 
+          {/*Searchbar mobile version */}
+          {!isPhone ? (
+            <>
+              <Box display={"none"}></Box>
             </>
           ) : (
-            <Box width={'100%'} px={2} py={1}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon sx={{ color: 'primary.main' }} />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
+            <Box width={"100%"} px={2} py={1}>
+              <SearchBar />
             </Box>
           )}
         </AppBar>

@@ -55,7 +55,6 @@ export const tokens = (mode) => ({
 export const themeSettings = (mode) => {
   const colors = tokens(mode);
   return {
-    
     palette: {
       mode: mode,
       ...(mode === "dark"
@@ -72,13 +71,13 @@ export const themeSettings = (mode) => {
               main: colors.white[2],
             },
             text: {
-              primary: '#fff',
+              primary: "#fff",
             },
             background: {
               // background colors arent being properly overwritten so
-              // so I added !important 
+              // so I added !important
               default: colors.black[1] + " !important",
-              paper: colors.black[2] + " !important"
+              paper: colors.black[2] + " !important",
             },
           }
         : {
@@ -96,7 +95,7 @@ export const themeSettings = (mode) => {
             },
             text: {
               primary: colors.black[1],
-              secondary: colors.blue[2]
+              secondary: colors.blue[2],
             },
             background: {
               default: colors.white[2],
@@ -136,11 +135,19 @@ export const themeSettings = (mode) => {
       MuiIconButton: {
         styleOverrides: {
           root: {
-            '&:hover': {
-              backgroundColor: '#2879AA25', // Change this to your desired color
+            "&:hover": {
+              backgroundColor: "#2879AA25", // Change this to your desired color
             },
           },
         },
+      },
+    },
+    breakpoints: {
+      values: {
+        sm: 430,
+        md: 768,
+        lg: 1280,
+        xl: 1920,
       },
     },
   };

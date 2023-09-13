@@ -15,8 +15,7 @@ export const Search = styled('div')(({ theme }) => ({
     marginLeft: 0,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3),
-      width: 'auto',
+      width: '100%',
     },
   }));
   
@@ -37,9 +36,9 @@ export const Search = styled('div')(({ theme }) => ({
       // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)})`,
       transition: theme.transitions.create('width'),
-      width: '100%',
+      minWidth: '100%',
       [theme.breakpoints.up('md')]: {
-        width: '20ch',
+        minWidth: '100%',
       },
     },
   }));

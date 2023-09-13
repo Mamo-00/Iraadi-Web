@@ -1,9 +1,8 @@
-import { doc, collection } from "firebase/firestore"; 
-import { db } from "./firebaseConfig";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "./firebaseConfig";
-import * as Sentry from "@sentry/react";
 import { createSlice, createAsyncThunk, createEntityAdapter } from "@reduxjs/toolkit";
+import { getDocs, collection, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
+import { functions, db, } from "../../firebase/firebase-config";
+import * as Sentry from "@sentry/react";
 
 // Async thunks
 export const fetchAds = createAsyncThunk('ads/fetchAds', async ( { rejectWithValue } ) => {

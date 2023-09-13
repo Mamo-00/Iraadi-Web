@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.920118fc.css",
-    "main.js": "/static/js/main.0dc9bd27.js",
+    "main.js": "/static/js/main.ec5ff8dc.js",
     "static/media/desert-4-login.jpg": "/static/media/desert-4-login.ab138840ac0ae1dd20f6.jpg",
     "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2877d54f94f30c5d563c.ttf",
     "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.13e40630e5866f777de8.ttf",
@@ -15,6 +15,7 @@
     "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.146404900f7550a9719d.ttf",
     "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.8bedd7cfa43a6c358cdd.woff2",
     "static/media/iiraadi-site-logo-camel.png": "/static/media/iiraadi-site-logo-camel.905e3b6ef5a90fcec216.png",
+    "static/media/iiraadi-with-text-logo.png": "/static/media/iiraadi-with-text-logo.b92f336325d7e1f6ae05.png",
     "static/media/iiraadi-notext-logo.png": "/static/media/iiraadi-notext-logo.ee7e564d51097e8da22e.png",
     "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.6c0a7b774ffa1cf0a059.ttf",
     "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.497d535001197a9c5b38.woff2",
@@ -23,23 +24,23 @@
     "static/media/appliances.svg": "/static/media/appliances.a614c148dfab2b64ccd07769b3177ebc.svg",
     "static/media/furniture.svg": "/static/media/furniture.e75473bf396739485aef29e99c8a6083.svg",
     "static/media/palette.svg": "/static/media/palette.ed7e607e51d0364164ffcfa609cb0161.svg",
-    "static/media/phone_tablet.svg": "/static/media/phone_tablet.d22bb6b1390319c677eefb34aa24bf50.svg",
+    "static/media/phone_tablet.svg": "/static/media/phone_tablet.655f8f4e1c38c14c59bd163680678af5.svg",
     "static/media/jobs.svg": "/static/media/jobs.8aca42a6bb44a0fd89a0645638b112f5.svg",
     "static/media/car.svg": "/static/media/car.3174a2916738c11c6fa15486e44c23a8.svg",
     "static/media/clothes.svg": "/static/media/clothes.14be32106dc62abfe2fadcbb9fdc5018.svg",
     "static/media/propertysale.svg": "/static/media/propertysale.e2f462d5e773c3c955a059cb1e06745a.svg",
-    "static/media/mileage.svg": "/static/media/mileage.d56078f8158442b889102d392fde47d9.svg",
+    "static/media/mileage.svg": "/static/media/mileage.a4e7734b5ccde04d73517b3488065b50.svg",
     "index.html": "/index.html",
-    "static/media/business.svg": "/static/media/business.7bf86ca0d103ebeb633310bdb0e8a176.svg",
-    "static/media/year.svg": "/static/media/year.a6eb446d98e3c05f77dfd38d3e484062.svg",
-    "static/media/car-door.svg": "/static/media/car-door.0f2a3836f3cf3d2811ff09863bfb9f5c.svg",
+    "static/media/business.svg": "/static/media/business.b5d365099879f15b888e93eaad183d7c.svg",
+    "static/media/year.svg": "/static/media/year.fdb41100c872fb0183888232b6c85787.svg",
+    "static/media/car-door.svg": "/static/media/car-door.e6cbf9a8ba91bef8ee5a16a60379c6f9.svg",
     "static/media/arrow_left.svg": "/static/media/arrow_left.db6e2d88c7c35a775ce4.svg",
     "static/media/arrow_right.svg": "/static/media/arrow_right.f7c6ac6d310d3b82f0a0.svg",
     "main.920118fc.css.map": "/static/css/main.920118fc.css.map",
-    "main.0dc9bd27.js.map": "/static/js/main.0dc9bd27.js.map"
+    "main.ec5ff8dc.js.map": "/static/js/main.ec5ff8dc.js.map"
   },
   "entrypoints": [
     "static/css/main.920118fc.css",
-    "static/js/main.0dc9bd27.js"
+    "static/js/main.ec5ff8dc.js"
   ]
 }

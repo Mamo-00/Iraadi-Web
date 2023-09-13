@@ -146,7 +146,7 @@ const Home = () => {
           my: 4,
           py: 1,
           px: 5,
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           [theme.breakpoints.down("md")]: {
             display: "none",
           },
@@ -168,23 +168,7 @@ const Home = () => {
             {currentUser?.displayName}
           </Box>
         </Typography>
-        <Link to="/create-ad" style={{ marginLeft: "2rem" }}>
-          <Fab
-            variant="extended"
-            color="tertiery"
-            size="small"
-            aria-label="create ad"
-          >
-            <EditIcon sx={{ mr: 1 }} color="primary" />
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: 'normal', pr: 1, letterSpacing: 0.75 }}
-              color="text.primary"
-            >
-              Create ad
-            </Typography>
-          </Fab>
-        </Link>
+         
       </Box>
      
       <Box

@@ -16,16 +16,31 @@ import {
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../../features/user/userSlice';
+import { selectCurrentUser, selectUserById } from '../../features/user/userSlice';
+import { selectAdById } from '../../features/ads/adSlice';
 
-const ProductDetail = ({ad}) => {
+const ProductDetail = () => {
   const currentUser = useSelector((state) => selectCurrentUser(state));
   const { category, subcategroy, subsubcategory, idProductName } = useParams();
   const id = idProductName.split('-')[0];
+  const ad = useSelector((state) => selectAdById(state, id));
+  const {
+    Title: title,
+    Location: location,
+    Price: price,
+    Description: description,
+    DatePosted: lastUpdated,
+    Status: published,
+    uid: uid,
+    Image: images,
+    tags,
+    Negotiable: negotiable,
+    Condition: condition,
+    Usage: usage,
+  } = ad || {};
 
-  const { title, location, price, description, lastUpdated, published, phoneNumber } = ad;
   const categoryPath = useSelector(); // Replace with your selector
-
+  const adOwner = useSelector((state) => selectUserById(state, uid));
 
   return (
     <div style={{ margin: 0, padding: 0, overflowX: 'hidden' }}>
@@ -61,8 +76,8 @@ const ProductDetail = ({ad}) => {
       <Typography variant="caption" color="text.secondary">Published: {published}</Typography>
 
       {/* Seller's Phone Number & WhatsApp Link */}
-      <Typography variant="body1">{phoneNumber}</Typography>
-      <Link href={`https://wa.me/${phoneNumber}`} target="_blank" rel="noopener noreferrer">
+      <Typography variant="body1">{adOwner.phoneNumber}</Typography>
+      <Link href={`https://wa.me/${adOwner.phoneNumber}`} target="_blank" rel="noopener noreferrer">
         <WhatsAppIcon />
       </Link>
     </div>
