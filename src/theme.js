@@ -144,6 +144,7 @@ export const themeSettings = (mode) => {
     },
     breakpoints: {
       values: {
+        xs: 360,
         sm: 430,
         md: 768,
         lg: 1280,

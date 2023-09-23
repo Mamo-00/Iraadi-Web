@@ -37,7 +37,6 @@ const ProfileForm = () => {
   const [phoneNumber, setPhoneNumber] = useState(user ? user.phoneNumber : "");
 
   const [profilePicture, setProfilePicture] = useState(user ? user.photoURL : "");
-  console.log("old profile picutre", profilePicture);
   const [previewUrl, setPreviewUrl] = useState(user ? user.photoURL : "");
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
@@ -60,7 +59,6 @@ const ProfileForm = () => {
   
     reader.onerror = (e) => {
       setError(`The selected file could not be read. Please choose a different image or check your file permissions.` );
-      console.error('Error reading image file:',e.target.error.message)
     };
   
     reader.readAsDataURL(file);
@@ -68,7 +66,6 @@ const ProfileForm = () => {
   
   const handleProfilePictureChange = async (event) => {
     const file = event.target.files[0];
-    console.log('file value', file);
   
     if (file.size === 0) {
       // Display an error message to the user
@@ -161,7 +158,7 @@ const ProfileForm = () => {
   }, [user, dispatch, isUserFetched]);
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
@@ -216,7 +213,6 @@ const ProfileForm = () => {
                         setError(
                           "Error loading preview image. Please choose a different image."
                         );
-                        console.log("preview url in onError", previewUrl);
                       }}
                     />
                   </Box>

@@ -106,13 +106,10 @@ const Login = () => {
   };
 
   const handleFacebookLogin = () => {
-    console.log("Facebook login button clicked");
-    dispatch(signInWithFacebook()).catch((error) => console.log("Error during dispatch:", error));
+    dispatch(signInWithFacebook());
   };
 
   const handleGoogleLogin = () => {
-    console.log("Google login button clicked");
-    console.log('from value:', from);
     // Store the original destination in the session storage
     sessionStorage.setItem('originalDestination', from);
     dispatch(signInWithGoogle())
@@ -304,7 +301,6 @@ const Login = () => {
               sx={{ mt: 2 }}
               onClick={() => {
                 const trimmedEmail = loginEmail.trim();
-                console.log("Email in login.jsx:", trimmedEmail);
                 if (trimmedEmail) {
                   dispatch(signInWithEmailPassword({ loginEmail: trimmedEmail, loginPassword }))
                     .then(() => {
@@ -467,16 +463,6 @@ const Login = () => {
               sx={{ mt: 2 }}
               onClick={() => {
                 if (validateRegisterForm()) {
-                  console.log(
-                    "email:",
-                    email,
-                    "password:",
-                    password,
-                    "name:",
-                    name,
-                    "phone:",
-                    phone
-                  );
                   const parsedPhoneNumber = parsePhoneNumber(
                     formattedPhone,
                     countryCode

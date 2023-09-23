@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, selectAllCategories } from '../../features/category/categorySlice';
 import { fetchSubcategories, selectAllSubcategories  } from '../../features/category/subcategorySlice';
 import { fetchSubSubcategories, selectAllSubSubcategories } from '../../features/category/subsubcategorySlice';
+import { fetchAds } from "../../features/ads/adsSlice";
 
 
 const Home = () => {
@@ -40,6 +41,7 @@ const Home = () => {
     dispatch(fetchCategories());
     dispatch(fetchSubcategories());
     dispatch(fetchSubSubcategories());
+    dispatch(fetchAds());
   }, []);
 
   
@@ -186,7 +188,6 @@ const Home = () => {
       >
         <Grid
           container
-          spacing={0.5}
           rowSpacing={5}
           sx={{ display: "flex", justifyContent: "center" }}
         >

@@ -17,7 +17,7 @@ function ImageCard( { img } ) {
         
           <CardMedia
             component="img"
-            sx={{ maxHeight: 200, overflow: "hidden" }}
+            sx={{ maxHeight: 275, overflow: "hidden" }}
             image={img}
             alt="Car"
           />

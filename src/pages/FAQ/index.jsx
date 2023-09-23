@@ -12,7 +12,7 @@ const FAQ = () => {
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           mx: 2,
           [theme.breakpoints.up("md")]: {
             mx: "auto",

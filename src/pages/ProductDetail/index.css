@@ -1,0 +1,59 @@
+.image-gallery-image {
+  border-radius: 10px;
+}
+
+.centerSmallImage .image-gallery-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;  
+  background-color: #f0f0f0;  
+}
+
+.centerSmallImage .image-gallery-image img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+
+.image-gallery-thumbnail-image {
+  border-radius: 7px;
+}
+
+.image-gallery-thumbnail.active {
+  border-radius: 10.5px;
+  border: 3.5px solid #2879AA;
+}
+
+.image-gallery-thumbnail.active, .image-gallery-thumbnail:focus {
+  border-radius: 10.5px;
+  border: 3.5px solid #2879AA;
+}
+
+.image-gallery-thumbnail:hover {
+  border-radius: 10.5px;
+  border: 3.5px solid #2879AA;
+}
+
+/*
+when the thumbnail leaves from focus to onfocused, 
+the border-radius is set to 0 which creates a small gap where the border is squared
+*/
+button {
+  border-radius: 10.5px !important;
+}
+
+.image-gallery-index {
+  border-top-right-radius: 10px;
+}
+
+
+.image-gallery-slides {
+  border-radius: 10px;
+}
+
+.image-gallery-left-nav .image-gallery-svg, .image-gallery-right-nav .image-gallery-svg {
+  height: 60px ;
+  width: 30px ;
+}

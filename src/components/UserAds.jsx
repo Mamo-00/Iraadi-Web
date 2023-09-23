@@ -39,7 +39,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
     },
   ];
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Box textAlign="center" my={4}>
         <Typography variant="h3" color="text.primary" sx={{ mb: 4 }}>
           My ads
@@ -53,7 +53,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
             <ImageCard
               key={index}
               img={item?.img}
-              sx={{
+              style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -76,10 +76,11 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
             <ImageCard
               key={index}
               img={item?.img}
-              sx={{
+              style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                heigh: 300,
               }}
             />
           ))}
@@ -99,7 +100,7 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
             <ImageCard
               key={index}
               img={item?.img}
-              sx={{
+              style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",

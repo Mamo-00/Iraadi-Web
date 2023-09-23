@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
-import ElectronicsSidebar from "../../../components/Sidebar/ElectronicsSidebar";
+import MobileSidebar from "../../../components/Sidebar/MobileSidebar";
+import SideBar from "../../../components/Sidebar/Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   useTheme,
@@ -16,6 +17,7 @@ import {
   Typography,
   Menu,
   MenuItem,
+  Hidden,
 } from "@mui/material";
 
 import { ArrowDropDown } from "@mui/icons-material";
@@ -24,19 +26,59 @@ import ElectronicsCard from "../../../components/Cards/DisplayCards/ElectronicsC
 
 import { useProducts } from "../../../utils/hooks/useProducts"
 
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories, selectAllCategories } from '../../../features/category/categorySlice';
+import { fetchSubcategories, selectAllSubcategories  } from '../../../features/category/subcategorySlice';
+import { fetchSubSubcategories, selectAllSubSubcategories } from '../../../features/category/subsubcategorySlice';
+import { fetchAds, selectAllAds } from "../../../features/ads/adsSlice";
+import { subsubcategories } from "../../../utils/products";
+
+
 const Electronics = () => {
-  const theme = useTheme();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sortOption, setSortOption] = useState('Default');
   const [anchorEl, setAnchorEl] = useState(null);
-
+ 
   const { subcategory, subsubcategory } = useParams();
-  console.log("subcategory:", subcategory);
-  console.log("subsubcategory:", subsubcategory);
+  
 
-  const electronicProducts = useProducts("Electronics", subcategory, subsubcategory);
-  console.log("electronics product", electronicProducts);
+  const categories = useSelector((state) => selectAllCategories(state));
+  const subcategories = useSelector((state) => selectAllSubcategories(state));
+  const subSubcategories = useSelector((state) =>
+    selectAllSubSubcategories(state)
+  );
+
+  const ads = useSelector((state) => selectAllAds(state));
+
+  // Map subcategory and subsubcategory names to their IDs
+  const subcategoryId = subcategories.find(
+    (sub) => sub.name === subcategory
+  )?.id;
+  const subSubcategoryId = subSubcategories.find(
+    (subSub) => subSub.name === subsubcategory
+  )?.id;
+
+  // Filter ads based on subcategoryId and subSubcategoryId
+  let filteredAds = ads;
+  if (subcategoryId) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.subcategoryId === subcategoryId
+    );
+  }
+  if (subSubcategoryId) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.subSubcategoryId === subSubcategoryId
+    );
+  }
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchSubcategories());
+    dispatch(fetchSubSubcategories());
+    dispatch(fetchAds());
+  }, [dispatch]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -151,63 +193,70 @@ const Electronics = () => {
         </Stack>
       </Box>
 
-      <Box
-        sx={{
-          zIndex: 1400,
-          flexGrow: 1,
-          maxWidth: "940px",
-          mx: "auto",
-          my: 4,
-        }}
-      >
-        <Drawer
-          anchor="right"
-          open={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
+      <Hidden lgUp>
+        <Box
+          sx={{
+            zIndex: 1400,
+            flexGrow: 1,
+            maxWidth: "940px",
+            mx: "auto",
+            my: 4,
+          }}
         >
-          <ElectronicsSidebar />
-        </Drawer>
-      </Box>
-      <Backdrop open={sidebarOpen} onClick={() => setSidebarOpen(false)} />
+          <Drawer
+            anchor="right"
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          >
+            <MobileSidebar />
+          </Drawer>
+        </Box>
+        <Backdrop open={sidebarOpen} onClick={() => setSidebarOpen(false)} />
+      </Hidden>
 
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "940px",
+          maxWidth: "1018px",
           mx: "auto",
           my: 4,
         }}
       >
-        {electronicProducts.length !== 0 ? (
-          <Grid
-            container
-            spacing={2}
-            sx={{ display: "flex", justifyContent: "flex-start", p: 0.5 }}
-          >
-            <Grid item sm={10}>
-              <Stack direction="column">
-                {electronicProducts.map((item) => (
+        <Grid container spacing={2}>
+          {/* Sidebar */}
+          <Hidden lgDown>
+            <Grid item lg={4}>
+              <SideBar />
+            </Grid>
+          </Hidden>
+          
+          {/* Cards */}
+          <Grid item xs={12} lg={8}>
+            <Grid container spacing={2} sx={{ px: 1 }}>
+              {filteredAds?.map((item) => (
+                <Grid item xs={12} sm={6} md={4} key={item?.id}>
                   <ElectronicsCard
-                    key={item?.id}
-                    title={item?.title}
-                    img={item?.img}
-                    price={item?.price}
-                    location={item?.location}
-                    user={item?.uid}
-                    usage={item?.usage}
-                    condition={item?.condition}
-                    date={item?.date}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
+                    id={item?.id}
+                    title={item?.Title}
+                    img={item?.Images[0]}
+                    price={item?.Price}
+                    location={item?.Location}
+                    usage={item?.Usage}
+                    condition={item?.Condition}
+                    date={item?.DatePosted}
+                    negotiable={item?.Negotiable}
+                    subcategories={subcategories}
+                    subsubcategories={subSubcategories}
+                    subId={item?.subcategoryId}
+                    subsubId={item?.subsubcategoryId}
                   />
-                ))}
-              </Stack>
+                </Grid>
+              ))}
             </Grid>
           </Grid>
-        ) : (
+        </Grid>
+
+        {filteredAds.length === 0 && (
           <Typography variant="h2" textAlign="center" tabIndex="0">
             There is no content to display here
           </Typography>

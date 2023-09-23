@@ -93,7 +93,7 @@ const CreateAd = () => {
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "1010px",
+          maxWidth: "940px",
           [theme.breakpoints.down("sm")]: {
             mx: 2,
           },

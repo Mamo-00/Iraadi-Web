@@ -23,7 +23,7 @@ import {
   signInWithRedirect,
   onAuthStateChanged,
 } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { httpsCallable } from "firebase/functions";
 
@@ -380,7 +380,7 @@ export const fetchAndUpdateCurrentUser = createAsyncThunk(
       // Check if the document exists
       if (userDoc.exists()) {
         // If the document exists, get the data from the document
-        const userData = userDoc.data();
+        const userData = userDoc?.data();
         // Return the user's display name, phone number, and profile picture URL
         return {
           displayName: userData.displayName,
@@ -402,7 +402,34 @@ export const fetchAndUpdateCurrentUser = createAsyncThunk(
       // If there's an error during this process, log the error message,
       // capture the error with Sentry for error tracking, and reject the promise with the error message
       Sentry.captureException(error);
-      console.log("rejectwithvalue fetchAndUpdate value:", error.message);
+      //console.log("rejectwithvalue fetchAndUpdate value:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchAllUsers = createAsyncThunk(
+  'user/fetchAllUsers',
+  async (_, { rejectWithValue }) => {
+    try {
+      // Get a reference to the 'users' collection
+      const usersCollectionRef = collection(db, 'users');
+
+      // Fetch all documents from the 'users' collection
+      const querySnapshot = await getDocs(usersCollectionRef);
+
+      // Initialize an empty array to hold the user data
+      const users = [];
+
+      // Loop through each document and push the data to the users array
+      querySnapshot.forEach((doc) => {
+        users.push({ uid: doc.id, ...doc.data() });
+      });
+
+      // Return the array of users
+      return users;
+    } catch (error) {
+      // If there's an error, reject the promise with the error message
       return rejectWithValue(error.message);
     }
   }
@@ -601,6 +628,19 @@ const userSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
+      .addCase(fetchAllUsers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAllUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // This will add all the fetched users to the state
+        userAdapter.setAll(state, action.payload);
+        state.error = null;
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user.displayName = action.payload.displayName;
@@ -712,5 +752,14 @@ export const {
 } = userAdapter.getSelectors((state) => state.user);
 
 export const selectCurrentUser = createSelector(selectAllUsers, (users) => (users.length > 0 ? users[0] : null));
+
+export const selectUserByUid = createSelector(
+  // First input selector: all users
+  selectAllUsers,
+  // Second input selector: the current state and props, but we only need the props (uid)
+  (state, uid) => uid,
+  // Result function: find and return the user with the specified uid
+  (users, uid) => users.find(user => user.uid === uid)
+);
 
 export default userSlice.reducer;

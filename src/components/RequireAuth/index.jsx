@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../features/user/userSlice';
-import Loading from '../../pages/Loading';
+import Loading from '../../pages/LoadingPages/Loading';
 
 const RequireAuth = ({ allowedRoles }) => {
     const location = useLocation();

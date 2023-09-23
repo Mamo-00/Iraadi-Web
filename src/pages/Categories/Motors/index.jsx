@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
-import VehicleSideBar from "../../../components/Sidebar/VehicleSidebar"
+import VehicleSideBar from "../../../components/Sidebar/Sidebar"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useTheme, Stack, Box, Grid } from "@mui/material";
 import VehicleCard from "../../../components/Cards/DisplayCards/VehicleCard";
@@ -46,7 +46,7 @@ const Motors = () => {
           </Grid>
           <Grid item sm={8}>
             <Stack direction="column" spacing={2}>
-              {motorProducts.map((item) => (
+              {motorProducts?.map((item) => (
                 <VehicleCard
                   key={item?.id}
                   img={item?.img}

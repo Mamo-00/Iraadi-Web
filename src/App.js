@@ -35,27 +35,32 @@ function App() {
         {/*Routing */}
         <Routes>
           <Route path="/" element={<Layout />}>
-
             {/*Public Routes*/}
             <Route path="/" element={<Home />} />
-            <Route path="/:category/:subcategory/:subsubcategory/:id-product-name" element={<ProductDetail />} />
+
+            <Route
+              path="/details/:category/:subcategory/:subsubcategory/:idProductName"
+              element={<ProductDetail />}
+            />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/unauthorized" element={<UnAuthorized />} />
             <Route path="/FAQ" element={<FAQ />} />
 
             {/*Protected Routes*/}
-            <Route element={<RequireAuth allowedRoles={'user'} />}>
+            <Route element={<RequireAuth allowedRoles={"user"} />}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/create-ad" element={<CreateAd />} />
             </Route>
 
             {/*Electronics Routes*/}
-            <Route path="/Electronics" element={<Electronics />} />
-            <Route path="/Electronics/:subcategory" element={<Electronics />} />
-            <Route
-              path="/Electronics/:subcategory/:subsubcategory"
-              element={<Electronics />}
-            />
+            <Route path="/Electronics" element={<Electronics />}>
+              <Route path=":subcategory" element={<Electronics />} />
+              <Route
+                path=":subcategory/:subsubcategory"
+                element={<Electronics />}
+              />
+            </Route>
 
             {/*Motors Routes*/}
             <Route path="/Vehicles" element={<Motors />} />
