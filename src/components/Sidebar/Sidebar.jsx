@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { carMakes } from "../../utils/carMakes";
+import { useDispatch } from 'react-redux';
+import { useOptionHandler } from '../../utils/hooks/useOptionHandler';
 import {
   Box,
   Button,
@@ -12,81 +13,101 @@ import {
   Select,
   Typography,
   TextField,
-  IconButton,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import  CloseRoundedIcon  from '@mui/icons-material/CloseRounded';
+import { fetchFilteredAds } from "../../features/ads/adsSlice";
 
-const Sidebar = () => {
-  const maxYear = new Date().getFullYear();
-  const minYear = 1930;
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
 
+const Sidebar = ({ handleFilterChange }) => {
+  
+  const dispatch = useDispatch();
   const [location, setLocation] = useState("");
-  const [make, setMake] = useState("");
-  const [color, setColor] = useState("");
-  const [year, setYear] = useState([minYear, maxYear]);
-  const [mileage, setMileage] = useState([0, 1]);
-  const [doors, setDoors] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [fuels, setFuels] = useState([]);
+  const [usage, setUsage, handleUsageChange] = useOptionHandler([]);
+  const [condition, setCondition, handleConditionChange] = useOptionHandler([]);
+  const [negotiable, setNegotiable] = useState(false);
+  const [price, setPrice] = useState([0, 100000]);
 
   const resetFilters = () => {
     setLocation("");
-    setMake("");
-    setColor("");
-    setYear([minYear, maxYear]);
-    setDoors([]);
-    setTags([]);
-    setFuels([]);
+    setCondition([]);
+    setNegotiable("");
+    setUsage([]);
   };
 
-  const handleYearChange = (event, newValue) => {
-    setYear(newValue);
-  };
+  const applyFilters = () => {
+    const filters = {
+      location,
+      condition,
+      usage,
+      negotiable,
+      // Add other filter states here
+    };
 
-  const handleLocationChange = (event) => {
-    setLocation(event.target.value);
-  };
-
-  const handleColorChange = (event) => {
-    setColor(event.target.value);
-  };
-
-  const handleMakeChange = (event) => {
-    setMake(event.target.value);
-  };
-
-  const doorOptions = ["One", "Two", "Three", "Four", "Five+"];
-  const handleDoorsChange = (value) => {
-    setDoors((prevState) => {
-      return prevState.includes(value)
-        ? prevState.filter((door) => door !== value)
-        : [...prevState, value];
+    // Loop through each filter and apply it
+    Object.keys(filters).forEach((key) => {
+      console.log('key value in applyFilter:', key);
+      const properCaseKey = key.charAt(0).toUpperCase() + key.slice(1);
+      console.log('key after the gruesome operation:', properCaseKey);
+      handleFilterChange(properCaseKey, filters[key]); // <-- Use handleFilterChange here
     });
+
   };
 
-  const tagOptions = ["Premium", "Dealer"];
-  const handleTagsChange = (value) => {
-    setTags((prevState) => {
-      return prevState.includes(value)
-        ? prevState.filter((tag) => tag !== value)
-        : [...prevState, value];
-    });
+  const debouncedApplyFilters = debounce(applyFilters, 300);
+
+  const handleNegotiableChange = (event) => {
+    setNegotiable(event.target.checked);
+    handleFilterChange('Negotiable', event.target.checked);  // <-- Add this line
   };
 
-  const fuelOptions = ["Gas", "Diesel", "Electricity"];
-  const handleFuelsChange = (value) => {
-    setFuels((prevState) => {
-      return prevState.includes(value)
-        ? prevState.filter((fuel) => fuel !== value)
-        : [...prevState, value];
-    });
+  const handlePriceInputChange = (index, event) => {
+    const newPrice = [...price];
+    newPrice[index] = parseInt(event.target.value);
+    setPrice(newPrice);
   };
 
-  const handleMileageInputChange = (index, event) => {
-    const newMileage = [...mileage];
-    newMileage[index] = parseInt(event.target.value);
-    setMileage(newMileage);
-  };
+  const usageOptions = [
+    "New",
+    "Used Once",
+    "Light Usage",
+    "Used",
+    "Heavy Usage",
+  ];
+  const conditionOptions = ["Perfect", "Good", "Normal", "Poor", "Broken"];
+  const negotiableOptions = ["Yes", "No"];
+  const statusOptions = ["Available", "Sold"];
+
+  const OptionBox = ({
+    title,
+    options,
+    selectedOptions,
+    handleOptionChange,
+  }) => (
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" gutterBottom>
+        {title}
+      </Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+        {options.map((option) => (
+          <Chip
+            key={option}
+            label={option}
+            color={selectedOptions.includes(option) ? "secondary" : "primary"}
+            onClick={() => handleOptionChange(option)}
+          />
+        ))}
+      </Box>
+    </Box>
+  );
 
   return (
     <Box
@@ -116,7 +137,10 @@ const Sidebar = () => {
           id="location-select"
           value={location}
           label="Location"
-          onChange={handleLocationChange}
+          onChange={(e) => {
+            setLocation(e.target.value);
+            handleFilterChange("Location", e.target.value);
+          }}
         >
           <MenuItem value="Bergen">Mogadishu</MenuItem>
           <MenuItem value="Oslo">Hargeysa</MenuItem>
@@ -128,217 +152,78 @@ const Sidebar = () => {
         </Select>
       </FormControl>
 
-      {/*Set Year */}
-      <Box display="flex" flexDirection="column" textAlign="center">
-        <Typography variant="subtitle1">Year</Typography>
-        <Stack direction="row" sx={{ mb: 3 }}>
-          <Typography variant="subtitle2" sx={{ mr: 1 }}>
-            {year[0]}
-          </Typography>
-          <Slider
-            label="year"
-            getAriaLabel={() => "model year"}
-            value={year}
-            onChange={handleYearChange}
-            valueLabelDisplay="auto"
-            min={minYear}
-            max={maxYear}
-            sx={{ mx: 1 }}
-          />
-          <Typography variant="subtitle2" sx={{ ml: 1 }}>
-            {year[1]}
-          </Typography>
-        </Stack>
-      </Box>
-
       <Stack direction="row" sx={{ mb: 3 }}>
         <TextField
           variant="outlined"
           type="number"
-          label="Km"
-          value={mileage[0]}
-          onChange={(event) => handleMileageInputChange(0, event)}
+          label="Min Price"
+          value={price[0]}
+          onChange={(event) => handlePriceInputChange(0, event)}
           inputProps={{
-            step: 1000,
+            step: 100,
             min: 0,
-            max: 1000000,
+            max: 100000,
             type: "number",
           }}
           sx={{ mr: 2 }}
         />
         <Typography variant="subtitle2" sx={{ my: "auto" }}>
-          Distance
+          to
         </Typography>
         <TextField
           variant="outlined"
           type="number"
-          label="Km"
-          value={mileage[1]}
-          onChange={(event) => handleMileageInputChange(1, event)}
+          label="Max Price"
+          value={price[1]}
+          onChange={(event) => handlePriceInputChange(1, event)}
           inputProps={{
-            step: 1000,
+            step: 100,
             min: 0,
-            max: 1000000,
+            max: 100000,
             type: "number",
           }}
           sx={{ ml: 2 }}
         />
       </Stack>
 
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Doors
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          {doorOptions.map((door) => (
-            <Chip
-              key={door}
-              label={door}
-              color={doors.includes(door) ? "secondary" : "primary"}
-              onClick={() => handleDoorsChange(door)}
-            />
-          ))}
-        </Box>
-      </Box>
+      <OptionBox
+        title="Condition"
+        options={conditionOptions}
+        selectedOptions={condition}
+        handleOptionChange={handleConditionChange}
+      />
 
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Tags
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          {tagOptions.map((tag) => (
-            <Chip
-              key={tag}
-              label={tag}
-              color={tags.includes(tag) ? "secondary" : "primary"}
-              onClick={() => handleTagsChange(tag)}
-            />
-          ))}
-        </Box>
-      </Box>
+      <OptionBox
+        title="Usage"
+        options={usageOptions}
+        selectedOptions={usage}
+        handleOptionChange={handleUsageChange}
+      />
 
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Fuels
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          {fuelOptions.map((fuel) => (
-            <Chip
-              key={fuel}
-              label={fuel}
-              color={fuels.includes(fuel) ? "secondary" : "primary"}
-              onClick={() => handleFuelsChange(fuel)}
-            />
-          ))}
-        </Box>
-      </Box>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={negotiable}
+            onChange={handleNegotiableChange}
+            name="Negotiable"
+            color="primary"
+            sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
+          />
+        }
+        label={
+          <Typography variant="body1" sx={{ fontSize: 18 }}>
+            Negotiable
+          </Typography>
+        }
+        labelPlacement="start"
+        sx={{
+          flexDirection: "row-reverse",
+          justifyContent: "start",
+          marginLeft: 0,
+        }}
+      />
 
-      <FormControl fullWidth sx={{ mb: 3 }}>
-        <InputLabel id="make-label">Make</InputLabel>
-        <Select
-          labelId="make-label"
-          id="make-select"
-          value={make}
-          label="Make"
-          onChange={handleMakeChange}
-          MenuProps={{
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "left",
-            },
-            transformOrigin: {
-              vertical: "top",
-              horizontal: "left",
-            },
-            getContentAnchorEl: null,
-            PaperProps: {
-              style: {
-                maxHeight: 200, // Set the maximum height of the dropdown here
-              },
-            },
-          }}
-        >
-          {carMakes.map((make) => (
-            <MenuItem key={make} value={make}>
-              {make}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth sx={{ mb: 3 }}>
-        <InputLabel id="color-label">Colors</InputLabel>
-        <Select
-          labelId="color-label"
-          id="color-select"
-          value={color}
-          label="Colors"
-          onChange={handleColorChange}
-          MenuProps={{
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "left",
-            },
-            transformOrigin: {
-              vertical: "top",
-              horizontal: "left",
-            },
-            getContentAnchorEl: null,
-            PaperProps: {
-              style: {
-                maxHeight: 200, // Set the maximum height of the dropdown here
-              },
-            },
-          }}
-        >
-          <MenuItem value="red">Red</MenuItem>
-          <MenuItem value="orange">Orange</MenuItem>
-          <MenuItem value="green">Green</MenuItem>
-          <MenuItem value="blue">Blue</MenuItem>
-          <MenuItem value="white">White</MenuItem>
-          <MenuItem value="silver">Silver</MenuItem>
-          <MenuItem value="black">Black</MenuItem>
-          <MenuItem value="grey">Grey</MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth sx={{ mb: 3 }}>
-        <InputLabel id="color-label">Colors</InputLabel>
-        <Select
-          labelId="color-label"
-          id="color-select"
-          value={color}
-          label="Colors"
-          onChange={handleColorChange}
-          MenuProps={{
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "left",
-            },
-            transformOrigin: {
-              vertical: "top",
-              horizontal: "left",
-            },
-            getContentAnchorEl: null,
-            PaperProps: {
-              style: {
-                maxHeight: 200, // Set the maximum height of the dropdown here
-              },
-            },
-          }}
-        >
-          <MenuItem value="red">Red</MenuItem>
-          <MenuItem value="orange">Orange</MenuItem>
-          <MenuItem value="green">Green</MenuItem>
-          <MenuItem value="blue">Blue</MenuItem>
-          <MenuItem value="white">White</MenuItem>
-          <MenuItem value="silver">Silver</MenuItem>
-          <MenuItem value="black">Black</MenuItem>
-          <MenuItem value="grey">Grey</MenuItem>
-        </Select>
-      </FormControl>
-
-      <Button variant="contained" color="primary">
+      <Button variant="contained" color="primary" onClick={applyFilters}>
         Apply
       </Button>
     </Box>

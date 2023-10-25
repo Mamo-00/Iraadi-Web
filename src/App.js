@@ -11,7 +11,7 @@ import CreateAd from "./pages/CreateAd";
 import Motors from "./pages/Categories/Motors";
 import ProductDetail from "./pages/ProductDetail";
 import FAQ from "./pages/FAQ";
-import Electronics from "./pages/Categories/Electronics";
+import Classifieds from "./pages/Categories/Classifieds";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 
@@ -53,13 +53,27 @@ function App() {
               <Route path="/create-ad" element={<CreateAd />} />
             </Route>
 
-            {/*Electronics Routes*/}
-            <Route path="/Electronics" element={<Electronics />}>
-              <Route path=":subcategory" element={<Electronics />} />
+            {/*Classifieds Routes*/}
+            <Route path="/Classifieds" element={<Classifieds />}>
+              <Route path=":category" element={<Classifieds />} />
+              <Route path=":category/:subcategory" element={<Classifieds />} />
               <Route
-                path=":subcategory/:subsubcategory"
-                element={<Electronics />}
+                path=":category/:subcategory/:subsubcategory"
+                element={<Classifieds />}
               />
+              <Route
+                path=":category/page/:page"
+                element={<Classifieds />}
+              />
+              <Route
+                path=":category/:subcategory/page/:page"
+                element={<Classifieds />}
+              />
+              <Route
+                path=":category/:subcategory/:subsubcategory/page/:page"
+                element={<Classifieds />}
+              />
+              {/* Page parameter */}
             </Route>
 
             {/*Motors Routes*/}

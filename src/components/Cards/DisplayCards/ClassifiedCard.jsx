@@ -10,7 +10,7 @@ import {
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Link } from "react-router-dom";
 
-const ElectronicsCard = ({
+const ClassifiedCard = ({
   id,
   img,
   title,
@@ -41,42 +41,55 @@ const ElectronicsCard = ({
           mb: 2,
         }}
       >
-        {/* Image at the top */}
-        {/* TODO: make it display an array of images instead of a single image.
-                    'A feature for the future' - Mahmod Mohamed          
-          */}
+        
         <CardMedia
           component="img"
           image={img}
           alt={title}
           sx={{
-            maxHeight: "180px",
+            height: "180px",
             objectFit: "contain",
             borderTopLeftRadius: 2,
             borderTopRightRadius: 2,
-            background: 'linear-gradient(to bottom, #F8F7F7, #EDEDED, #D0D0D0 )',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'
+            background:
+              "linear-gradient(to bottom, #F8F7F7, #EDEDED, #D0D0D0 )",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         />
         {/* Text details beneath the image */}
-        <CardContent>
-          <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+        <CardContent sx={{ pb: 0 }}>
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{
+              mb: 1,
+              maxWidth: "100%",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {title}
           </Typography>
-          <Typography variant="h4" sx={{ mb: 2 }}>
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    currencyDisplay: "narrowSymbol",
-                  }).format(price)}
-                </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="h4" sx={{ mb: 1 }}>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              currencyDisplay: "narrowSymbol",
+            }).format(price)}
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 0.5 }}>
             Usage: {usage}
           </Typography>
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="body1" sx={{ mb: 0.5 }}>
             Condition: {condition}
           </Typography>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={2}
+          >
             <Box display="flex" alignItems="center">
               <LocationOnIcon fontSize="small" />
               <Typography variant="body2" ml={0.5}>
@@ -95,4 +108,4 @@ const ElectronicsCard = ({
   );
 };
 
-export default ElectronicsCard;
+export default ClassifiedCard;

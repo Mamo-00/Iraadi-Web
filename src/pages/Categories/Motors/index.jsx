@@ -6,7 +6,7 @@ import Login from "../../../components/Login";
 import VehicleSideBar from "../../../components/Sidebar/Sidebar"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useTheme, Stack, Box, Grid } from "@mui/material";
-import VehicleCard from "../../../components/Cards/DisplayCards/VehicleCard";
+import MotorsCard from "../../../components/Cards/DisplayCards/MotorsCard";
 
 import { useProducts } from "../../../utils/hooks/useProducts"
 
@@ -47,7 +47,7 @@ const Motors = () => {
           <Grid item sm={8}>
             <Stack direction="column" spacing={2}>
               {motorProducts?.map((item) => (
-                <VehicleCard
+                <MotorsCard
                   key={item?.id}
                   img={item?.img}
                   make={item?.make}

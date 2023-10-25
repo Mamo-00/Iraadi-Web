@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
@@ -39,6 +39,7 @@ import {
   signUpWithEmailPassword,
   signInWithGoogle,
   signInWithFacebook,
+  selectCurrentUser
 } from '../features/user/userSlice';
 import { set } from 'date-fns';
 import { Stack } from '@mui/system';
@@ -69,14 +70,19 @@ const Login = () => {
 
   // Redux hooks
   const dispatch = useDispatch();
+  const currentUser = useSelector((state) => selectCurrentUser(state));
   const userError = useSelector((state) => state.user.error);
 
   // Navigation
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  console.log('the location:', location);
+  const from = location?.state?.from?.pathname || "/";
+  console.log('the from value:', from);
+  sessionStorage.setItem('intendedDestination', from);
+  console.log('session storage:', sessionStorage.getItem('intendedDestination'));
 
-  const combinedError = error || userError;
+  const combinedError = error ;
 
   countries.registerLocale(enLocale);
   const countryCodes = getCountries();
@@ -89,36 +95,55 @@ const Login = () => {
 
 
 
-  const handleLogin = () => {
-    dispatch(signInWithEmailPassword(loginEmail, loginPassword)).catch((error) => {
-      setError(error.message);
-    });
-  };
-
-  const handleSignUp = () => {
-    if (validateRegisterForm()) {
-      dispatch(
-        signUpWithEmailPassword(email, password, name, phone)
-      ).catch((error) => {
+    const handleLogin = async () => {
+      try {
+        await dispatch(signInWithEmailPassword(loginEmail, loginPassword));
+        const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
+        navigate(intendedDestination, { replace: true });
+        sessionStorage.removeItem('intendedDestination');
+      } catch (error) {
         setError(error.message);
-      });
-    }
-  };
+      }
+    };
+
+    const handleSignUp = () => {
+      if (validateRegisterForm()) {
+        dispatch(signUpWithEmailPassword(email, password, name, phone))
+          .then(() => {
+            // Retrieve the intended destination from the session storage
+            const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
+            navigate(intendedDestination, { replace: true });
+            // Clear the session storage
+            sessionStorage.removeItem('intendedDestination');
+          })
+          .catch((error) => {
+            setError(error.message);
+          });
+      }
+    };
 
   const handleFacebookLogin = () => {
-    dispatch(signInWithFacebook());
+    dispatch(signInWithFacebook())
+      .then(() => {
+        // Retrieve the original destination from the session storage
+        const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
+        navigate(intendedDestination, { replace: true });
+        // Clear the session storage
+        sessionStorage.removeItem('intendedDestination');
+      })
+      .catch((error) => console.log("Error during google login dispatch:", error));
   };
 
   const handleGoogleLogin = () => {
     // Store the original destination in the session storage
-    sessionStorage.setItem('originalDestination', from);
+    
     dispatch(signInWithGoogle())
       .then(() => {
         // Retrieve the original destination from the session storage
-        const originalDestination = sessionStorage.getItem('originalDestination') || '/';
-        navigate(originalDestination, { replace: true });
+        const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
+        navigate(intendedDestination, { replace: true });
         // Clear the session storage
-        sessionStorage.removeItem('originalDestination');
+        sessionStorage.removeItem('intendedDestination');
       })
       .catch((error) => console.log("Error during google login dispatch:", error));
   };
@@ -128,6 +153,14 @@ const Login = () => {
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  /* useEffect(() => {
+    if (currentUser) {
+      const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
+      navigate(intendedDestination, { replace: true });
+      sessionStorage.removeItem('intendedDestination');
+    }
+  }, [currentUser, navigate]); */
 
   const validateRegisterForm = () => {
     if (name.trim() === '') {

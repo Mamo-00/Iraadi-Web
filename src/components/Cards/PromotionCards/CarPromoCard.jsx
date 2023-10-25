@@ -36,7 +36,7 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
         mx: 1,
         borderRadius: 2
       }}
-      style={{ boxShadow: "1px -2px 9px #4189DD70, 0px 1px 9px #4189DD90" }}
+      style={{ boxShadow: "1px -2px 6px #ccc, 0px 1px 6px #808080" }}
     >
       <CardActionArea component={Link} to="/motors" target="_blank">
         <Box position="relative">

@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const { Storage } = require("@google-cloud/storage");
-const cors = require("cors")({ origin: true });
+const cors = require("cors");
+const Joi = require("joi");
 
 const storage = new Storage();
 
@@ -8,6 +9,140 @@ const admin = require("firebase-admin");
 const { initializeApp } = require("firebase-admin/app");
 
 initializeApp();
+
+const corsHandler = cors({
+  origin: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+});
+
+// Validation schemas
+const createUserDocumentSchema = Joi.object({
+  user: Joi.object({
+    uid: Joi.string().required(),
+    email: Joi.string().email().required(),
+    photoURL: Joi.string().uri().allow(null, ""),
+    displayName: Joi.string().allow(null, ""),
+    phoneNumber: Joi.string().allow(null, ""),
+  }).required(),
+  name: Joi.string().allow(null, ""),
+  phone: Joi.string().allow(null, ""),
+});
+
+const setCustomClaimsSchema = Joi.object({
+  uid: Joi.string().required(),
+  name: Joi.string().required(),
+  phone: Joi.string().required(),
+});
+
+const createUserWithEmailPasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  name: Joi.string().required(),
+  phone: Joi.string().required(),
+});
+
+const createAdSchema = Joi.object({
+  ad: Joi.object().required(),
+  collectionName: Joi.string().required(),
+});
+
+const createAdDocumentSchema = Joi.object({
+  ad: Joi.object().required(),
+  uid: Joi.string().required(),
+  collectionName: Joi.string().required(),
+});
+
+const adsSchema = Joi.object({
+  Condition: Joi.string().required(),
+  "Date Listed": Joi.date().required(),
+  Description: Joi.string().required(),
+  Images: Joi.array().items(Joi.string()).required(),
+  Location: Joi.string().required(),
+  uid: Joi.string().required(),
+  Price: Joi.number().required(),
+  Title: Joi.string().required(),
+  id: Joi.string().required(),
+  Negotiable: Joi.string().required(),
+});
+
+const carAdSchema = Joi.object({
+  "Accident History": Joi.boolean().required(),
+  "Body Type": Joi.string().required(),
+  Color: Joi.string().required(),
+  Condition: Joi.string().required(),
+  "Date Listed": Joi.date().required(),
+  Description: Joi.string().required(),
+  Doors: Joi.number().required(),
+  "Drive Type": Joi.string().required(),
+  "Engine Size": Joi.number().required(),
+  "Expiration Date": Joi.date().required(),
+  "Fuel Type": Joi.string().required(),
+  Gearbox: Joi.string().required(),
+  Images: Joi.array().items(Joi.string()).required(),
+  "License Plate": Joi.string().required(),
+  Location: Joi.string().required(),
+  Make: Joi.string().required(),
+  Mileage: Joi.string().required(),
+  Model: Joi.string().required(),
+  "Number of Owners": Joi.number().required(),
+  uid: Joi.string().required(),
+  Price: Joi.number().required(),
+  Seats: Joi.string().required(),
+  Title: Joi.string().required(),
+  VIN: Joi.string().required(),
+  Warranty: Joi.string().required(),
+  Year: Joi.string().required(),
+  Negotiable: Joi.string().required(),
+  id: Joi.string().required(),
+});
+
+const propertyAdSchema = Joi.object({
+  Title: Joi.string().required(),
+  Bedrooms: Joi.number().required(),
+  Bathrooms: Joi.number().required(),
+  Images: Joi.array().items(Joi.string()).required(),
+  uid: Joi.string().required(),
+  Price: Joi.number().required(),
+  Area: Joi.number().required(),
+  Description: Joi.string().required(),
+  Facilities: Joi.array().items(Joi.string()).required(),
+  Location: Joi.string().required(),
+  Negotiable: Joi.string().required(),
+  Rooms: Joi.number().required(),
+  Type: Joi.string().required(),
+  "Real Estate Agent": Joi.string().required(),
+  "Sale or Rent": Joi.string().required(),
+});
+
+// Define the jobAds schema
+const jobAdsSchema = Joi.object({
+  "Document ID": Joi.string().required(), // Assuming this is a string and required
+  "Contact Info": Joi.string().required(), // Assuming this is a string and required
+  Description: Joi.string().required(),
+  Education: Joi.string().required(), // Assuming this is a string and required
+  "Employment Type": Joi.string().required(),
+  Experience: Joi.string().required(), // Assuming this is a string and required
+  Salary: Joi.alternatives()
+    .try(
+      Joi.object({
+        Negotiable: Joi.string().required(),
+        max: Joi.number().optional(),
+        min: Joi.number().optional(),
+      }),
+      Joi.object({
+        Negotiable: Joi.string().optional(),
+        max: Joi.number().required(),
+        min: Joi.number().required(),
+      })
+    )
+    .required(),
+  Title: Joi.string().required(),
+  Workplace: Joi.string().required(), // Assuming this is a string and required
+  categoryId: Joi.string().required(),
+  id: Joi.string().required(),
+  subcategoryId: Joi.string().required(),
+  subsubcategoryId: Joi.string().allow(null, ""), // Allowing null or empty string
+}).required();
 
 async function createUserDocument(user, name, phone) {
   try {
@@ -33,6 +168,14 @@ async function createUserDocument(user, name, phone) {
 }
 
 exports.setCustomClaims = functions.https.onCall(async (data, context) => {
+  const { error } = setCustomClaimsSchema.validate(data);
+  if (error) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      error.details[0].message
+    );
+  }
+
   const { uid, name, phone } = data;
 
   const metadata = { resource: { type: "global" } };
@@ -55,6 +198,14 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
 
 exports.createUserWithEmailPassword = functions.https.onCall(
   async (data, context) => {
+    const { error } = createUserWithEmailPasswordSchema.validate(data);
+    if (error) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        error.details[0].message
+      );
+    }
+
     const { email, password, name, phone } = data;
 
     try {
@@ -79,6 +230,19 @@ exports.createUserWithEmailPassword = functions.https.onCall(
 );
 
 async function createAdDocument(ad, uid, collectionName) {
+  const { error } = createAdDocumentSchema.validate({
+    ad,
+    uid,
+    collectionName,
+  });
+  if (error) {
+    console.log(
+      "Validation error in createAdDocument:",
+      error.details[0].message
+    );
+    return;
+  }
+
   try {
     const createdAt = new Date().toISOString();
 
@@ -100,6 +264,41 @@ async function createAdDocument(ad, uid, collectionName) {
 
 // Cloud Function to create a new ad
 exports.createAd = functions.https.onCall(async (data, context) => {
+  const { error } = createAdSchema.validate(data);
+  if (error) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      error.details[0].message
+    );
+  }
+
+  let schema;
+  switch (data.collectionName) {
+    case "ads":
+      schema = adsSchema;
+      break;
+    case "carAds":
+      schema = carAdSchema;
+      break;
+    case "propertyAds":
+      schema = propertyAdSchema;
+      break;
+    // ... other cases
+    default:
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Invalid collection name"
+      );
+  }
+
+  const { error: adError } = schema.validate(data.ad);
+  if (adError) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      adError.details[0].message
+    );
+  }
+
   const { ad, collectionName } = data;
   const uid = context.auth.uid;
 
@@ -113,7 +312,6 @@ exports.createAd = functions.https.onCall(async (data, context) => {
     const timeSinceLastPost = Date.now() - activityData.lastPost;
     const oneHour = 60 * 60 * 1000;
 
-    // If it's been less than an hour since the last post, and the user has already posted 10 ads, reject the request
     if (timeSinceLastPost < oneHour && activityData.postCount >= 10) {
       throw new functions.https.HttpsError(
         "resource-exhausted",
@@ -135,6 +333,56 @@ exports.createAd = functions.https.onCall(async (data, context) => {
   return { status: "success" };
 });
 
+exports.getFilteredAds = functions.https.onCall(async (data, context) => {
+  try {
+    console.log("Request data: ", data); // Log the incoming request data
+
+    const { location, condition, usage, negotiable } = data;
+    console.log('logging filters start');
+    console.log("location:",location," condition:",condition," usage:",usage," negotiable:",negotiable);
+    console.log('end');
+
+    const pageSize = 3;
+    const page = data.page || 1;
+    const offset = (page - 1) * pageSize;
+    let query = admin.firestore().collection("ads").offset(offset).limit(pageSize);
+
+    
+    console.log('Page:', page);
+    console.log('Offset:', offset);
+    // Apply filters based on the conditions
+    const filters = ['Location', 'Condition', 'Usage', 'Negotiable']; // Add more filters here as needed
+
+    filters.forEach((filter) => {
+      console.log('value of filter in index.js functions', filter); 
+      if (filter) {
+        if (Array.isArray(filter) && filter.length > 0) {
+          query = query.where(filter, "array-contains-any", filter);
+        } else {
+          query = query.where(filter, "==", filter);
+        }
+      }
+    });
+
+    if (data.lastVisible) {
+      query = query.startAfter(data.lastVisible);
+    }
+    const snapshot = await query.get();
+    console.log('Snapshot received:', snapshot);
+
+    const ads = snapshot.docs.map((doc) => doc.data());
+    console.log("Filtered Ads: ", ads);
+
+    const lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+    const lastVisible = lastVisibleDoc ? { id: lastVisibleDoc.id, ...lastVisibleDoc.data() } : null; // Simplify the object
+    console.log("Last Visible: ", lastVisible);
+    console.log('ads from functions:', ads);
+    return { status: "success", ads, lastVisible };
+  } catch (error) {
+    console.log("Error: ", error);
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
 
 // Cloud Function to reset post counts every hour
 /* exports.resetPostCounts = functions.pubsub
@@ -155,7 +403,7 @@ exports.createAd = functions.https.onCall(async (data, context) => {
   }); */
 
 exports.decrementPostCountOnAdDeletion = functions.firestore
-  .document("ads/{adId}")
+  .document("ads/{id}")
   .onDelete(async (snap, context) => {
     const adData = snap.data();
     const uid = adData.uid;
@@ -182,36 +430,8 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
     }
   });
 
-  exports.decrementPostCountOnCarAdDeletion = functions.firestore
-  .document("cars/{adId}")
-  .onDelete(async (snap, context) => {
-    const adData = snap.data();
-    const uid = adData.uid;
-
-    const activityRef = admin.firestore().collection("userActivity").doc(uid);
-    const activityDoc = await activityRef.get();
-
-    if (activityDoc.exists) {
-      const activityData = activityDoc.data();
-
-      // Check if the postCount is already at 0
-      if (activityData.postCount > 0) {
-        // Check the type of the ad
-        if (adData.type === "regular") {
-          await activityRef.update({
-            postCount: admin.firestore.FieldValue.increment(-1),
-          });
-        } else if (adData.type === "premium") {
-          await activityRef.update({
-            postCount: admin.firestore.FieldValue.increment(-2),
-          });
-        }
-      }
-    }
-  });
-  
-  exports.decrementPostCountOnPropertyAdDeletion = functions.firestore
-  .document("property/{adId}")
+exports.decrementPostCountOnCarAdDeletion = functions.firestore
+  .document("cars/{id}")
   .onDelete(async (snap, context) => {
     const adData = snap.data();
     const uid = adData.uid;
@@ -238,8 +458,36 @@ exports.decrementPostCountOnAdDeletion = functions.firestore
     }
   });
 
-  exports.decrementPostCountOnJobsAdDeletion = functions.firestore
-  .document("jobs/{adId}")
+exports.decrementPostCountOnPropertyAdDeletion = functions.firestore
+  .document("property/{id}")
+  .onDelete(async (snap, context) => {
+    const adData = snap.data();
+    const uid = adData.uid;
+
+    const activityRef = admin.firestore().collection("userActivity").doc(uid);
+    const activityDoc = await activityRef.get();
+
+    if (activityDoc.exists) {
+      const activityData = activityDoc.data();
+
+      // Check if the postCount is already at 0
+      if (activityData.postCount > 0) {
+        // Check the type of the ad
+        if (adData.type === "regular") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-1),
+          });
+        } else if (adData.type === "premium") {
+          await activityRef.update({
+            postCount: admin.firestore.FieldValue.increment(-2),
+          });
+        }
+      }
+    }
+  });
+
+exports.decrementPostCountOnJobsAdDeletion = functions.firestore
+  .document("jobs/{id}")
   .onDelete(async (snap, context) => {
     const adData = snap.data();
     const uid = adData.uid;
@@ -277,7 +525,7 @@ exports.fetchCategories = functions.https.onCall(async (data, context) => {
       ...doc.data(),
       id: doc.id,
     }));
-    console.log('functions', categories);
+    console.log("functions", categories);
     return { status: "success", categories };
   } catch (error) {
     console.error("Error fetching categories:", error);

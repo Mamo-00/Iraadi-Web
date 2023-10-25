@@ -4,7 +4,7 @@ import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
 import Login from "../../../components/Login";
 import MobileSidebar from "../../../components/Sidebar/MobileSidebar";
-import SideBar from "../../../components/Sidebar/Sidebar";
+import Sidebar from "../../../components/Sidebar/Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   useTheme,
@@ -22,27 +22,38 @@ import {
 
 import { ArrowDropDown } from "@mui/icons-material";
 
-import ElectronicsCard from "../../../components/Cards/DisplayCards/ElectronicsCard";
+import ClassifiedCard from "../../../components/Cards/DisplayCards/ClassifiedCard";
 
-import { useProducts } from "../../../utils/hooks/useProducts"
 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, selectAllCategories } from '../../../features/category/categorySlice';
 import { fetchSubcategories, selectAllSubcategories  } from '../../../features/category/subcategorySlice';
 import { fetchSubSubcategories, selectAllSubSubcategories } from '../../../features/category/subsubcategorySlice';
-import { fetchAds, selectAllAds } from "../../../features/ads/adsSlice";
+import { fetchAds, selectAllAds, fetchFilteredAds } from "../../../features/ads/adsSlice";
 import { subsubcategories } from "../../../utils/products";
 
 
-const Electronics = () => {
+const Classifieds = () => {
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    subcategoryId: null,
+    subSubcategoryId: null,
+    minPrice: null,
+    maxPrice: null,
+    Location: null,
+    Condition: null,
+    Usage: null,
+    Negotiable: null,
+    Status: null,
+    // Add more filters here as needed
+  });
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sortOption, setSortOption] = useState('Default');
+  const [sortOption, setSortOption] = useState("Default");
   const [anchorEl, setAnchorEl] = useState(null);
- 
+
   const { subcategory, subsubcategory } = useParams();
-  
+  const { page = 1 } = useParams();
 
   const categories = useSelector((state) => selectAllCategories(state));
   const subcategories = useSelector((state) => selectAllSubcategories(state));
@@ -51,6 +62,10 @@ const Electronics = () => {
   );
 
   const ads = useSelector((state) => selectAllAds(state));
+  // Extract the 'ads' array from the 'filteredAds' object in the Redux state.
+  // Default to an empty array if 'filteredAds' or 'ads' is null.
+  const filteredAds = useSelector((state) => state.ads.filteredAds?.ads || []);
+  console.log("filtered ads:", filteredAds);
 
   // Map subcategory and subsubcategory names to their IDs
   const subcategoryId = subcategories.find(
@@ -61,24 +76,79 @@ const Electronics = () => {
   )?.id;
 
   // Filter ads based on subcategoryId and subSubcategoryId
-  let filteredAds = ads;
-  if (subcategoryId) {
-    filteredAds = filteredAds.filter(
-      (ad) => ad.subcategoryId === subcategoryId
-    );
-  }
-  if (subSubcategoryId) {
-    filteredAds = filteredAds.filter(
-      (ad) => ad.subSubcategoryId === subSubcategoryId
+  let categroyAds = ads;
+
+  // Filter by subcategoryId if it exists in activeFilters
+  if (activeFilters.subcategoryId) {
+    categroyAds = categroyAds.filter(
+      (ad) => ad.subcategoryId === activeFilters.subcategoryId
     );
   }
 
+  // Filter by subSubcategoryId if it exists in activeFilters
+  if (activeFilters.subSubcategoryId) {
+    categroyAds = categroyAds.filter(
+      (ad) => ad.subSubcategoryId === activeFilters.subSubcategoryId
+    );
+  }
+  /*
+  // Filter by price range if both minPrice and maxPrice exist in activeFilters
+  if (activeFilters.minPrice !== null && activeFilters.maxPrice !== null) {
+    filteredAds = filteredAds.filter(
+      (ad) =>
+        ad.Price >= activeFilters.minPrice && ad.Price <= activeFilters.maxPrice
+    );
+  }
+
+  if (activeFilters.Location) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.Location === activeFilters.Location
+    );
+  }
+  
+  if (activeFilters.Condition) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.Condition === activeFilters.Condition
+    );
+  }
+  
+  if (activeFilters.Usage) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.Usage === activeFilters.Usage
+    );
+  }
+  
+  if (activeFilters.Negotiable) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.Negotiable === activeFilters.Negotiable
+    );
+  }
+  
+  if (activeFilters.Status) {
+    filteredAds = filteredAds.filter(
+      (ad) => ad.Status === activeFilters.Status
+    );
+  } */
+  const lastVisibleRedux = useSelector((state) => state.ads.lastVisible);
+  console.log("the active filters in Electronics", activeFilters);
+  console.log('the last visible ad from redux:', lastVisibleRedux);
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchSubcategories());
     dispatch(fetchSubSubcategories());
-    dispatch(fetchAds());
-  }, [dispatch]);
+
+    dispatch(fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux }));
+  }, [activeFilters]);
+
+  
+  
+
+  useEffect(() => {
+    dispatch(
+      fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux })
+    );
+  }, [activeFilters, lastVisibleRedux, dispatch]);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -89,13 +159,16 @@ const Electronics = () => {
     setAnchorEl(null);
   };
 
-  const toggleShow = (e) => {
-    e.preventDefault();
-    setOpen(!open);
+  const handleFilterChange = (filterType, value) => {
+    // Update the activeFilters state with the new filter value
+    setActiveFilters({
+      ...activeFilters,
+      [filterType]: value,
+    });
   };
 
   return (
-    <div>
+    <div style={{ margin: 0, padding: 0, overflowX: "hidden" }}>
       <Navbar />
 
       <Box
@@ -226,16 +299,16 @@ const Electronics = () => {
           {/* Sidebar */}
           <Hidden lgDown>
             <Grid item lg={4}>
-              <SideBar />
+              <Sidebar handleFilterChange={handleFilterChange} />
             </Grid>
           </Hidden>
-          
+
           {/* Cards */}
           <Grid item xs={12} lg={8}>
             <Grid container spacing={2} sx={{ px: 1 }}>
               {filteredAds?.map((item) => (
                 <Grid item xs={12} sm={6} md={4} key={item?.id}>
-                  <ElectronicsCard
+                  <ClassifiedCard
                     id={item?.id}
                     title={item?.Title}
                     img={item?.Images[0]}
@@ -253,14 +326,28 @@ const Electronics = () => {
                 </Grid>
               ))}
             </Grid>
+            {filteredAds && filteredAds.length === 0 && (
+              <Typography
+                variant="h2"
+                textAlign="center"
+                tabIndex="0"
+                sx={{ my: 20 }}
+              >
+                There is no content to display here
+              </Typography>
+            )}
+            {filteredAds === null && (
+              <Typography
+                variant="h2"
+                textAlign="center"
+                tabIndex="0"
+                sx={{ my: 20 }}
+              >
+                Loading...
+              </Typography>
+            )}
           </Grid>
         </Grid>
-
-        {filteredAds.length === 0 && (
-          <Typography variant="h2" textAlign="center" tabIndex="0">
-            There is no content to display here
-          </Typography>
-        )}
       </Box>
 
       <Footer />
@@ -268,4 +355,4 @@ const Electronics = () => {
   );
 };
 
-export default Electronics;
+export default Classifieds;

@@ -57,27 +57,62 @@ const Home = () => {
 
   const theme = useTheme();
 
-  const Promo = ( { title } ) => {
+  const Promo = ({ title }) => {
     return (
       <>
-      <Typography variant="h4" color="text.primary" sx={{ my: 3, ml: 1 }}>
-        {title}
-      </Typography>
-      <ImageList
-        sx={{
-          maxWidth: 940,
-          height: 270,
-          p: 1,
-          [theme.breakpoints.up("md")]: {
-            display: "none",
-          },
-        }}
-        cols={products?.length + 1} // +1 to show FAB component
-        rowHeight={260}
-      >
-        {products?.map((item, index) => (
-          <ImageListItem key={index}>
+        <Typography variant="h4" color="text.primary" sx={{ my: 3, ml: 1 }}>
+          {title}
+        </Typography>
+        <ImageList
+          sx={{
+            maxWidth: 940,
+            height: 270,
+            p: 1,
+            [theme.breakpoints.up("md")]: {
+              display: "none",
+            },
+          }}
+          cols={products?.length + 1} // +1 to show FAB component
+          rowHeight={260}
+        >
+          {products?.map((item, index) => (
+            <ImageListItem key={index}>
+              <CarsPromoCard
+                img={item?.img}
+                distance={item?.distance}
+                price={item?.price}
+                year={item?.year}
+                make={item?.make}
+                model={item?.model}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              />
+            </ImageListItem>
+          ))}
+          <ImageListItem sx={{ justifyContent: "center", mx: 1 }}>
+            <Fab color="primary" aria-label="view all">
+              <ArrowForwardIcon />
+            </Fab>
+            <Typography variant="subtitle1" sx={{ mt: 1 }}>
+              View All Items
+            </Typography>
+          </ImageListItem>
+        </ImageList>
+        <Stack
+          direction="row"
+          sx={{
+            [theme.breakpoints.down("md")]: {
+              display: "none",
+            },
+            justifyContent: "space-between",
+          }}
+        >
+          {products?.slice(0, 4).map((item, index) => (
             <CarsPromoCard
+              key={index}
               img={item?.img}
               distance={item?.distance}
               price={item?.price}
@@ -90,55 +125,20 @@ const Home = () => {
                 alignItems: "center",
               }}
             />
-          </ImageListItem>
-        ))}
-        <ImageListItem sx={{ justifyContent: "center", mx: 1 }}>
-          <Fab color="primary" aria-label="view all">
-            <ArrowForwardIcon />
-          </Fab>
-          <Typography variant="subtitle1" sx={{ mt: 1 }}>
-            View All Items
-          </Typography>
-        </ImageListItem>
-      </ImageList>
-      <Stack
-        direction="row"
-        sx={{
-          [theme.breakpoints.down("md")]: {
-            display: "none",
-          },
-          justifyContent: 'space-between'
-        }}
-      >
-        {products?.slice(0, 4).map((item, index) => (
-          <CarsPromoCard
-            key={index}
-            img={item?.img}
-            distance={item?.distance}
-            price={item?.price}
-            year={item?.year}
-            make={item?.make}
-            model={item?.model}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          />
-        ))}
-      </Stack>
-    </>
+          ))}
+        </Stack>
+      </>
     );
-    
   };
 
+
   return (
-    <div style={{ margin: 0, padding: 0, overflowX: 'hidden' }}>
+    <div style={{ margin: 0, padding: 0, overflowX: "hidden" }}>
       <Navbar />
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           flexGrow: 1,
           maxWidth: "940px",
           mx: 2,
@@ -148,31 +148,35 @@ const Home = () => {
           my: 4,
           py: 1,
           px: 5,
-          justifyContent: 'center',
+          justifyContent: "center",
           [theme.breakpoints.down("md")]: {
             display: "none",
           },
         }}
       >
-        <Typography variant="h3" fontWeight={600} sx={{
-          display: 'flex', 
-          flexDirection: 'row', 
-          p: 1, 
-          
-        }}>
+        <Typography
+          variant="h3"
+          fontWeight={600}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            p: 1,
+          }}
+        >
           Welcome - Soo Dhawoow
-          {currentUser ?
-            <Box sx={{}} color='text.primary'>, </Box>
-            :
-            <Box display={'none'}></Box>
-          }
-          <Box sx={{ ml: 1 }} color='text.secondary'>
+          {currentUser ? (
+            <Box sx={{}} color="text.primary">
+              ,{" "}
+            </Box>
+          ) : (
+            <Box display={"none"}></Box>
+          )}
+          <Box sx={{ ml: 1 }} color="text.secondary">
             {currentUser?.displayName}
           </Box>
         </Typography>
-         
       </Box>
-     
+
       <Box
         sx={{
           flexGrow: 1,
@@ -193,8 +197,12 @@ const Home = () => {
         >
           {categories?.map((category, index) => {
             // Get the subcategories that belong to this category
-            const relevantSubcategories = filterSubcategoriesByCategoryId(category.id);
-            const relevantSubsubcategories = filterSubsubcategoriesByCategoryId(category.id);
+            const relevantSubcategories = filterSubcategoriesByCategoryId(
+              category.id
+            );
+            const relevantSubsubcategories = filterSubsubcategoriesByCategoryId(
+              category.id
+            );
             return (
               // TODO: add a new page for further filtering when on mobile page
               <Grid item xs={4} sm={2.2} key={index}>
@@ -219,7 +227,6 @@ const Home = () => {
           pb: 1,
           overflowX: "hidden",
         }}
-        
       >
         <Promo title="Recently Looked At" />
         <Promo title="Popular Cars" />

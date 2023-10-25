@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Stack, useTheme } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
+import { format } from 'date-fns';
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer";
 import ProductDetailLoading from "../LoadingPages/ProductDetailLoading";
@@ -178,8 +179,13 @@ const ProductDetail = () => {
             <Grid
               item
               xs={12}
-              sm={6}
-              sx={{ order: { sm: 2, md: 1 }, width: "40%" }}
+              md={6}
+              sx={{
+                order: { sm: 2, md: 1 },
+                [theme.breakpoints.up("md")]: {
+                  width: "40%",
+                },
+              }}
             >
               <Box display={"flex"} flexDirection={"column"} sx={{ pr: 1 }}>
                 {/* Ad Title */}
@@ -213,9 +219,13 @@ const ProductDetail = () => {
 
                 {/* Last Updated & Published Text */}
                 <Typography variant="subtitle2" color="text.secondary">
-                  Last updated: {lastUpdated}
+                  Last updated:
+                  {isNaN(new Date(lastUpdated).getTime())
+                    ? "Invalid date"
+                    : format(new Date(lastUpdated), "dd MMMM yyyy")}
                 </Typography>
-                <Typography variant="body1" sx={{ my: 2 }}>
+
+                <Typography variant="body1" fontWeight={'bold'} sx={{ my: 2 }}>
                   Status: {published}
                 </Typography>
 
@@ -250,7 +260,7 @@ const ProductDetail = () => {
                   showPlayButton={false}
                   showFullscreenButton={false}
                   lazyLoad={true}
-                  additionalClass="centerSmallImage" 
+                  additionalClass="centerSmallImage"
                 />
               </Box>
             </Grid>

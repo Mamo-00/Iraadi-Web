@@ -350,6 +350,7 @@ const Navbar = () => {
                   color="tertiery"
                   size="small"
                   aria-label="create ad"
+                  sx={{py: '20px'}}
                 >
                   <EditIcon sx={{ mr: 1 }} color="primary" />
                   <Typography

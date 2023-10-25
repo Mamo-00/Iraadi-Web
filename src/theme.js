@@ -38,9 +38,12 @@ export const tokens = (mode) => ({
         },
 
         golden: {
-          1: "#F50057",
-          2: "#D0AA3A",
-          3: "#DFCB90",
+          1: "#D0AA3A",
+          2: "#DFCB90",
+        },
+
+        red: {
+          1: "#F50057"
         },
 
         black: {
@@ -86,9 +89,9 @@ export const themeSettings = (mode) => {
               main: colors.blue[3],
             },
             secondary: {
-              main: colors.golden[1],
-              light: colors.golden[2],
-              dark: colors.golden[3],
+              main: colors.red[1],
+              light: colors.blue[1],
+              dark: colors.golden[1],
             },
             tertiery: {
               main: colors.blue[2],
@@ -96,6 +99,7 @@ export const themeSettings = (mode) => {
             text: {
               primary: colors.black[1],
               secondary: colors.blue[2],
+              light: colors.blue[1],
             },
             background: {
               default: colors.white[2],

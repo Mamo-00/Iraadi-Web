@@ -22,6 +22,7 @@ import {
   updatePassword as updateUserPassword,
   signInWithRedirect,
   onAuthStateChanged,
+  signInWithPopup,
 } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -308,18 +309,28 @@ async function handleDifferentCredentialError(error, rejectWithValue) {
 }
 
 // This asynchronous thunk function signs a user in with their Google account.
-  export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
-    try {
-      await signInWithRedirect(auth, googleProvider);
+export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async (_, { rejectWithValue }) => {
+  try {
+    // Use Firebase's signInWithPopup method to sign in the user
+    const result = await signInWithPopup(auth, googleProvider);
     
-    } catch (error) {
-      // If there is an error during the sign-in process, 
-      // it will be caught and sent to Sentry for error tracking.
-      Sentry.captureException(error);
-      console.log("rejectwithvalue signInWithGoogle value:",error.message);
-      return rejectWithValue(error.message);
-    }
-  });
+    // Destructure the user object to only get the fields we need
+    const { uid, email, displayName, photoURL } = result.user;
+    const userDoc = await waitForUserDocument(result.user);
+    const userData = userDoc.data();
+    const role = userData.role;
+    
+    // Create a sanitized user object that only contains serializable values
+    const sanitizedUser = { uid, email, displayName, photoURL, role };
+    
+    // Return the sanitized user object to be stored in Redux state
+    return sanitizedUser;
+  } catch (error) {
+    // Handle errors by sending them to Sentry and rejecting the promise
+    Sentry.captureException(error);
+    return rejectWithValue(error.message);
+  }
+});
 
 // This asynchronous thunk function signs a user in with their Facebook account.
 export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
@@ -673,6 +684,7 @@ export const signInStateChangeListener = createAsyncThunk(
         // If the user's document exists, get the user data from it.
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          console.log("Fetched user data from Firestore: ", userData);
 
           // Prepare the payload with the user's data.
           const payload = {
@@ -693,55 +705,6 @@ export const signInStateChangeListener = createAsyncThunk(
         dispatch(removeAllUsers());
       }
     });
-
-    // Handle the redirect result if the user is signing in using a federated identity provider.
-    try {
-      const result = await getRedirectResult(auth);
-      console.log('result of the redirect:', result);
-      if (result.user) {
-        // If the user successfully signed in, wait for the user's document in Firestore to be available.
-        const user = result.user;
-        const userDoc = await waitForUserDocument(user);
-
-        if (userDoc.exists()) {
-          // If the user's document exists, get the user data from it.
-          const userData = userDoc.data();
-
-          // Prepare the payload with the user's data.
-          const payload = {
-            uid: user.uid,
-            displayName: userData.displayName || user.displayName,
-            phoneNumber: userData.phoneNumber || user.phoneNumber,
-            photoURL: userData.photoURL || user.photoURL,
-            role: userData.role || user.role,
-          };
-
-          // Dispatch the upsertUser action to update the user's data in the Redux store.
-          dispatch(upsertUser(payload));
-        }
-      }
-    } catch (error) {
-      // If an error occurred during the sign-in process, handle it.
-      if (error.code === "auth/account-exists-with-different-credential") {
-        // This specific error occurs when the user has already signed up using a
-        // different sign-in method with the same email address.
-        // In this case, handle the error and try to merge the accounts.
-        try {
-          console.log(
-            "we reached the handle different credential error function"
-          );
-          await handleDifferentCredentialError(error, rejectWithValue);
-        } catch (e) {
-          console.log("we reached error");
-          // If handling the error failed, clear the user data from the Redux store.
-          dispatch(removeAllUsers());
-        }
-      } else {
-        dispatch(removeAllUsers());
-        return rejectWithValue(error.message);
-      }
-    }
-    
   }
 );
 

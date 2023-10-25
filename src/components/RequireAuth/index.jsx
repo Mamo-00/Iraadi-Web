@@ -17,8 +17,9 @@ const RequireAuth = ({ allowedRoles }) => {
     // The RequireAuth component is making a decision based on the user's 
     // role before that information is available. So we need a loading state.
     useEffect(() => {
-      // Check if the authentication status has been determined (i.e., currentUser is not undefined)
-      setIsLoading(false); // Set isLoading to false once the user's information is available or confirmed to be null
+      if (currentUser !== undefined) { // Check if the user data is available
+        setIsLoading(false);
+      }
     }, [currentUser]);
     
     if (isLoading) {
