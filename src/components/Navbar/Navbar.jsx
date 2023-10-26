@@ -6,13 +6,13 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/iiraadi-notext-logo.png";
-import LogoWithText from "../../assets/logo/iiraadi-with-text-logo.png";
+import LogoWithText from "../../assets/logo/iiraadi-text-right.png";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -196,27 +196,27 @@ const Navbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-      </MenuItem>
+      </MenuItem>*/}
       <MenuItem onClick={handleMobileMenuClose}>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        <IconButton size="large" aria-label="show 4 new mails" color="primary">
           <Badge badgeContent={8} color="secondary">
-            <MailIcon />
+            <MailOutlinedIcon />
           </Badge>
         </IconButton>
-        <span>Messages</span>
+        <Typography color="primary">Messages</Typography>
       </MenuItem>
       <MenuItem onClick={handleMobileMenuClose}>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
-          color="inherit"
+          color="primary"
         >
           <Badge badgeContent={17} color="secondary">
-            <NotificationsIcon />
+            <NotificationsOutlinedIcon color="primary"/>
           </Badge>
         </IconButton>
-        <span>Notifications</span>
-      </MenuItem> */}
+        <Typography color="primary">Notifications</Typography>
+      </MenuItem> 
       <Link to="/profile" color="inherit">
         <MenuItem onClick={handleMobileMenuClose}>
           <IconButton
@@ -224,24 +224,24 @@ const Navbar = () => {
             aria-label="account of current user"
             aria-controls="primary-search-account-menu"
             aria-haspopup="false"
-            color="inherit"
+            color="primary"
           >
             <AccountCircle />
           </IconButton>
-          <span>Profile</span>
+          <Typography color="primary">Profile</Typography>
         </MenuItem>
       </Link>
       {currentUser !== null ? (
         <Box>
           <Link to="/">
             <MenuItem onClick={handleLogout}>
-              <IconButton size="large" aria-label="logout" color="inherit">
+              <IconButton size="large" aria-label="logout" color="primary">
                 <LogoutIcon />
               </IconButton>
               <Typography
                 rel="noopener follow"
                 onClick={handleLogout}
-                color="inherit"
+                color="primary"
               >
                 Logout
               </Typography>
@@ -264,7 +264,7 @@ const Navbar = () => {
               )}
             </IconButton>
 
-            <Typography variant="subtitle2">
+            <Typography variant="subtitle1">
               {currentUser?.displayName}
             </Typography>
           </MenuItem>
@@ -288,7 +288,7 @@ const Navbar = () => {
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "940px",
+          maxWidth: "1010px",
           mx: "auto",
           backgroundColor: "background.default",
         }}
@@ -297,7 +297,12 @@ const Navbar = () => {
           position="static"
           sx={{ boxShadow: "none", backgroundColor: "background.default" }}
         >
-          <Toolbar sx={{ backgroundColor: "background.default", justifyItems: 'center' }}>
+          <Toolbar
+            sx={{
+              backgroundColor: "background.default",
+              justifyItems: "center",
+            }}
+          >
             {/* LOGO */}
             {!isPhone ? (
               <Link
@@ -308,7 +313,7 @@ const Navbar = () => {
                 <img
                   src={Logo}
                   className="d-sm-block me-3 logo"
-                  alt="Logo"
+                  alt="Logo no text"
                   style={{ width: "65px", height: "50px" }}
                 />
               </Link>
@@ -321,7 +326,7 @@ const Navbar = () => {
                 <img
                   src={LogoWithText}
                   className="d-sm-block me-3 logo"
-                  alt="Logo"
+                  alt="Logo with text: iiraadi.net buy easy sell easy"
                   style={{ width: "185px", height: "57px" }}
                 />
               </Link>
@@ -330,7 +335,7 @@ const Navbar = () => {
             {/*Searchbar */}
             {!isPhone ? (
               <>
-                <Box width={"60%"} marginLeft={2}>
+                <Box width={"60%"} marginLeft={1} marginRight={1}>
                   <SearchBar />
                 </Box>
               </>
@@ -343,19 +348,32 @@ const Navbar = () => {
 
             {/*Create Ad button*/}
             {!isSmallPhone ? (
-             
-              <Link to="/create-ad" style={{ marginLeft: "auto", marginRight: 'auto' }}>
+              <Link
+                to="/create-ad"
+                style={{ marginLeft: "auto", marginRight: "auto" }}
+              >
                 <Fab
                   variant="extended"
                   color="tertiery"
                   size="small"
                   aria-label="create ad"
-                  sx={{py: '20px'}}
+                  sx={{
+                    py: "10px",
+                    [theme.breakpoints.down("xs")]: {
+                      mr: 1,
+                    },
+                    mr: 0,
+                  }}
                 >
                   <EditIcon sx={{ mr: 1 }} color="primary" />
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: "normal", pr: 1, letterSpacing: 0.75, mx: 'auto' }}
+                    sx={{
+                      fontWeight: "normal",
+                      pr: 1,
+                      letterSpacing: 0.75,
+                      mx: "auto",
+                    }}
                     color="text.primary"
                   >
                     Create ad
@@ -363,7 +381,10 @@ const Navbar = () => {
                 </Fab>
               </Link>
             ) : (
-              <Link to="/create-ad" style={{ marginLeft: "auto", marginRight: 'auto' }}>
+              <Link
+                to="/create-ad"
+                style={{ marginLeft: "auto", marginRight: "auto" }}
+              >
                 <Fab
                   variant="extended"
                   color="tertiery"
@@ -379,7 +400,7 @@ const Navbar = () => {
 
             {/*Menu button either as profile picture or MoreIcon from MUI*/}
             {!isPhone ? (
-              <Box>
+              <Box justifyContent={"space-between"}>
                 {/* TODO: Implement light/dark mode toggle at a later time */}
                 {/*
             <IconButton onClick={colorMode.toggleColorMode}>
@@ -392,27 +413,27 @@ const Navbar = () => {
             */}
 
                 {/* TODO: Implement message and notification icons at a later time */}
-                {/*
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="text.secondary"
-            >
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
 
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="text.secondary"
-            >
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            */}
+                <IconButton
+                  size="large"
+                  aria-label="show 4 new mails"
+                  color="tertiery"
+                >
+                  <Badge badgeContent={4} color="secondary">
+                    <MailOutlinedIcon color="tertiery" sx={{width: 26, height: 26}}/>
+                  </Badge>
+                </IconButton>
+
+                <IconButton
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="primary"
+                >
+                  <Badge badgeContent={17} color="secondary">
+                    <NotificationsOutlinedIcon color="tertiery" sx={{width: 27, height: 27}} />
+                  </Badge>
+                </IconButton>
+
                 <IconButton
                   size="large"
                   edge="end"
@@ -421,7 +442,7 @@ const Navbar = () => {
                   aria-haspopup="true"
                   onClick={handleProfileMenuOpen}
                   color="primary.main"
-                  sx={{mx: 'auto', px:0}}
+                  sx={{ mx: "auto", px: 2 }}
                 >
                   {loadingProfile ? (
                     <CircularProgress size={24} />
@@ -449,9 +470,9 @@ const Navbar = () => {
                   aria-haspopup="true"
                   onClick={handleMobileMenuOpen}
                   color="primary.main"
-                  sx={{p: 0}}
+                  sx={{ p: 0 }}
                 >
-                  <MoreIcon sx={{mx: 0.5, p: 0}}/>
+                  <MoreIcon sx={{ mx: 0.5, p: 0 }} />
                 </IconButton>
               </Box>
             )}

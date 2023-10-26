@@ -58,9 +58,9 @@ export default function CategoryCard({ category, subcategories, subsubcategories
           <IconButton aria-label={category?.name} size="large">
             <Link
               to={`/Classifieds/${category?.name.replace(/\s+/g, "-")}`}
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "primary" }}
             >
-              <IconComponent category={category?.name} style={{ width: 50, height: 40 }} />
+              <IconComponent category={category?.name} style={{ width: 50, height: 40, }} color="primary"/>
             </Link>
           </IconButton>
           <Box

@@ -54,7 +54,7 @@ export const products = [
     distance: 312,
     year: 2017,
     title: "Nice barely used car with low milage for sale",
-    img: "https://images.pexels.com/photos/1805053/pexels-photo-1805053.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa-kDjZhdHdysMISh1rIvgf4fyQE9fIzGsKoKmZWIJvwuNlyGjqMEHn7mxoymZT25LjEo&usqp=CAU",
     price: 25000,
     description:
       "a very nice car, must buy, great deal, BUY IT! NOOOW! or go to jail",
@@ -75,7 +75,7 @@ export const products = [
     distance: 52,
     year: 2019,
     title: "Nice barely used car with low milage for sale",
-    img: "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXA9pxEbTwsCrkej9UbCo2V0YAtC2_-CehuCCcFpD_7bC8yk1G-IG6G3_D4DnWoPgr6a0&usqp=CAU",
     price: 545000,
     description:
       "a very nice car, must buy, great deal, BUY IT! NOOOW! or go to jail",
@@ -96,7 +96,7 @@ export const products = [
     distance: 125,
     year: 2020,
     title: "Nice barely used car with low milage for sale",
-    img: "https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrxsl2yv5207GigYvrKXpCNirVO3pDqI1h7UaHWYC9i1ZpH50ovtvCY91kvmxJjylxvU8&usqp=CAU",
     price: 2500000,
     description:
       "a very nice car, must buy, great deal, BUY IT! NOOOW! or go to jail",
@@ -117,7 +117,7 @@ export const products = [
     distance: 278,
     year: 2012,
     title: "Nice barely used car with low milage for sale",
-    img: "https://images.pexels.com/photos/376361/pexels-photo-376361.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEWVGzMIfMHw9h9gCxMVouRxC7sRKmo4n24gshnO-qjKvlcXJRuF_mGDMcb4t4Bwc6b7w&usqp=CAU",
     price: 15000,
     description:
       "a very nice car, must buy, great deal, BUY IT! NOOOW! or go to jail",
@@ -138,7 +138,7 @@ export const products = [
     distance: 212,
     year: 2007,
     title: "Nice barely used car with low milage for sale",
-    img: "https://images.pexels.com/photos/3156482/pexels-photo-3156482.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9SoeqALksRwPxRcj_Cru3uZbSaS3JN0bsnAFVlsOcw5bRVVF2y4knL64-l_EIGK4-SAc&usqp=CAU",
     price: 40000,
     description:
       "a very nice car, must buy, great deal, BUY IT! NOOOW! or go to jail",

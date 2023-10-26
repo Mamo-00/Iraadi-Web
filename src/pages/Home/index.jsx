@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, selectAllCategories } from '../../features/category/categorySlice';
 import { fetchSubcategories, selectAllSubcategories  } from '../../features/category/subcategorySlice';
 import { fetchSubSubcategories, selectAllSubSubcategories } from '../../features/category/subsubcategorySlice';
-import { fetchAds } from "../../features/ads/adsSlice";
+import { fetchAds, selectAllAds } from "../../features/ads/adsSlice";
 
 
 const Home = () => {
@@ -44,6 +44,7 @@ const Home = () => {
     dispatch(fetchAds());
   }, []);
 
+  const ads = useSelector((state) => selectAllAds(state));
   
   // Function to filter subcategories based on categoryId
   const filterSubcategoriesByCategoryId = (categoryId) => {
@@ -75,15 +76,13 @@ const Home = () => {
           cols={products?.length + 1} // +1 to show FAB component
           rowHeight={260}
         >
-          {products?.map((item, index) => (
-            <ImageListItem key={index}>
+          {ads?.map((item) => (
+            <ImageListItem key={item?.id}>
               <CarsPromoCard
-                img={item?.img}
-                distance={item?.distance}
-                price={item?.price}
-                year={item?.year}
-                make={item?.make}
-                model={item?.model}
+                img={item?.Images[0]}
+                title={item?.Title}
+                price={item?.Price}
+                location={item?.Location}
                 sx={{
                   display: "flex",
                   justifyContent: "center",
@@ -110,22 +109,35 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          {products?.slice(0, 4).map((item, index) => (
-            <CarsPromoCard
-              key={index}
-              img={item?.img}
-              distance={item?.distance}
-              price={item?.price}
-              year={item?.year}
-              make={item?.make}
-              model={item?.model}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            />
-          ))}
+          {title === "Popular Cars"
+            ? products?.slice(0, 4).map((item, index) => (
+                <CarsPromoCard
+                  key={index}
+                  img={item?.img}
+                  title={item?.title}
+                  price={item?.price}
+                  location={item?.location}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                />
+              ))
+            : ads?.slice(0, 4).map((item) => (
+                <CarsPromoCard
+                  key={item?.id}
+                  img={item?.Images[0]}
+                  title={item?.Title}
+                  price={item?.Price}
+                  location={item?.Location}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                />
+              ))}
         </Stack>
       </>
     );
@@ -166,7 +178,7 @@ const Home = () => {
           Welcome - Soo Dhawoow
           {currentUser ? (
             <Box sx={{}} color="text.primary">
-              ,{" "}
+              ,
             </Box>
           ) : (
             <Box display={"none"}></Box>

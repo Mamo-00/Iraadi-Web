@@ -1,14 +1,14 @@
 import React from "react";
-import { ReactComponent as ElectronicsIcon } from "../../assets/categoryIcons/svg/appliances.svg";
-import { ReactComponent as VehicleIcon } from "../../assets/categoryIcons/svg/car.svg";
-import { ReactComponent as PropertyIcon } from "../../assets/categoryIcons/svg/propertysale.svg";
-import { ReactComponent as FurnitureIcon } from "../../assets/categoryIcons/svg/furniture.svg";
-import { ReactComponent as MobileIcon } from "../../assets/categoryIcons/svg/phone_tablet.svg";
-import { ReactComponent as PropertyRentIcon } from "../../assets/categoryIcons/svg/property.svg";
-import { ReactComponent as BusinessIcon } from "../../assets/categoryIcons/svg/business.svg";
-import { ReactComponent as JobsIcon } from "../../assets/categoryIcons/svg/jobs.svg";
-import { ReactComponent as ClothesIcon } from "../../assets/categoryIcons/svg/clothes.svg";
-import { ReactComponent as ValuablesIcon } from "../../assets/categoryIcons/svg/valuables.svg";
+import { ReactComponent as ElectronicsIcon } from "../../assets/categoryIcons/svg/figma/electronics.svg";
+import { ReactComponent as VehicleIcon }  from "../../assets/categoryIcons/svg/figma/vehicle.svg";
+import { ReactComponent as PropertyIcon } from "../../assets/categoryIcons/svg/figma/sale.svg";
+import { ReactComponent as FurnitureIcon } from "../../assets/categoryIcons/svg/figma/furniture.svg";
+import { ReactComponent as MobileIcon } from "../../assets/categoryIcons/svg/figma/mobile.svg";
+import { ReactComponent as PropertyRentIcon } from "../../assets/categoryIcons/svg/figma/rent.svg";
+import { ReactComponent as BusinessIcon } from "../../assets/categoryIcons/svg/figma/business.svg";
+import { ReactComponent as JobsIcon } from "../../assets/categoryIcons/svg/figma/jobs.svg";
+import { ReactComponent as ClothesIcon } from "../../assets/categoryIcons/svg/figma/clothes.svg";
+import { ReactComponent as ValuablesIcon } from "../../assets/categoryIcons/svg/figma/valuables.svg";
 import { useTheme } from "@mui/material";
 
 

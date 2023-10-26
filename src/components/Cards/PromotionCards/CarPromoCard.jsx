@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { format } from 'date-fns';
 import {
   Card,
   CardActionArea,
@@ -13,7 +14,7 @@ import {
 import { FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-function CarPromoCard({ img, distance, year, price, make, model }) {
+function CarPromoCard({ img, title, location, price, }) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -50,29 +51,26 @@ function CarPromoCard({ img, distance, year, price, make, model }) {
         <CardContent sx={{ p: 1 }}>
           <Stack direction="column">
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="h4" color="text.primary" sx={{ pt: 1 }}>
-                {price}$
+              <Typography variant="h5" color="text.primary" sx={{
+              
+              maxWidth: "100%",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}>
+                {title}
               </Typography>
-              <IconButton
-                aria-label="favorite"
-                onClick={handleFavoriteClick}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 0, 0, 0.3)",
-                  },
-                }}
-              >
-                <FavoriteBorderIcon
-                  color={isFavorited ? "secondary" : "primary"}
-                />
-              </IconButton>
             </Box>
 
-            <Typography variant="body1">
-              {make} <span>•</span> {model}
+            <Typography variant="subtitle2" sx={{mb:2}}>
+              {location}
             </Typography>
-            <Typography variant="body1">
-              {year} <span>•</span> {distance} Km
+            <Typography variant="h4">
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              currencyDisplay: "narrowSymbol",
+            }).format(price)}
             </Typography>
           </Stack>
         </CardContent>
