@@ -50,7 +50,7 @@ export const subsubcategories = [
 export const products = [
   {
     id: 1,
-    location: "Bergen",
+    location: "Mogadishu",
     distance: 312,
     year: 2017,
     title: "Nice barely used car with low milage for sale",
@@ -71,7 +71,7 @@ export const products = [
   },
   {
     id: 2,
-    location: "Oslo",
+    location: "Hargeysa",
     distance: 52,
     year: 2019,
     title: "Nice barely used car with low milage for sale",
@@ -92,7 +92,7 @@ export const products = [
   },
   {
     id: 3,
-    location: "Stavanger",
+    location: "Burco",
     distance: 125,
     year: 2020,
     title: "Nice barely used car with low milage for sale",
@@ -113,7 +113,7 @@ export const products = [
   },
   {
     id: 4,
-    location: "Ålesund",
+    location: "Bosaso",
     distance: 278,
     year: 2012,
     title: "Nice barely used car with low milage for sale",
@@ -134,7 +134,7 @@ export const products = [
   },
   {
     id: 5,
-    location: "Bergen",
+    location: "Xamar",
     distance: 212,
     year: 2007,
     title: "Nice barely used car with low milage for sale",
@@ -155,7 +155,7 @@ export const products = [
   },
   {
     id: 6,
-    location: "Tromsø",
+    location: "Borama",
     distance: 112,
     year: 2010,
     title: "Nice barely used tuktuk with low milage for sale",
@@ -176,7 +176,7 @@ export const products = [
   },
   {
     id: 7,
-    location: "Trondheim",
+    location: "Baloodh",
     distance: 141,
     year: 2009,
     title: "Nice barely used tuktuk with low milage for sale",

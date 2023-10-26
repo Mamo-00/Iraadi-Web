@@ -76,21 +76,37 @@ const Home = () => {
           cols={products?.length + 1} // +1 to show FAB component
           rowHeight={260}
         >
-          {ads?.map((item) => (
-            <ImageListItem key={item?.id}>
-              <CarsPromoCard
-                img={item?.Images[0]}
-                title={item?.Title}
-                price={item?.Price}
-                location={item?.Location}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              />
-            </ImageListItem>
-          ))}
+          {title !== "Popular Cars"
+            ? ads?.map((item) => (
+                <ImageListItem key={item?.id}>
+                  <CarsPromoCard
+                    img={item?.Images[0]}
+                    title={item?.Title}
+                    price={item?.Price}
+                    location={item?.Location}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  />
+                </ImageListItem>
+              ))
+            : products?.map((item, index) => (
+                <ImageListItem key={index}>
+                  <CarsPromoCard
+                    img={item?.img}
+                    title={item?.title}
+                    price={item?.price}
+                    location={item?.location}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  />
+                </ImageListItem>
+              ))}
           <ImageListItem sx={{ justifyContent: "center", mx: 1 }}>
             <Fab color="primary" aria-label="view all">
               <ArrowForwardIcon />
