@@ -4,15 +4,18 @@
 <desc>Created with Fabric.js 5.2.4</desc>
 <defs>
 </defs>
-<g transform="matrix(1 0 0 1 540 540)" id="1045f559-5879-4a95-9050-d831c47ee49f"  >
+<g transform="matrix(1 0 0 1 540 540)" id="a55605f7-2e96-442c-ac33-bb0f01171ae8"  >
 <rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke"  x="-540" y="-540" rx="0" ry="0" width="1080" height="1080" />
 </g>
-<g transform="matrix(1 0 0 1 540 540)" id="f4c76d8e-fa50-4210-9aa3-8bfe2ae19e22"  >
+<g transform="matrix(Infinity NaN NaN Infinity 0 0)" id="0bbff0f8-9822-4ab0-b31a-f9b34d7921f2"  >
 </g>
 <g transform="matrix(18.62 0 0 18.62 540 540)"  >
 <g style=""   >
 		<g transform="matrix(1 0 0 1 -7.46 -0.07)"  >
 <path style="stroke: rgb(89,177,227); stroke-width: 3; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: round; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-21.54, -21.93)" d="M 2.38379 18.3376 L 21.5358 1.59064 L 40.6879 18.3376 L 40.6879 42.2618 L 28.7178 42.2618 L 28.7178 32.6921 C 28.7178 30.7887 27.9611 28.963 26.6142 27.6171 C 25.2674 26.2711 23.4405 25.5148 21.5358 25.5148 C 19.6309 25.5148 17.8043 26.2711 16.4574 27.6171 C 15.1105 28.963 14.3538 30.7885 14.3538 32.6921 L 14.3538 42.2618 L 2.38381 42.2618 L 2.38379 18.3376 Z" stroke-linecap="round" />
+</g>
+		<g transform="matrix(1 0 0 1 9 -1.5)"  >
+<ellipse style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(242,248,251); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  cx="0" cy="0" rx="11" ry="10.5" />
 </g>
 		<g transform="matrix(1 0 0 1 16.88 -6.76)"  >
 <path style="stroke: rgb(89,177,227); stroke-width: 2.2; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: round; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke"  transform=" translate(-45.88, -15.24)" d="M 56.6082 15.6908 L 47.5616 5 L 35.9734 14.7928 L 35.1483 24.658 L 45.02 25.4836 L 56.6082 15.6908 Z" stroke-linecap="round" />

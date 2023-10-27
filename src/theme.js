@@ -27,7 +27,7 @@ export const tokens = (mode) => ({
     : {
         white: {
           1: "#F8F7F7",
-          2: "#fff",
+          2: "#f5f5f5",
         },
 
         blue: {
@@ -70,7 +70,7 @@ export const themeSettings = (mode) => {
             secondary: {
               main: colors.blue[1],
             },
-            tertiery: {
+            tertiary: {
               main: colors.white[2],
             },
             text: {
@@ -93,7 +93,7 @@ export const themeSettings = (mode) => {
               light: colors.blue[1],
               dark: colors.golden[1],
             },
-            tertiery: {
+            tertiary: {
               main: colors.blue[2],
             },
             text: {

@@ -5,7 +5,7 @@ import Fab from "@mui/material/Fab";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/logo/iiraadi-notext-logo.png";
+import LogoNoSlogan from "../../assets/logo/iiraadi-text-no-slogan.png";
 import LogoWithText from "../../assets/logo/iiraadi-text-right.png";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
@@ -311,10 +311,10 @@ const Navbar = () => {
                 sx={{ color: "#fff", backgroundColor: "inherit" }}
               >
                 <img
-                  src={Logo}
+                  src={LogoNoSlogan}
                   className="d-sm-block me-3 logo"
                   alt="Logo no text"
-                  style={{ width: "65px", height: "50px" }}
+                  style={{ width: "145px", height: "40px" }}
                 />
               </Link>
             ) : (
@@ -335,7 +335,7 @@ const Navbar = () => {
             {/*Searchbar */}
             {!isPhone ? (
               <>
-                <Box width={"60%"} marginLeft={1} marginRight={1}>
+                <Box width={"50%"} marginLeft={1} marginRight={1}>
                   <SearchBar />
                 </Box>
               </>
@@ -345,64 +345,37 @@ const Navbar = () => {
 
             {/*Spacing*/}
             <Box sx={{ flexGrow: 1 }} />
-
-            {/*Create Ad button*/}
-            {!isSmallPhone ? (
-              <Link
-                to="/create-ad"
-                style={{ marginLeft: "auto", marginRight: "auto" }}
-              >
-                <Fab
-                  variant="extended"
-                  color="tertiery"
+            <Box
+              sx={{
+                display: { xs: "none", sm: "flex" }, // Hide on mobile, display as flex on larger screens
+                justifyContent: "space-evenly",
+                width: { sm: "fit-content", md: "30%" }, // Ensures the container only takes up necessary space on larger screens
+              }}
+            >
+              {/*Create Ad button*/}
+              <Link to="/create-ad" style={{ marginTop: "8px", width: "25%" }}>
+                <IconButton
+                  color="tertiary"
                   size="small"
                   aria-label="create ad"
                   sx={{
-                    py: "10px",
-                    [theme.breakpoints.down("xs")]: {
-                      mr: 1,
-                    },
-                    mr: 0,
+                    borderRadius: "50% !important",
+                    backgroundColor: "transparent",
+                    border: "2px solid",
+                    borderColor: theme.palette.tertiary.main,
+                    ml: 2,
                   }}
                 >
-                  <EditIcon sx={{ mr: 1 }} color="primary" />
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: "normal",
-                      pr: 1,
-                      letterSpacing: 0.75,
-                      mx: "auto",
-                    }}
-                    color="text.primary"
-                  >
-                    Create ad
-                  </Typography>
-                </Fab>
+                  <EditIcon color="tertiary.main" />
+                </IconButton>
               </Link>
-            ) : (
-              <Link
-                to="/create-ad"
-                style={{ marginLeft: "auto", marginRight: "auto" }}
-              >
-                <Fab
-                  variant="extended"
-                  color="tertiery"
-                  size="small"
-                  aria-label="create ad"
-                >
-                  <EditIcon color="primary" />
-                </Fab>
-              </Link>
-            )}
-            {/*Spacing*/}
-            <Box sx={{ flexGrow: 1 }} />
 
-            {/*Menu button either as profile picture or MoreIcon from MUI*/}
-            {!isPhone ? (
-              <Box justifyContent={"space-between"}>
-                {/* TODO: Implement light/dark mode toggle at a later time */}
-                {/*
+              {/*Spacing*/}
+
+              {/*Menu button either as profile picture or MoreIcon from MUI*/}
+
+              {/* TODO: Implement light/dark mode toggle at a later time */}
+              {/*
             <IconButton onClick={colorMode.toggleColorMode}>
               {theme.palette.mode === "dark" ? (
                 <DarkModeOutlinedIcon />
@@ -412,57 +385,92 @@ const Navbar = () => {
             </IconButton>
             */}
 
-                {/* TODO: Implement message and notification icons at a later time */}
+              {/* TODO: Implement message and notification icons at a later time */}
 
-                <IconButton
-                  size="large"
-                  aria-label="show 4 new mails"
-                  color="tertiery"
-                >
-                  <Badge badgeContent={4} color="secondary">
-                    <MailOutlinedIcon color="tertiery" sx={{width: 26, height: 26}}/>
-                  </Badge>
-                </IconButton>
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="tertiary"
+                sx={{ width: "25%" }}
+              >
+                <Badge badgeContent={4} color="secondary">
+                  <MailOutlinedIcon
+                    color="tertiary"
+                    sx={{ width: 26, height: 26 }}
+                  />
+                </Badge>
+              </IconButton>
 
-                <IconButton
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="primary"
-                >
-                  <Badge badgeContent={17} color="secondary">
-                    <NotificationsOutlinedIcon color="tertiery" sx={{width: 27, height: 27}} />
-                  </Badge>
-                </IconButton>
+              <IconButton
+                size="large"
+                aria-label="show 17 new notifications"
+                color="primary"
+                sx={{ width: "25%" }}
+              >
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsOutlinedIcon
+                    color="tertiary"
+                    sx={{ width: 27, height: 27 }}
+                  />
+                </Badge>
+              </IconButton>
 
-                <IconButton
-                  size="large"
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={menuId}
-                  aria-haspopup="true"
-                  onClick={handleProfileMenuOpen}
-                  color="primary.main"
-                  sx={{ mx: "auto", px: 2 }}
-                >
-                  {loadingProfile ? (
-                    <CircularProgress size={24} />
-                  ) : currentUser !== null ? (
-                    <Avatar
-                      key={currentUser?.photoURL}
-                      alt="Profile picture"
-                      src={currentUser?.photoURL}
-                      sx={{ width: 30, height: 30 }}
-                    />
-                  ) : (
-                    <AccountCircle
-                      color="primary.main"
-                      sx={{ width: 30, height: 30, pl: 0 }}
-                    />
-                  )}
-                </IconButton>
-              </Box>
-            ) : (
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="primary.main"
+                sx={{ mx: "auto", px: 2, width: "25%" }}
+              >
+                {loadingProfile ? (
+                  <CircularProgress size={24} />
+                ) : currentUser !== null ? (
+                  <Avatar
+                    key={currentUser?.photoURL}
+                    alt="Profile picture"
+                    src={currentUser?.photoURL}
+                    sx={{ width: 30, height: 30 }}
+                  />
+                ) : (
+                  <AccountCircle
+                    color="primary.main"
+                    sx={{ width: 30, height: 30, pl: 0 }}
+                  />
+                )}
+              </IconButton>
+            </Box>
+
+            {!isPhone ? null : (
               <Box>
+                <Link to="/create-ad">
+                  <Fab
+                    variant="extended"
+                    color="tertiary"
+                    size="small"
+                    aria-label="create ad"
+                    sx={{
+                      py: "10px",
+                      mr: 1,
+                    }}
+                  >
+                    <EditIcon sx={{ mr: 1 }} color="primary" />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: "normal",
+                        pr: 1,
+                        letterSpacing: 0.75,
+                        justifySelf: "flex-end",
+                      }}
+                      color="text.primary"
+                    >
+                      Create ad
+                    </Typography>
+                  </Fab>
+                </Link>
                 <IconButton
                   size="large"
                   aria-label="show more"

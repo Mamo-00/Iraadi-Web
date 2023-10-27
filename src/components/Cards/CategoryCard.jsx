@@ -55,7 +55,7 @@ export default function CategoryCard({ category, subcategories, subsubcategories
             alignItems: 'center',
           }}
         >
-          <IconButton aria-label={category?.name} size="large">
+          <IconButton aria-label={category?.name} size="large" sx={{borderRadius: "50% !important",}}>
             <Link
               to={`/Classifieds/${category?.name.replace(/\s+/g, "-")}`}
               style={{ textDecoration: "none", color: "primary" }}
@@ -74,9 +74,9 @@ export default function CategoryCard({ category, subcategories, subsubcategories
           >
             <Link
               to={`/${category?.name.replace(/\s+/g, "-")}`}
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ textDecoration: "none", color: "inherit", paddingLeft: '24px', paddingRight: '4px' }}
             >
-              <Typography variant="body1" color="text.primary" >
+              <Typography variant="body1" color="text.primary" fontWeight='bold'>
                 {category?.name}
               </Typography>
             </Link>

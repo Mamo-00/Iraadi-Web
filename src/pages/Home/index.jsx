@@ -168,7 +168,7 @@ const Home = () => {
           display: "flex",
           flexDirection: "row",
           flexGrow: 1,
-          maxWidth: "940px",
+          maxWidth: "1010px",
           mx: 2,
           [theme.breakpoints.up("md")]: {
             mx: "auto",
@@ -176,7 +176,7 @@ const Home = () => {
           my: 4,
           py: 1,
           px: 5,
-          justifyContent: "center",
+          justifyContent: "space-between",
           [theme.breakpoints.down("md")]: {
             display: "none",
           },
@@ -203,12 +203,37 @@ const Home = () => {
             {currentUser?.displayName}
           </Box>
         </Typography>
+        <Link to="/create-ad">
+          <Fab
+            variant="extended"
+            color="tertiary"
+            size="small"
+            aria-label="create ad"
+            sx={{
+              py: "10px",
+            }}
+          >
+            <EditIcon sx={{ mr: 1 }} color="primary" />
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: "normal",
+                pr: 1,
+                letterSpacing: 0.75,
+                justifySelf: "flex-end",
+              }}
+              color="text.primary"
+            >
+              Create ad
+            </Typography>
+          </Fab>
+        </Link>
       </Box>
 
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "940px",
+          maxWidth: "1010px",
           mx: 2,
           [theme.breakpoints.up("md")]: {
             mx: "auto",
@@ -221,7 +246,7 @@ const Home = () => {
         <Grid
           container
           rowSpacing={5}
-          sx={{ display: "flex", justifyContent: "center" }}
+          sx={{ display: "flex", justifyContent: "space-between" }}
         >
           {categories?.map((category, index) => {
             // Get the subcategories that belong to this category
@@ -249,7 +274,7 @@ const Home = () => {
       <Box
         sx={{
           flexGrow: 1,
-          maxWidth: "940px",
+          maxWidth: "1010px",
           mx: "auto",
           my: 4,
           pb: 1,

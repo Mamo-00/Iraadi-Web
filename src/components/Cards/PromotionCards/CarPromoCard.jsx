@@ -35,7 +35,7 @@ function CarPromoCard({ img, title, location, price, }) {
         height: 240,
         overflow: "hidden",
         mx: 1,
-        borderRadius: 2
+        borderRadius: 2,
       }}
       style={{ boxShadow: "1px -2px 6px #ccc, 0px 1px 6px #808080" }}
     >
@@ -51,26 +51,31 @@ function CarPromoCard({ img, title, location, price, }) {
         <CardContent sx={{ p: 1 }}>
           <Stack direction="column">
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="h5" color="text.primary" sx={{
-              
-              maxWidth: "100%",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}>
+              <Typography
+                variant="h5"
+                color="text.primary"
+                sx={{
+                  fontWeight: "bold",
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
                 {title}
               </Typography>
             </Box>
 
-            <Typography variant="subtitle2" sx={{mb:2}}>
+            <Typography variant="subtitle2" sx={{ mb: 2 }}>
               {location}
             </Typography>
-            <Typography variant="h4">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-              currencyDisplay: "narrowSymbol",
-            }).format(price)}
+            <Typography variant="h6" fontWeight="bold">
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                currencyDisplay: "narrowSymbol",
+                minimumFractionDigits: 0,
+              }).format(price)}
             </Typography>
           </Stack>
         </CardContent>
