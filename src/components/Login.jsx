@@ -269,7 +269,7 @@ const Login = () => {
                   Google
                 </Typography>
               </Button>
-              {/* <Button
+              <Button
                       variant="outlined"
                       onClick={handleFacebookLogin}
                       startIcon={
@@ -283,7 +283,7 @@ const Login = () => {
                       >
                         Facebook
                       </Typography>
-                    </Button> */}
+                    </Button>
             </Box>
             <Typography align="center" variant="body1" sx={{ mt: 2 }}>
               or:
@@ -378,7 +378,7 @@ const Login = () => {
                   Google
                 </Typography>
               </Button>
-              {/* <Button
+              <Button
                       variant="outlined"
                       onClick={handleFacebookLogin}
                       startIcon={
@@ -393,7 +393,7 @@ const Login = () => {
                       >
                         Facebook
                       </Typography>
-                    </Button> */}
+                    </Button>
             </Box>
             <Typography align="center" variant="body1" sx={{ mt: 2 }}>
               or:

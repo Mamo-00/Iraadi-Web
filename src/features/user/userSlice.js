@@ -336,7 +336,7 @@ export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async 
 export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
   console.log("Starting Facebook sign-in redirect operation...");
   try {
-    await signInWithRedirect(auth, facebookProvider);
+    await signInWithPopup(auth, facebookProvider);
     console.log("Facebook sign-in redirect operation completed successfully.");
     // Add a delay before calling getRedirectResult
     await new Promise(resolve => setTimeout(resolve, 60000));
