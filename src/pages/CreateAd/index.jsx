@@ -6,6 +6,7 @@ import Login from '../../components/Login';
 import LocationInput from '../../components/Maps/LocationInput';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import ClassifiedForm from '../../components/CreateAdCategoryForms/ClassifiedForm';
 import {
   Typography,
   TextField,
@@ -50,6 +51,21 @@ const CreateAd = () => {
   const [titleError, setTitleError] = useState(false);
   const [descriptionError, setDesriptionError] = useState(false);
 
+  // State for the filters in the ClassifiedForm
+  const [classifiedFilters, setClassifiedFilters] = useState({
+    usage: '',
+    condition: '',
+    tags: [],
+  });
+
+  // Handler to update the state when filters change
+  const handleClassifiedFiltersChange = (newFilters) => {
+    setClassifiedFilters(prevFilters => ({
+      ...prevFilters,
+      ...newFilters,
+    }));
+  };
+
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
     if (event.target.value.length < 16) {
@@ -87,8 +103,8 @@ const CreateAd = () => {
   };
 
   return (
-    <div style={{ overflowX: 'hidden' }}>
-      <Navbar  />
+    <div style={{ overflowX: "hidden" }}>
+      <Navbar />
 
       <Box
         sx={{
@@ -104,7 +120,11 @@ const CreateAd = () => {
         }}
         textAlign="center"
       >
-        <Typography variant="h2" color="text.primary" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="h2"
+          color="text.primary"
+          sx={{ fontWeight: "bold" }}
+        >
           Welcome!
         </Typography>
         <Typography
@@ -146,7 +166,6 @@ const CreateAd = () => {
             error={descriptionError}
             value={description}
             onChange={handleDescriptionChange}
-            required
             id="description"
             label="Description"
             variant="outlined"
@@ -154,13 +173,7 @@ const CreateAd = () => {
             multiline
             rows={6}
             placeholder="Write a description that best describes your ad. Try and make it as informative as possible"
-            helperText={
-              descriptionError
-                ? "Description must be at least 50 characters"
-                : isSmallScreen
-                ? "Describe your ad in detail"
-                : "Describe your ad in detail, minimum 50 letters."
-            }
+            helperText={"Describe your ad in detail"}
             sx={{
               [theme.breakpoints.down("sm")]: {
                 width: "100%",
@@ -172,8 +185,8 @@ const CreateAd = () => {
           />
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
+              display: "flex",
+              flexDirection: "column",
               [theme.breakpoints.down("sm")]: {
                 width: "100%",
               },
@@ -201,97 +214,12 @@ const CreateAd = () => {
                   width: "40%", // Adjust this value as needed
                 }}
               />
-              <FormControl
-                variant="outlined"
-                size="small"
-                sx={{
-                  [theme.breakpoints.down("sm")]: {
-                    width: "30%",
-                  },
-                  width: "20%", // Adjust this value as needed
-                }}
-              >
-                <InputLabel id="currency-label">Currency</InputLabel>
-                <Select
-                  labelId="currency-label"
-                  id="currency"
-                  value={currency}
-                  onChange={handleCurrencyChange}
-                  label="Currency"
-                >
-                  <MenuItem value="USD">
-                    <AttachMoneyOutlinedIcon color="text.primary" sx={{ mr: 1 }} />
-                    USD
-                  </MenuItem>
-                  <MenuItem value="EUR">
-                    <EuroSymbolOutlinedIcon color="text.primary" sx={{ mr: 1 }} />
-                    EUR
-                  </MenuItem>
-                  <MenuItem value="SOS">
-                    <Typography
-                      variant="h4"
-                      fontWeight="bold"
-                      sx={{ mx: 1, display: "inline-block" }}
-                      color="text.primary"
-                    >
-                      S
-                    </Typography>{" "}
-                    SOS
-                  </MenuItem>
-                  {/* Add more currencies as needed */}
-                </Select>
-              </FormControl>
             </Stack>
-            <StyledTextField
-              error={descriptionError}
-              value={locationInText ? locationInText.placeName : ""}
-              onChange={handleLocationChange}
-              InputProps={{
-                readOnly: true,
-              }}
-              id="location"
-              label="Location"
-              variant="outlined"
-              size="small"
-              helperText={
-                !isSmallScreen
-                  ? "Place the marker where your item is located, if the marker is not automatically placed there. If the address is not accurate, manually type in your address"
-                  : "Place the marker where your item is located or manually type it in"
-              }
-              sx={{
-                [theme.breakpoints.down("sm")]: {
-                  width: "100%",
-                },
-                width: "75%",
-                mt: 4,
-              }}
-            />
-            <Box
-              sx={{
-                mt: 2,
-                [theme.breakpoints.down("sm")]: {
-                  width: "100%",
-                },
-                width: "50%",
-                height: 300,
-                border: "5px solid #4189DD",
-                borderRadius: "10px",
-              }}
-            >
-              <LocationInput onLocationChange={handleLocationChange} />
-            </Box>
           </Box>
-          {/* Location component goes here */}
-
           <Button variant="outlined" sx={{ mt: 2 }}>
             Categories
           </Button>
-          <Typography variant="h4" sx={{ mt: 2 }}>
-            Latitude:{" "}
-            {selectedLocation ? selectedLocation.latitude : "Loading..."},
-            Longitude:{" "}
-            {selectedLocation ? selectedLocation.longitude : "Loading..."}
-          </Typography>
+          <ClassifiedForm onFiltersChange={handleClassifiedFiltersChange} />
         </Stack>
       </Box>
 

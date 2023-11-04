@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
@@ -36,24 +36,26 @@ import { subsubcategories } from "../../../utils/products";
 const Classifieds = () => {
   const dispatch = useDispatch();
   const [activeFilters, setActiveFilters] = useState({
-    subcategoryId: null,
-    subSubcategoryId: null,
-    minPrice: null,
+    subcategoryId: "",
+    subSubcategoryId: "",
+    minPrice: 0,
     maxPrice: null,
-    Location: null,
-    Condition: null,
-    Usage: null,
+    Location: "",
+    Condition: "",
+    Usage: "",
     Negotiable: null,
-    Status: null,
+    Status: "Available",
     // Add more filters here as needed
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Default");
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); 
+  const [loadMore, setLoadMore] = useState(false);
+  
 
   const { subcategory, subsubcategory } = useParams();
-  const { page = 1 } = useParams();
+ 
 
   const categories = useSelector((state) => selectAllCategories(state));
   const subcategories = useSelector((state) => selectAllSubcategories(state));
@@ -62,6 +64,7 @@ const Classifieds = () => {
   );
 
   const ads = useSelector((state) => selectAllAds(state));
+  const allAdsFetched = useSelector((state) => state.ads.allAdsFetched);
   // Extract the 'ads' array from the 'filteredAds' object in the Redux state.
   // Default to an empty array if 'filteredAds' or 'ads' is null.
   const filteredAds = useSelector((state) => state.ads.filteredAds?.ads || []);
@@ -76,18 +79,18 @@ const Classifieds = () => {
   )?.id;
 
   // Filter ads based on subcategoryId and subSubcategoryId
-  let categroyAds = ads;
+  let categoryAds = ads;
 
   // Filter by subcategoryId if it exists in activeFilters
   if (activeFilters.subcategoryId) {
-    categroyAds = categroyAds.filter(
+    categoryAds = categoryAds.filter(
       (ad) => ad.subcategoryId === activeFilters.subcategoryId
     );
   }
 
   // Filter by subSubcategoryId if it exists in activeFilters
   if (activeFilters.subSubcategoryId) {
-    categroyAds = categroyAds.filter(
+    categoryAds = categoryAds.filter(
       (ad) => ad.subSubcategoryId === activeFilters.subSubcategoryId
     );
   }
@@ -130,24 +133,36 @@ const Classifieds = () => {
     );
   } */
   const lastVisibleRedux = useSelector((state) => state.ads.lastVisible);
-  console.log("the active filters in Electronics", activeFilters);
+  console.log("the active filters in Classified", activeFilters);
   console.log('the last visible ad from redux:', lastVisibleRedux);
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchSubcategories());
     dispatch(fetchSubSubcategories());
+    
+  }, []);
 
-    dispatch(fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux }));
-  }, [activeFilters]);
-
-  
-  
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    dispatch(
-      fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux })
-    );
-  }, [activeFilters, lastVisibleRedux, dispatch]);
+    if (isMounted.current) {
+      // Will be false on the first render
+
+      dispatch(
+        fetchFilteredAds({
+          filters: activeFilters,
+          lastVisible: lastVisibleRedux,
+        })
+      );
+    } else {
+      isMounted.current = true; // Set to true after the first render
+    }
+  }, [activeFilters, loadMore]);
+
+
+  const handleLoadMore = () => {
+    setLoadMore(!loadMore); // Toggle the state to trigger useEffect
+  };
 
 
   const handleClick = (event) => {
@@ -165,6 +180,8 @@ const Classifieds = () => {
       ...activeFilters,
       [filterType]: value,
     });
+    
+    console.log('value in handleFilterChange - Classifieds:', value);
   };
 
   return (
@@ -306,8 +323,8 @@ const Classifieds = () => {
           {/* Cards */}
           <Grid item xs={12} lg={8}>
             <Grid container spacing={2} sx={{ px: 1 }}>
-              {filteredAds?.map((item) => (
-                <Grid item xs={12} sm={6} md={4} key={item?.id}>
+              {filteredAds?.map((item, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
                   <ClassifiedCard
                     id={item?.id}
                     title={item?.Title}
@@ -345,6 +362,18 @@ const Classifieds = () => {
               >
                 Loading...
               </Typography>
+            )}
+          </Grid>
+
+          <Grid item xs={12} style={{ textAlign: "center", margin: "20px 0" }}>
+            {!allAdsFetched && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleLoadMore}
+              >
+                Load More
+              </Button>
             )}
           </Grid>
         </Grid>

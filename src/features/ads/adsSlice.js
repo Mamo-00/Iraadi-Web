@@ -20,16 +20,15 @@ import * as Sentry from "@sentry/react";
 // Async thunks
 export const fetchAds = createAsyncThunk(
   "ads/fetchAds",
-  async (_, { rejectWithValue }) => {
+  async (args, { rejectWithValue }) => {
     try {
-      const adCollection = collection(db, "ads");
-      const adSnapshot = await getDocs(adCollection);
-      const adList = adSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      console.log("the ads!", adList);
-      return adList;
+      const { lastVisible } = args;
+      const getAds = httpsCallable(functions, "getAds");
+      const response = await getAds({ lastVisible });
+      if (!response.data.status || response.data.status !== "success") {
+        throw new Error("Network response was not ok");
+      }
+      return { ads: response.data.ads, lastVisible: response.data.lastVisible };
     } catch (error) {
       console.error("rejectWithValue fetchAds value:", error.message);
       Sentry.captureException(error);
@@ -128,16 +127,25 @@ export const deleteAd = createAsyncThunk(
 // Slice
 const adsAdapter = createEntityAdapter();
 
+const initialState = adsAdapter.getInitialState({
+  status: "idle",
+  error: null,
+  filteredAds: { ads: [] }, 
+  lastVisible: null,
+  ads:[],
+  allAdsFetched: false,
+  filterChange: false,
+});
+
 // Slice
 const adsSlice = createSlice({
   name: "ads",
-  initialState: adsAdapter.getInitialState({
-    status: "idle",
-    error: null,
-    filteredAds: null,
-    lastVisible: null,
-  }),
-  reducers: {},
+  initialState,
+  reducers: {
+    setFilterChange: (state, action) => {
+      state.filterChange = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAds.pending, (state) => {
@@ -145,7 +153,9 @@ const adsSlice = createSlice({
       })
       .addCase(fetchAds.fulfilled, (state, action) => {
         state.status = "succeeded";
-        adsAdapter.setAll(state, action.payload);
+        // Concatenate the new ads to the existing ads array
+        state.ads = state.ads.concat(action.payload.ads);
+        state.lastVisible = action.payload.lastVisible;
       })
       .addCase(fetchAds.rejected, (state, action) => {
         state.status = "failed";
@@ -156,8 +166,24 @@ const adsSlice = createSlice({
       })
       .addCase(fetchFilteredAds.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.filteredAds = action.payload;
+        
         state.lastVisible = action.payload.lastVisible;
+
+        // Add this block to handle the allAdsFetched flag
+        // TODO dont forget to change the page size later when increased
+        if (action.payload.ads.length < 4) { // Assuming 4 is the page size
+          state.allAdsFetched = true;
+        } else {
+          state.allAdsFetched = false; // Reset the flag if more ads are available
+        }
+
+        if (state.filterChange === true) { // Assuming 4 is the page size
+          state.filteredAds.ads = action.payload.ads;
+          state.filterChange = false;
+        } else {
+          state.filteredAds.ads = state.filteredAds.ads.concat(action.payload.ads);
+        }
+
       })
       .addCase(fetchFilteredAds.rejected, (state, action) => {
         state.status = "failed";
@@ -174,7 +200,7 @@ const adsSlice = createSlice({
       });
   },
 });
-export const { setActiveFilters } = adsSlice.actions;
+export const { setActiveFilters, setFilterChange } = adsSlice.actions;
 
 // Selectors
 export const {

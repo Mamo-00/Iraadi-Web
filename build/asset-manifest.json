@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.3751ac84.css",
-    "main.js": "/static/js/main.899aeb09.js",
+    "main.js": "/static/js/main.943e3d5b.js",
     "static/media/desert-4-login.jpg": "/static/media/desert-4-login.ab138840ac0ae1dd20f6.jpg",
     "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2877d54f94f30c5d563c.ttf",
     "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.13e40630e5866f777de8.ttf",
@@ -37,10 +37,10 @@
     "static/media/arrow_left.svg": "/static/media/arrow_left.db6e2d88c7c35a775ce4.svg",
     "static/media/arrow_right.svg": "/static/media/arrow_right.f7c6ac6d310d3b82f0a0.svg",
     "main.3751ac84.css.map": "/static/css/main.3751ac84.css.map",
-    "main.899aeb09.js.map": "/static/js/main.899aeb09.js.map"
+    "main.943e3d5b.js.map": "/static/js/main.943e3d5b.js.map"
   },
   "entrypoints": [
     "static/css/main.3751ac84.css",
-    "static/js/main.899aeb09.js"
+    "static/js/main.943e3d5b.js"
   ]
 }

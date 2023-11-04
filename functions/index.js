@@ -333,56 +333,171 @@ exports.createAd = functions.https.onCall(async (data, context) => {
   return { status: "success" };
 });
 
+// Firebase Cloud Function for getting filtered ads
 exports.getFilteredAds = functions.https.onCall(async (data, context) => {
   try {
-    console.log("Request data: ", data); // Log the incoming request data
+    const {
+      Location,
+      Condition,
+      Usage,
+      Negotiable,
+      minPrice,
+      maxPrice,
+      lastVisible,
+    } = data;
+    console.log(
+      "filters in getFilteredAds:",
+      Location,
+      Condition,
+      Usage,
+      Negotiable,
+      minPrice,
+      maxPrice
+    );
+    console.log("last visible:", lastVisible);
+    const pageSize = 4;
+    let query = admin.firestore().collection("ads").limit(pageSize);
 
-    const { location, condition, usage, negotiable } = data;
-    console.log('logging filters start');
-    console.log("location:",location," condition:",condition," usage:",usage," negotiable:",negotiable);
-    console.log('end');
+    // Manually apply filters
+    const orderByFields = []; // Keep track of fields used in orderBy
+    // Initialize startAfterValues as an empty array
+    let startAfterValues = [];
+    if (Location) {
+      query = query.where("Location", "==", Location);
+      orderByFields.push("Location");
+    }
+    if (Condition) {
+      query = query.where("Condition", "==", Condition);
+      orderByFields.push("Condition");
+    }
+    if (Usage) {
+      query = query.where("Usage", "==", Usage);
+      orderByFields.push("Usage");
+    }
+    if (Negotiable !== null) { // Only apply the filter if Negotiable is explicitly true or false
+      query = query.where("Negotiable", "==", Negotiable);
+      orderByFields.push("Negotiable");
+    }
+    if (minPrice !== null) {
+      // Check for minPrice and adjust the query
+      query = query.where("Price", ">=", minPrice);
+      // It's important to only push "Price" to orderByFields once.
+      if (!orderByFields.includes("Price")) {
+        orderByFields.push("Price");
+      }
+    }
 
-    const pageSize = 3;
-    const page = data.page || 1;
-    const offset = (page - 1) * pageSize;
-    let query = admin.firestore().collection("ads").offset(offset).limit(pageSize);
+    if (maxPrice !== null) {
+      // Check for maxPrice and adjust the query
+      query = query.where("Price", "<=", maxPrice);
+      // No need to push "Price" again if it's already there.
+      if (!orderByFields.includes("Price")) {
+        orderByFields.push("Price");
+      }
+    }
 
-    
-    console.log('Page:', page);
-    console.log('Offset:', offset);
-    // Apply filters based on the conditions
-    const filters = ['Location', 'Condition', 'Usage', 'Negotiable']; // Add more filters here as needed
-
-    filters.forEach((filter) => {
-      console.log('value of filter in index.js functions', filter); 
-      if (filter) {
-        if (Array.isArray(filter) && filter.length > 0) {
-          query = query.where(filter, "array-contains-any", filter);
-        } else {
-          query = query.where(filter, "==", filter);
+    // Check if all filters are undefined or null
+    if (
+      !Location &&
+      !Condition &&
+      !Usage &&
+      !Negotiable &&
+      minPrice === null &&
+      maxPrice === null
+    ) {
+      // Populate orderByFields with all the fields
+      orderByFields.push(
+        "Location",
+        "Condition",
+        "Usage",
+        "Negotiable",
+        "Price"
+      );
+    }
+    // Apply orderBy based on orderByFields
+    orderByFields.forEach((field) => {
+      // If we're ordering by price, we need to specify the direction.
+      // Assuming you want to order from low to high price.
+      if (field === "Price") {
+        query = query.orderBy(field, "asc");
+      } else {
+        // Make sure to only add orderBy for other fields if Price is not being used as an inequality filter
+        // or if it's already been added as the first orderBy field.
+        if (
+          !orderByFields.includes("Price") ||
+          orderByFields.indexOf("Price") < orderByFields.indexOf(field)
+        ) {
+          query = query.orderBy(field);
         }
       }
     });
 
-    if (data.lastVisible) {
-      query = query.startAfter(data.lastVisible);
+    const filteredLastVisible = {};
+    if (lastVisible) {
+      orderByFields.map((field) => {
+        filteredLastVisible[field] = lastVisible[field];
+      });
     }
+
+    // Check if lastVisible is not null before mapping
+    if (lastVisible) {
+      startAfterValues = orderByFields.map((field) => {
+        return filteredLastVisible[field];
+      });
+    }
+
+    console.log("orderByFields:", orderByFields);
+    console.log("startAfterValues:", startAfterValues);
+
+    // Manually apply pagination using startAfter
+    if (
+      lastVisible &&
+      startAfterValues.every((value) => value !== undefined && value !== null)
+    ) {
+      console.log("startAfterValues2:", startAfterValues);
+      query = query.startAfter(...startAfterValues);
+    }
+
     const snapshot = await query.get();
-    console.log('Snapshot received:', snapshot);
-
     const ads = snapshot.docs.map((doc) => doc.data());
-    console.log("Filtered Ads: ", ads);
-
     const lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-    const lastVisible = lastVisibleDoc ? { id: lastVisibleDoc.id, ...lastVisibleDoc.data() } : null; // Simplify the object
-    console.log("Last Visible: ", lastVisible);
-    console.log('ads from functions:', ads);
-    return { status: "success", ads, lastVisible };
+    const newLastVisible = lastVisibleDoc
+      ? { id: lastVisibleDoc.id, ...lastVisibleDoc.data() }
+      : null;
+
+    return { status: "success", ads, lastVisible: newLastVisible };
   } catch (error) {
     console.log("Error: ", error);
     throw new functions.https.HttpsError("internal", error.message);
   }
 });
+
+
+exports.getAds = functions.https.onCall(async (data, context) => {
+  try {
+    const { lastVisible } = data;
+    const pageSize = 4;
+    let query = admin.firestore().collection("ads").orderBy("Status").limit(pageSize);
+
+    if (lastVisible) {
+      query = query.startAfter(lastVisible);
+    }
+
+    const snapshot = await query.get();
+    const ads = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+
+    const lastVisibleAd = snapshot.docs[snapshot.docs.length - 1];
+
+    return { ads, lastVisible: lastVisibleAd };
+  } catch (error) {
+    console.log("Error: ", error);
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
+
 
 // Cloud Function to reset post counts every hour
 /* exports.resetPostCounts = functions.pubsub

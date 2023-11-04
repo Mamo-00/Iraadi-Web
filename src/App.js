@@ -61,18 +61,6 @@ function App() {
                 path=":category/:subcategory/:subsubcategory"
                 element={<Classifieds />}
               />
-              <Route
-                path=":category/page/:page"
-                element={<Classifieds />}
-              />
-              <Route
-                path=":category/:subcategory/page/:page"
-                element={<Classifieds />}
-              />
-              <Route
-                path=":category/:subcategory/:subsubcategory/page/:page"
-                element={<Classifieds />}
-              />
               {/* Page parameter */}
             </Route>
 
