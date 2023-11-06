@@ -337,7 +337,7 @@ export const signInWithFacebook = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     console.log("Starting Facebook sign-in redirect operation...");
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, facebookProvider);
 
       // Destructure the user object to only get the fields we need
       const { uid, email, displayName, photoURL } = result.user;
