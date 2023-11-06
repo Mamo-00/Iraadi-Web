@@ -337,31 +337,31 @@ export const signInWithFacebook = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     console.log("Starting Facebook sign-in redirect operation...");
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-    
+      const result = await signInWithPopup(auth, googleProvider);
+
       // Destructure the user object to only get the fields we need
       const { uid, email, displayName, photoURL } = result.user;
       const userDoc = await waitForUserDocument(result.user);
       const userData = userDoc.data();
       const role = userData.role;
-      
+
       // Create a sanitized user object that only contains serializable values
       const sanitizedUser = { uid, email, displayName, photoURL, role };
-      
+
       // Return the sanitized user object to be stored in Redux state
       return sanitizedUser;
-     
     } catch (error) {
       console.log("Error during Facebook sign-in redirect operation:", error);
       Sentry.captureException(error);
-      
+
       if (error.code === "auth/account-exists-with-different-credential") {
-        const email =error.customData.email;
-        const signInMethods = await fetchSignInMethodsForEmail(auth,email);
+        const email = error.customData.email;
+        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
         if (signInMethods[0] === "google.com") {
-          const errorMessage ="An account with this email already exists with Google. Please sign in with Google.";
-  
+          const errorMessage =
+            "An account with this email already exists with Google. Please sign in with Google.";
+
           return rejectWithValue(errorMessage);
         }
       }
