@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {unwrapResult } from '@reduxjs/toolkit';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   Alert,
@@ -122,18 +123,22 @@ const Login = () => {
       }
     };
 
-  const handleFacebookLogin = () => {
-    dispatch(signInWithFacebook())
-      .then(() => {
-        // Retrieve the original destination from the session storage
-        const intendedDestination = sessionStorage.getItem('intendedDestination') || '/';
-        navigate(intendedDestination, { replace: true });
-        // Clear the session storage
-        sessionStorage.removeItem('intendedDestination');
-      })
-      .catch((error) => console.log("Error during google login dispatch:", error));
-  };
-
+ const handleFacebookLogin = () => {
+   dispatch(signInWithFacebook())
+     .then(unwrapResult)
+     .then(() => {
+       // Retrieve the original destination from the session storage
+       const intendedDestination =
+         sessionStorage.getItem("intendedDestination") || "/";
+       navigate(intendedDestination, { replace: true });
+       // Clear the session storage
+       sessionStorage.removeItem("intendedDestination");
+     })
+     .catch((error) =>
+      //  alert("Error during Facebook login dispatch:", error.message)
+       alert(error)
+     );
+ };
   const handleGoogleLogin = () => {
     // Store the original destination in the session storage
     

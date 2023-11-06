@@ -332,21 +332,33 @@ export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async 
   }
 });
 
-// This asynchronous thunk function signs a user in with their Facebook account.
-export const signInWithFacebook = createAsyncThunk("user/signInWithFacebook", async (_, { rejectWithValue }) => {
-  console.log("Starting Facebook sign-in redirect operation...");
-  try {
-    await signInWithPopup(auth, facebookProvider);
-    console.log("Facebook sign-in redirect operation completed successfully.");
-    // Add a delay before calling getRedirectResult
-    await new Promise(resolve => setTimeout(resolve, 60000));
-  } catch (error) {
-    console.log("Error during Facebook sign-in redirect operation:", error);
-    Sentry.captureException(error);
-    console.log("rejectwithvalue signInWithFacebook value:",error.message);
-    return rejectWithValue(error.message);
+export const signInWithFacebook = createAsyncThunk(
+  "user/signInWithFacebook",
+  async (_, { rejectWithValue }) => {
+    console.log("Starting Facebook sign-in redirect operation...");
+    try {
+     await signInWithPopup(auth, facebookProvider);
+     
+    } catch (error) {
+      console.log("Error during Facebook sign-in redirect operation:", error);
+      Sentry.captureException(error);
+      
+      if (error.code === "auth/account-exists-with-different-credential") {
+        const email =error.customData.email;
+        const signInMethods = await fetchSignInMethodsForEmail(auth,email);
+
+        if (signInMethods[0] === "google.com") {
+          const errorMessage ="An account with this email already exists with Google. Please sign in with Google.";
+  
+          return rejectWithValue(errorMessage);
+        }
+      }
+
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
+
 
 // This asynchronous thunk function uploads the profile picture.
 export const uploadAndCompressProfilePicture = createAsyncThunk(
