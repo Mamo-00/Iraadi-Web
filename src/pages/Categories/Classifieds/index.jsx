@@ -432,18 +432,6 @@ const Classifieds = () => {
               </Typography>
             )}
           </Grid>
-
-          <Grid item xs={12} style={{ textAlign: "center", margin: "20px 0" }}>
-            {!allAdsFetched && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleLoadMore}
-              >
-                Load More
-              </Button>
-            )}
-          </Grid>
         </Grid>
       </Box>
 
