@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useOptionHandler } from '../../utils/hooks/useOptionHandler';
 import {
   Box,
@@ -17,7 +17,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import  CloseRoundedIcon  from '@mui/icons-material/CloseRounded';
-import { setFilterChange } from "../../features/ads/adsSlice";
+import { fetchFilteredAds } from "../../features/ads/adsSlice";
 
 const debounce = (func, delay) => {
   let timer;
@@ -39,32 +39,28 @@ const Sidebar = ({ handleFilterChange }) => {
   const resetFilters = () => {
     setLocation("");
     setCondition([]);
+    setNegotiable("");
     setUsage([]);
-    setNegotiable(null);
-    setPrice([0, 100000]); // Reset price to default values
   };
-  
 
   const applyFilters = () => {
     const filters = {
-      Location: location,
-      Condition: condition.join(', '), // Assuming multiple conditions can be selected
-      Usage: usage.join(', '), // Assuming multiple usages can be selected
-      Negotiable: negotiable,
-      minPrice: price[0], // Min price
-      maxPrice: price[1], // Max price
+      location,
+      condition,
+      usage,
+      negotiable,
       // Add other filter states here
     };
-  
+
     // Loop through each filter and apply it
     Object.keys(filters).forEach((key) => {
-      console.log('Applying filter for:', key);
-      handleFilterChange(key, filters[key]);
+      console.log('key value in applyFilter:', key);
+      const properCaseKey = key.charAt(0).toUpperCase() + key.slice(1);
+      console.log('key after the gruesome operation:', properCaseKey);
+      handleFilterChange(properCaseKey, filters[key]); // <-- Use handleFilterChange here
     });
-  
-    dispatch(setFilterChange(true));
+
   };
-  
 
   const debouncedApplyFilters = debounce(applyFilters, 300);
 
@@ -75,15 +71,9 @@ const Sidebar = ({ handleFilterChange }) => {
 
   const handlePriceInputChange = (index, event) => {
     const newPrice = [...price];
-    const value = parseInt(event.target.value, 10);
-    newPrice[index] = value;
+    newPrice[index] = parseInt(event.target.value);
     setPrice(newPrice);
-  
-    // Call handleFilterChange with 'MinPrice' or 'MaxPrice'
-    const filterKey = index === 0 ? 'minPrice' : 'maxPrice';
-    handleFilterChange(filterKey, value);
   };
-  
 
   const usageOptions = [
     "New",
@@ -93,6 +83,8 @@ const Sidebar = ({ handleFilterChange }) => {
     "Heavy Usage",
   ];
   const conditionOptions = ["Perfect", "Good", "Normal", "Poor", "Broken"];
+  const negotiableOptions = ["Yes", "No"];
+  const statusOptions = ["Available", "Sold"];
 
   const OptionBox = ({
     title,
@@ -110,9 +102,7 @@ const Sidebar = ({ handleFilterChange }) => {
             key={option}
             label={option}
             color={selectedOptions.includes(option) ? "secondary" : "primary"}
-            onClick={() =>{handleOptionChange(option);
-              handleFilterChange(title, option);
-            }}
+            onClick={() => handleOptionChange(option)}
           />
         ))}
       </Box>
@@ -152,17 +142,13 @@ const Sidebar = ({ handleFilterChange }) => {
             handleFilterChange("Location", e.target.value);
           }}
         >
-          <MenuItem value="Mogadishu">Mogadishu</MenuItem>
-          <MenuItem value="Hargeysa">Hargeysa</MenuItem>
-          <MenuItem value="Galkayo">Galkayo</MenuItem>
-          <MenuItem value="Burao">Burao</MenuItem>
-          <MenuItem value="Burco">Burco</MenuItem>
-          <MenuItem value="Shingaani">Shingaani</MenuItem>
-          <MenuItem value="darusalam">darusalam</MenuItem>
-          <MenuItem value="Xamar">Xamar</MenuItem>
-          <MenuItem value="Bosaso">Bosaso</MenuItem>
-          <MenuItem value="Kismayo">Kismayo</MenuItem>
-          <MenuItem value="Baidoa">Baidoa</MenuItem>
+          <MenuItem value="Bergen">Mogadishu</MenuItem>
+          <MenuItem value="Oslo">Hargeysa</MenuItem>
+          <MenuItem value="Stavanger">Galkayo</MenuItem>
+          <MenuItem value="Ålesund">Burao</MenuItem>
+          <MenuItem value="Tromsø">Bosaso</MenuItem>
+          <MenuItem value="Trondheim">Kismayo</MenuItem>
+          <MenuItem value="Trondheim">Baidoa</MenuItem>
         </Select>
       </FormControl>
 
@@ -204,32 +190,14 @@ const Sidebar = ({ handleFilterChange }) => {
         title="Condition"
         options={conditionOptions}
         selectedOptions={condition}
-        handleOptionChange={(option) => {
-          handleConditionChange(option);
-          // Assuming you want to handle multiple conditions, you might need to adjust this
-          handleFilterChange(
-            "Condition",
-            condition.includes(option)
-              ? condition.filter((c) => c !== option)
-              : [...condition, option]
-          );
-        }}
+        handleOptionChange={handleConditionChange}
       />
 
       <OptionBox
         title="Usage"
         options={usageOptions}
         selectedOptions={usage}
-        handleOptionChange={(option) => {
-          handleUsageChange(option);
-          // Assuming you want to handle multiple usages, you might need to adjust this
-          handleFilterChange(
-            "Usage",
-            usage.includes(option)
-              ? usage.filter((u) => u !== option)
-              : [...usage, option]
-          );
-        }}
+        handleOptionChange={handleUsageChange}
       />
 
       <FormControlLabel
@@ -263,5 +231,3 @@ const Sidebar = ({ handleFilterChange }) => {
 };
 
 export default Sidebar;
-
-

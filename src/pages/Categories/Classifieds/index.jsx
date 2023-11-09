@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import Navbar from "../../../components/Navbar/Navbar";
 import Footer from "../../../components/Footer";
@@ -36,26 +36,24 @@ import { subsubcategories } from "../../../utils/products";
 const Classifieds = () => {
   const dispatch = useDispatch();
   const [activeFilters, setActiveFilters] = useState({
-    subcategoryId: "",
-    subSubcategoryId: "",
-    minPrice: 0,
+    subcategoryId: null,
+    subSubcategoryId: null,
+    minPrice: null,
     maxPrice: null,
-    Location: "",
-    Condition: "",
-    Usage: "",
+    Location: null,
+    Condition: null,
+    Usage: null,
     Negotiable: null,
-    Status: "Available",
+    Status: null,
     // Add more filters here as needed
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Default");
-  const [anchorEl, setAnchorEl] = useState(null); 
-  const [loadMore, setLoadMore] = useState(false);
-  
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const { subcategory, subsubcategory } = useParams();
- 
+  const { page = 1 } = useParams();
 
   const categories = useSelector((state) => selectAllCategories(state));
   const subcategories = useSelector((state) => selectAllSubcategories(state));
@@ -64,7 +62,6 @@ const Classifieds = () => {
   );
 
   const ads = useSelector((state) => selectAllAds(state));
-  const allAdsFetched = useSelector((state) => state.ads.allAdsFetched);
   // Extract the 'ads' array from the 'filteredAds' object in the Redux state.
   // Default to an empty array if 'filteredAds' or 'ads' is null.
   const filteredAds = useSelector((state) => state.ads.filteredAds?.ads || []);
@@ -87,18 +84,18 @@ const Classifieds = () => {
   )?.id;
 
   // Filter ads based on subcategoryId and subSubcategoryId
-  let categoryAds = ads;
+  let categroyAds = ads;
 
   // Filter by subcategoryId if it exists in activeFilters
   if (activeFilters.subcategoryId) {
-    categoryAds = categoryAds.filter(
+    categroyAds = categroyAds.filter(
       (ad) => ad.subcategoryId === activeFilters.subcategoryId
     );
   }
 
   // Filter by subSubcategoryId if it exists in activeFilters
   if (activeFilters.subSubcategoryId) {
-    categoryAds = categoryAds.filter(
+    categroyAds = categroyAds.filter(
       (ad) => ad.subSubcategoryId === activeFilters.subSubcategoryId
     );
   }
@@ -186,8 +183,6 @@ const Classifieds = () => {
       ...activeFilters,
       [filterType]: value,
     });
-    
-    console.log('value in handleFilterChange - Classifieds:', value);
   };
 
   return (

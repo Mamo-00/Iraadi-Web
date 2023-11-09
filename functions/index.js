@@ -355,8 +355,7 @@ exports.getFilteredAds = functions.https.onCall(async (data, context) => {
       maxPrice
     );
     console.log("last visible:", lastVisible);
-    const pageSize = 4;
-    let query = admin.firestore().collection("ads").limit(pageSize);
+    let query = admin.firestore().collection("ads");
 
     // Manually apply filters
     const orderByFields = []; // Keep track of fields used in orderBy
