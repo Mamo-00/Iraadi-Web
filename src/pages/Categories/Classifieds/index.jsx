@@ -65,7 +65,15 @@ const Classifieds = () => {
   // Extract the 'ads' array from the 'filteredAds' object in the Redux state.
   // Default to an empty array if 'filteredAds' or 'ads' is null.
   const filteredAds = useSelector((state) => state.ads.filteredAds?.ads || []);
-  console.log("filtered ads:", filteredAds);
+  // console.log("filtered ads:", filteredAds);
+
+  //handle pagination
+  const [paginatedAds, setPaginatedAds] = useState(filteredAds);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const recordsPerPage = 2;
+  const pagesVisited = pageNumber * recordsPerPage;
+  const pageCount = Math.ceil(filteredAds.length / recordsPerPage);
 
   // Map subcategory and subsubcategory names to their IDs
   const subcategoryId = subcategories.find(
@@ -130,25 +138,35 @@ const Classifieds = () => {
     );
   } */
   const lastVisibleRedux = useSelector((state) => state.ads.lastVisible);
-  console.log("the active filters in Electronics", activeFilters);
-  console.log('the last visible ad from redux:', lastVisibleRedux);
+  // console.log("the active filters in Electronics", activeFilters);
+  // console.log('the last visible ad from redux:', lastVisibleRedux);
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchSubcategories());
     dispatch(fetchSubSubcategories());
 
-    dispatch(fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux }));
+    dispatch(
+      fetchFilteredAds({
+        filters: activeFilters,
+        lastVisible: lastVisibleRedux,
+      })
+    );
   }, [activeFilters]);
-
-  
-  
 
   useEffect(() => {
     dispatch(
-      fetchFilteredAds({ filters: activeFilters, lastVisible: lastVisibleRedux })
+      fetchFilteredAds({
+        filters: activeFilters,
+        lastVisible: lastVisibleRedux,
+      })
     );
   }, [activeFilters, lastVisibleRedux, dispatch]);
 
+  //handle pagination
+  useEffect(() => {
+    setPaginatedAds(filteredAds);
+    setTotalPages(pageCount);
+  }, [filteredAds, pageCount]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -306,25 +324,87 @@ const Classifieds = () => {
           {/* Cards */}
           <Grid item xs={12} lg={8}>
             <Grid container spacing={2} sx={{ px: 1 }}>
-              {filteredAds?.map((item) => (
-                <Grid item xs={12} sm={6} md={4} key={item?.id}>
-                  <ClassifiedCard
-                    id={item?.id}
-                    title={item?.Title}
-                    img={item?.Images[0]}
-                    price={item?.Price}
-                    location={item?.Location}
-                    usage={item?.Usage}
-                    condition={item?.Condition}
-                    date={item?.DatePosted}
-                    negotiable={item?.Negotiable}
-                    subcategories={subcategories}
-                    subsubcategories={subSubcategories}
-                    subId={item?.subcategoryId}
-                    subsubId={item?.subsubcategoryId}
-                  />
-                </Grid>
-              ))}
+              {paginatedAds
+              ?.slice(pagesVisited, pagesVisited + recordsPerPage)
+                .map((item) => (
+                  <Grid item xs={12} sm={6} md={4} key={item?.id}>
+                    <ClassifiedCard
+                      id={item?.id}
+                      title={item?.Title}
+                      img={item?.Images[0]}
+                      price={item?.Price}
+                      location={item?.Location}
+                      usage={item?.Usage}
+                      condition={item?.Condition}
+                      date={item?.DatePosted}
+                      negotiable={item?.Negotiable}
+                      subcategories={subcategories}
+                      subsubcategories={subSubcategories}
+                      subId={item?.subcategoryId}
+                      subsubId={item?.subsubcategoryId}
+                    />
+                  </Grid>
+                ))}
+
+              {/* buttons for pagination */}
+              {totalPages > 1 && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    my: 2,
+                  }}
+                >
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      variant="outlined"
+                      sx={{ mx: 1 }}
+                      onClick={() => setPageNumber(0)}
+                    >
+                      First
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{ mx: 1 }}
+                      onClick={() => setPageNumber(pageNumber - 1)}
+                      disabled={pageNumber === 0}
+                    >
+                      Previous
+                    </Button>
+
+                    {/* custom pages to navigate for pagination */}
+                    {[...Array(totalPages)].map((_, index) => (
+                      <Button
+                        variant="outlined"
+                        sx={{ mx: 1 }}
+                        onClick={() => setPageNumber(index)}
+                        disabled={pageNumber === index}
+                      >
+                        {index + 1}
+                      </Button>
+                    ))}
+
+                    {/* custom pages to navigate for pagination */}
+
+                    <Button
+                      variant="outlined"
+                      sx={{ mx: 1 }}
+                      onClick={() => setPageNumber(pageNumber + 1)}
+                      disabled={pageNumber === totalPages - 1}
+                    >
+                      Next
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{ mx: 1 }}
+                      onClick={() => setPageNumber(totalPages - 1)}
+                    >
+                      Last
+                    </Button>
+                  </Box>
+                </Box>
+              )}
             </Grid>
             {filteredAds && filteredAds.length === 0 && (
               <Typography
