@@ -2,15 +2,18 @@ import React from "react";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import ImageCard from "./Cards/ImageCard";
 import Masonry from "@mui/lab/Masonry";
+import CarsPromoCard from "./Cards/PromotionCards/CarPromoCard";
+
+const renderAdItems = (items) => {
+  return items.map((item, index) => (
+    <Grid item xs={12} sm={6} md={4} key={index}>
+      <Box>{item.title}</Box>
+    </Grid>
+  ));
+};
 
 const UserAds = ({ ads, recentSearches, favorites }) => {
-  const renderAdItems = (items) => {
-    return items.map((item, index) => (
-      <Grid item xs={12} sm={6} md={4} key={index}>
-        <Box>{item.title}</Box>
-      </Grid>
-    ));
-  };
+  console.log("favorites", favorites);
 
   const products = [
     {
@@ -96,15 +99,20 @@ const UserAds = ({ ads, recentSearches, favorites }) => {
           spacing={2}
           sx={{ mx: "auto" }}
         >
-          {products?.map((item, index) => (
-            <ImageCard
-              key={index}
-              img={item?.img}
-              style={{
+          {favorites?.map((item, index) => (
+            <CarsPromoCard
+              img={item?.Images===undefined?item.img:item?.Images[0]}
+              title={item?.Title===undefined?item.title:item?.Title}
+              price={item?.Price ===undefined?item.price:item?.Price}
+              location={item?.Location ===undefined?item.location:item?.Location}
+              sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
+              item={item}
+              key={item?.id}
+              alreadyFavorited={true}
             />
           ))}
         </Masonry>

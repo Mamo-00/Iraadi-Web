@@ -120,6 +120,7 @@ export const signInWithEmailPassword = createAsyncThunk(
       // If successful, it will return the user's data
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        sessionStorage.setItem("user_uid", user.uid);
         return {
           uid: user.uid,
           email: loginEmail,
@@ -543,8 +544,10 @@ const initialState = userAdapter.getInitialState({
     displayName: null,
     phoneNumber: null,
     photoURL: null,
-    role: null
+    role: null,
   },
+  favorites: [],
+  loading: "idle",
 });
 
 // This creates the Redux slice for user operations.
@@ -685,7 +688,30 @@ const userSlice = createSlice({
       })      
       .addCase(uploadAndCompressProfilePicture.fulfilled, (state, action) => {
         state.user.photoURL = action.payload;
-      });
+      })
+      .addCase(LoadFavorites.pending, (state) => {
+        state.loading = "pending";
+      })
+      .addCase(LoadFavorites.fulfilled, (state, action) => {
+        state.loading = "succeeded";
+        state.favorites = action.payload;
+      })
+      .addCase(LoadFavorites.rejected, (state, action) => {
+        state.loading = "failed";
+        state.error = action.payload;
+      })
+      .addCase(removeProductFromFavorites.pending, (state) => {
+        state.loading = "pending";
+      })
+      .addCase(removeProductFromFavorites.fulfilled, (state, action) => {
+        state.loading = "succeeded";
+        state.favorites = state.favorites.filter(
+          (favorite) => favorite.id !== action.payload.id
+        );
+      })
+      
+
+
   },
 });
 
@@ -750,3 +776,73 @@ export const selectUserByUid = createSelector(
 );
 
 export default userSlice.reducer;
+
+export const addProductToFavorites = createAsyncThunk(
+  //find the user with uid in the users collection
+  //add the product to the user's favorites array
+  //update the user with the new favorites array
+
+  "user/addProductToFavorites",
+  async ({ uid, product }, { rejectWithValue }) => {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        await updateDoc(userDocRef, {
+          favorites: [...userData.favorites, product],
+        });
+        return product;
+      }
+    } catch (error) {
+      // Sentry.captureException(error);
+      // return rejectWithValue(error.message);
+      console.log("error:", error);
+    }
+  } 
+);
+
+export const removeProductFromFavorites = createAsyncThunk(
+  "user/removeProductFromFavorites",
+  async ({ uid, product }, { rejectWithValue }) => {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const newFavorites = userData.favorites.filter(
+          (favorite) => favorite.id !== product.id
+        );
+        await updateDoc(userDocRef, {
+          favorites: newFavorites,
+        })
+        return product;
+      }
+    } catch (error) {
+      // Sentry.captureException(error);
+      // return rejectWithValue(error.message);
+      console.log("error:", error);
+    }
+  } 
+);
+
+
+export const LoadFavorites = createAsyncThunk(
+  "user/LoadFavorites",
+  async (uid, { rejectWithValue }) => {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        //return array of favorites
+        return userData.favorites;
+
+      }
+    } catch (error) {
+      // Sentry.captureException(error);
+      // return rejectWithValue(error.message);
+      console.log("error:", error);
+    }
+  } 
+);
