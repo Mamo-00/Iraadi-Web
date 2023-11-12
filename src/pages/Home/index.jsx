@@ -145,7 +145,7 @@ const Home = () => {
           }}
         >
           {title === "Popular Cars"
-            ? products?.slice(0, 4).map((item) => (
+            ? products?.slice(0, 4).map((item,index) => (
                 <CarsPromoCard
                   key={index}
                   item={item}
