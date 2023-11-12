@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer";
@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, selectAllCategories } from '../../features/category/categorySlice';
 import { fetchSubcategories, selectAllSubcategories  } from '../../features/category/subcategorySlice';
 import { fetchSubSubcategories, selectAllSubSubcategories } from '../../features/category/subsubcategorySlice';
-import { fetchAds, selectAllAds } from "../../features/ads/adsSlice";
+import { fetchFilteredAds,  selectAllAds } from "../../features/ads/adsSlice";
 
 
 const Home = () => {
@@ -41,10 +41,27 @@ const Home = () => {
     dispatch(fetchCategories());
     dispatch(fetchSubcategories());
     dispatch(fetchSubSubcategories());
-    dispatch(fetchAds());
+    
   }, []);
 
-  const ads = useSelector((state) => selectAllAds(state));
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      // Will be false on the first render
+
+      dispatch(
+        fetchFilteredAds({
+          filters: null,
+          lastVisible: null,
+        })
+      );
+    } else {
+      isMounted.current = true; // Set to true after the first render
+    }
+  }, []);
+
+   const filteredAds = useSelector((state) => state.ads.filteredAds?.ads || []);
   
   // Function to filter subcategories based on categoryId
   const filterSubcategoriesByCategoryId = (categoryId) => {
@@ -77,7 +94,7 @@ const Home = () => {
           rowHeight={260}
         >
           {title !== "Popular Cars"
-            ? ads?.map((item) => (
+            ? filteredAds?.map((item) => (
                 <ImageListItem key={item?.id}>
                   <CarsPromoCard
                     img={item?.Images[0]}
@@ -128,7 +145,7 @@ const Home = () => {
           }}
         >
           {title === "Popular Cars"
-            ? products?.slice(0, 4).map((item, index) => (
+            ? products?.slice(0, 4).map((item) => (
                 <CarsPromoCard
                   key={index}
                   item={item}
@@ -143,10 +160,10 @@ const Home = () => {
                   }}
                 />
               ))
-            : ads?.slice(0, 4).map((item) => (
+            : filteredAds?.slice(0, 4).map((item, index) => (
                 <CarsPromoCard
                   item={item}
-                  key={item?.id}
+                  key={index}
                   img={item?.Images[0]}
                   title={item?.Title}
                   price={item?.Price}
