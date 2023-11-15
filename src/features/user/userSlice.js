@@ -323,6 +323,9 @@ export const signInWithGoogle = createAsyncThunk("user/signInWithGoogle", async 
     
     // Create a sanitized user object that only contains serializable values
     const sanitizedUser = { uid, email, displayName, photoURL, role };
+
+    //save the uid in session storage
+    sessionStorage.setItem("user_uid", uid);
     
     // Return the sanitized user object to be stored in Redux state
     return sanitizedUser;
@@ -348,6 +351,9 @@ export const signInWithFacebook = createAsyncThunk(
 
       // Create a sanitized user object that only contains serializable values
       const sanitizedUser = { uid, email, displayName, photoURL, role };
+
+      // Save the uid in session storage
+      sessionStorage.setItem("user_uid", uid);
 
       // Return the sanitized user object to be stored in Redux state
       return sanitizedUser;
