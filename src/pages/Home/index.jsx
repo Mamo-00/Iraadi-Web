@@ -76,7 +76,7 @@ const Home = () => {
   const theme = useTheme();
 
   const Promo = ({ title }) => {
-    return (
+    return ( 
       <>
         <Typography variant="h4" color="text.primary" sx={{ my: 3, ml: 1 }}>
           {title}
