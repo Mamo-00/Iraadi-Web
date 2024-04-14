@@ -106,6 +106,7 @@ const Home = () => {
                       justifyContent: "center",
                       alignItems: "center",
                     }}
+                    item={item}
                   />
                 </ImageListItem>
               ))
@@ -116,6 +117,7 @@ const Home = () => {
                     title={item?.title}
                     price={item?.price}
                     location={item?.location}
+                    item={item}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
@@ -143,9 +145,10 @@ const Home = () => {
           }}
         >
           {title === "Popular Cars"
-            ? products?.slice(0, 4).map((item) => (
+            ? products?.slice(0, 4).map((item,index) => (
                 <CarsPromoCard
-                  key={item?.id}
+                  key={index}
+                  item={item}
                   img={item?.img}
                   title={item?.title}
                   price={item?.price}
@@ -159,6 +162,7 @@ const Home = () => {
               ))
             : filteredAds?.slice(0, 4).map((item, index) => (
                 <CarsPromoCard
+                  item={item}
                   key={index}
                   img={item?.Images[0]}
                   title={item?.Title}
