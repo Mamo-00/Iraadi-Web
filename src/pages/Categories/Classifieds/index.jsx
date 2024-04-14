@@ -257,12 +257,12 @@ const Classifieds = () => {
             </MenuItem>
             <MenuItem onClick={() => handleClose("Price High to Low")}>
               <Typography variant="body1" fontWeight="bold">
-                Price High to Low
+                Price High To Low
               </Typography>
             </MenuItem>
             <MenuItem onClick={() => handleClose("Price Low to High")}>
               <Typography variant="body1" fontWeight="bold">
-                Price Low to High
+                Price Low To High
               </Typography>
             </MenuItem>
             <MenuItem onClick={() => handleClose("Alphabetical")}>
